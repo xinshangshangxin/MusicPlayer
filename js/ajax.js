@@ -30,16 +30,16 @@ function ajaxGet(url, funScuss, funFail) {
     // 4, 接收服务器的返回
     xhr.onreadystatechange = function() {
         // 完成返回
-        if (xhr.readyState == 4) {
+        if (xhr.readyState === 4) {
             // 成功接收数据
-            if (xhr.status == 200) {
+            if (xhr.status === 200) {
                 funScuss && funScuss(xhr.responseText);
             }
             else {
                 funFail && funFail(xhr.status);
             }
         }
-    }
+    };
 }
 
 /**
@@ -76,22 +76,23 @@ function ajaxPost(url, data, funScuss, funFail) {
     // 4, 接收服务器的返回
     xhr.onreadystatechange = function() {
         // 完成返回
-        if (xhr.readyState == 4) {
+        if (xhr.readyState === 4) {
             // 成功接收数据
-            if (xhr.status == 200) {
+            if (xhr.status === 200) {
                 funScuss && funScuss(xhr.responseText);
             }
             else {
                 funFail && funFail(xhr.status);
             }
         }
-    }
+    };
 }
 
 /**
- * Cross-Origin Get
- * @param url 获取网址
- * @param fun 获取成功执行函数
+ * jsonpGet
+ * @param url
+ * @param [funSuccess]
+ * @param [funFail]
  */
 function jsonpGet(url, funSuccess, funFail) {
     var tempcallback = 'callback_' + new Date().getTime() + '_' + Math.random().toString(36).substr(2);

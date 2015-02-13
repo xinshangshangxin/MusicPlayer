@@ -8,9 +8,9 @@ $(document).ready(function() {
         $nextsong = $('#nextsong'), //下一首
         $mutebtn = $('#mute'), //静音按钮
         $volumebar = $('#volumebar'), // 音量条
-        $currentvolumebar = $('#currentvolumebar'),//当前音量
+        $currentvolumebar = $('#currentvolumebar'), //当前音量
         $progressbar = $('#progressbar'), // 进度条
-        $currentprogressbar = $('#currentprogress'),//当前进度
+        $currentprogressbar = $('#currentprogress'), //当前进度
         $coverimg = $('#coverimg'),
         $title = $('#title'),
         $artist = $('#artist'),
@@ -20,10 +20,10 @@ $(document).ready(function() {
     var currentprogress = 0, //当前进度
         currentIndex = -1, // 当前播放 index
         currentVolum = 1, // 当前音量
-        playlistinfo = [],  // 所有 歌曲
+        playlistinfo = [], // 所有 歌曲
         audiolisthtml = [], // 所有歌曲 的 html 格式
         isplaying = true, // 是否正在播放
-        audiolist = {};   //列表中所有歌曲 对象; 用于判断是否在列表中
+        audiolist = {}; //列表中所有歌曲 对象; 用于判断是否在列表中
 
     //本地存储
     var localStr = localStorage['shang_music'];
@@ -48,6 +48,7 @@ $(document).ready(function() {
     var volumBarlen = $volumebar.width();
     var lrcObj;
 
+    //noinspection JSCheckFunctionSignatures
     $(document).on('mousedown', function() {
         if (isProgressBar || isVolumBar) {
             document.body.style.cursor = 'pointer';
@@ -89,8 +90,7 @@ $(document).ready(function() {
             var percentLen = len / progressbarLen;
             if (percentLen < 0) {
                 percentLen = 0;
-            }
-            else if (percentLen > 1) {
+            } else if (percentLen > 1) {
                 percentLen = 1;
             }
             $currentprogressbar.width(percentLen * 100 + '%');
@@ -109,8 +109,7 @@ $(document).ready(function() {
             var percentLen = len / volumBarlen;
             if (percentLen < 0) {
                 percentLen = 0;
-            }
-            else if (percentLen > 1) {
+            } else if (percentLen > 1) {
                 percentLen = 1;
             }
             $currentvolumebar.width(percentLen * 100 + '%');
@@ -128,7 +127,7 @@ $(document).ready(function() {
     }
 
 
-    $('#showtext').on('hidden.bs.modal', function(e) {
+    $('#showtext').on('hidden.bs.modal', function() {
         $addplay.button('reset');
     });
 
@@ -140,7 +139,11 @@ $(document).ready(function() {
             $addplay.button('reset');
         }, 10000);
 
-        var id = $addr.val().match('\\d+')[0];
+        var temp = ($addr.val()).match('\\d+');
+        var id = '';
+        if (temp) {
+            id = temp[0];
+        }
         if (audiolist['id' + id]) {
             $('.textdiv').html('已经在列表中,点击确定跳转播放');
             $('#showtext').modal('show');
@@ -148,7 +151,7 @@ $(document).ready(function() {
                 clearTimeout(temptimer);
                 $('#showtext').modal('hide');
                 for (var i = 0; i < playlistinfo.length; i++) {
-                    if (id == playlistinfo[i]['rate128'].id) {
+                    if (id === playlistinfo[i]['rate128'].id) {
                         currentIndex = i;
                         palynewaudio(currentIndex);
                         break;
@@ -218,8 +221,7 @@ $(document).ready(function() {
         if (audio.muted) {
             audio.muted = false;
             $mutebtn.attr('src', './images/volume.png');
-        }
-        else {
+        } else {
             audio.muted = true;
             $mutebtn.attr('src', './images/mute.png');
         }
@@ -229,12 +231,11 @@ $(document).ready(function() {
         if (audio) {
             if (isplaying) {
                 audio.pause();
-                $playpushbtn.attr('src', './images/pause.png');
-                isplaying = false;
-            }
-            else {
-                audio.play();
                 $playpushbtn.attr('src', './images/play.png');
+                isplaying = false;
+            } else {
+                audio.play();
+                $playpushbtn.attr('src', './images/pause.png');
                 isplaying = true;
             }
         }
@@ -246,7 +247,7 @@ $(document).ready(function() {
         if (audio) {
             document.body.removeChild(audio);
         }
-        audio = null;
+        //audio = null;
         audio = document.createElement('audio');
         audio.innerHTML = '<source src=' + audioobj.mp3 + '>';
         document.body.appendChild(audio);
