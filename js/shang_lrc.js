@@ -14,6 +14,8 @@ function shangLrcLoad(oAudio, oLrc) {
 
     shangLrc.lrchtmlarr = [];
     shangLrc.divContent = document.createElement('div');
+    shangLrc.repaireTimeNu = 0;
+
 
     var scrollTimer = null;
 
@@ -40,7 +42,7 @@ function shangLrcLoad(oAudio, oLrc) {
     };
 
     shangLrc.checkUpdate = function() {
-        if (shangLrc.audioObj.currentTime >= shangLrc.nextUpdateTime - 0.2) {
+        if (shangLrc.audioObj.currentTime >= shangLrc.nextUpdateTime - shangLrc.repaireTimeNu) {
             shangLrc.scrollLrc();
             shangLrc.checkUpdate();
         }

@@ -77,6 +77,11 @@ a {
     color: #fff;
     font-weight: bold;
 }
+
+#alllist ul li img {
+    display: none;
+}
+
 #alllist ul li.playing {
     color: #fff;
     font-weight: bolder;
@@ -106,4 +111,8 @@ hr {
 }
 #lrcdiv p {
     line-height: 22px;
+}
+
+.lrctime:hover {
+    cursor: pointer;
 }
