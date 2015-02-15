@@ -25,8 +25,7 @@ $(document).ready(function() {
         currentVolum = 1, // 当前音量
         playlistinfo = [], // 所有 歌曲
         audiolisthtml = [], // 所有歌曲 的 html 格式
-        isplaying = true, // 是否正在播放
-        audiolist = {}; //列表中所有歌曲 对象; 用于判断是否在列表中
+        isplaying = true; // 是否正在播放
 
     //本地存储
     var localStr = localStorage['shang_music'];
@@ -36,8 +35,6 @@ $(document).ready(function() {
         if (localInfo) {
             playlistinfo = localInfo.playlistinfo || [];
             for (var i = 0; i < playlistinfo.length; i++) {
-                //console.log(playlistinfo[i]['rate128'].id);
-                audiolist['id' + playlistinfo[i]['rate128'].id] = true;
                 addAudiolisthtml(playlistinfo[i]['rate128'], i);
             }
         }
@@ -184,26 +181,29 @@ $(document).ready(function() {
         if (temp) {
             id = temp[0];
         }
-        if (audiolist['id' + id]) {
+
+        var hadNu = -1;
+        for (var i = 0; i < playlistinfo.length; i++) {
+            if (id === playlistinfo[i]['rate128'].id) {
+                hadNu = i;
+                break;
+            }
+        }
+
+        if (hadNu !== -1) {
             $('.textdiv').html('已经在列表中,点击确定跳转播放');
             $('#showtext').modal('show');
             $('#ensurebtn').one('click', function() {
                 clearTimeout(temptimer);
                 $('#showtext').modal('hide');
-                for (var i = 0; i < playlistinfo.length; i++) {
-                    if (id === playlistinfo[i]['rate128'].id) {
-                        currentIndex = i;
-                        palynewaudio(currentIndex);
-                        break;
-                    }
-                }
 
+                currentIndex = hadNu;
+                palynewaudio(currentIndex);
             });
             return;
         }
 
         var newaudio = {};
-        audiolist['id' + id] = newaudio;
         playlistinfo.push(newaudio);
 
 
