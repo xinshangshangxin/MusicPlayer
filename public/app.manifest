@@ -1,0 +1,32 @@
+CACHE MANIFEST
+
+
+CACHE:
+images/delete.png
+images/fastforward.png
+images/mute.png
+images/pause.png
+images/play.png
+images/playing.png
+images/rewind.png
+images/shang.png
+images/volume.png
+css/bootstrap.css
+css/user-b0d7833a.css
+css/user.min.css
+js/bootstrap.min.js
+js/jquery-1.11.1.min.js
+js/user-58d76eac.js
+js/user.min.js
+
+
+NETWORK:
+http://*
+https://*
+*
+
+
+SETTINGS:
+prefer-online
+
+# hash: ef5e3ea07fb868aa22b9e3963e0d75e50baa7d345c189d547180b57fd310dfb6

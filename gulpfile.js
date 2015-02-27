@@ -10,7 +10,8 @@ var gulp = require('gulp'),
     rev = require('gulp-rev'),
     usemin = require('gulp-usemin'),
     changed = require('gulp-changed'),
-    minifyhtml = require('gulp-minify-html');
+    minifyhtml = require('gulp-minify-html'),
+    manifest = require('gulp-manifest');
 
 
 // Styles
@@ -52,7 +53,7 @@ gulp.task('movecss', function() {
 
 
 //usemin
-gulp.task('usemin', function() {
+gulp.task('usemin', ['css', 'js', 'movecss', 'movejs', 'moveimages'], function() {
     return gulp.src('index.html')
         .pipe(
             usemin({
@@ -66,17 +67,25 @@ gulp.task('usemin', function() {
         )
         .pipe(
             gulp.dest('public/')
-        )
-        .pipe(
-            notify({
-                message: 'usemin task complete'
-            })
         );
 });
 
 // Clean
 gulp.task('clean', function(cb) {
     del(['public'], cb)
+});
+
+//manifest
+gulp.task('manifest', ['css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin'], function() {
+    gulp.src(['public/**/*', '!public/index.html'])
+        .pipe(manifest({
+            hash: true,
+            preferOnline: true,
+            network: ['http://*', 'https://*', '*'],
+            filename: 'app.manifest',
+            exclude: 'app.manifest'
+        }))
+        .pipe(gulp.dest('public'));
 });
 
 
@@ -95,5 +104,5 @@ gulp.task('clean', function(cb) {
 
 // Default task
 gulp.task('default', ['clean'], function() {
-    gulp.start('css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin');
+    gulp.start('css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin', 'manifest');
 });
