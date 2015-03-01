@@ -14,50 +14,22 @@ var gulp = require('gulp'),
     manifest = require('gulp-manifest');
 
 
-// Styles
-gulp.task('css', function() {
-    return gulp.src(['css/**/*css', '!css/**/*bootstrap*css'])
-        .pipe(
-            rename('user.min.css')
-        )
-        .pipe(gulp.dest('public/css'));
-});
-
-// Scripts
-gulp.task('js', function() {
-    return gulp.src(['js/**/*.js', '!js/**/*jquery*js', '!js/**/*bootstrap*js'])
-        .pipe(concat('user.min.js'))
-        .pipe(gulp.dest('public/js'));
-});
-
-//movejs
-gulp.task('movejs', function() {
-    return gulp.src(['js/**/*jquery*js', 'js/**/*bootstrap*js'])
-        .pipe(changed('public'))
-        .pipe(gulp.dest('public/js'));
-});
-
-//moveimages
-gulp.task('moveimages', function() {
-    return gulp.src(['images/**/*'])
-        .pipe(changed('public'))
-        .pipe(gulp.dest('public/images'));
-});
-
-//movecss
-gulp.task('movecss', function() {
-    return gulp.src(['css/**/*bootstrap*css'])
-        .pipe(changed('public'))
-        .pipe(gulp.dest('public/css'));
+// move
+gulp.task('move', function() {
+    return gulp.src(
+        ['js/**/*jquery*js', 'js/**/*bootstrap*js', 'images/**/*', 'css/**/*bootstrap*css'], {
+            base: './'
+        }
+    ).pipe(gulp.dest('public'));
 });
 
 
 //usemin
-gulp.task('usemin', ['css', 'js', 'movecss', 'movejs', 'moveimages'], function() {
+gulp.task('usemin', function() {
     return gulp.src('index.html')
         .pipe(
             usemin({
-                //rev() 文件带hash  'concat' 文件名没有hash
+                //rev() 文件带hash  'concat' 文件没有hash
                 css: [minifycss(), rev()],
                 html: [minifyhtml({
                     empty: true
@@ -70,23 +42,27 @@ gulp.task('usemin', ['css', 'js', 'movecss', 'movejs', 'moveimages'], function()
         );
 });
 
+
+//manifest
+gulp.task('manifest', ['move', 'usemin'], function() {
+    gulp.src(['public/**/*', '!public/index.html'])
+        .pipe(
+            manifest({
+                hash: true,
+                preferOnline: true,
+                network: ['http://*', 'https://*', '*'],
+                filename: 'app.manifest',
+                exclude: 'app.manifest'
+            })
+        ).pipe(gulp.dest('public'));
+});
+
 // Clean
 gulp.task('clean', function(cb) {
     del(['public'], cb)
 });
 
-//manifest
-gulp.task('manifest', ['css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin'], function() {
-    gulp.src(['public/**/*', '!public/index.html'])
-        .pipe(manifest({
-            hash: true,
-            preferOnline: true,
-            network: ['http://*', 'https://*', '*'],
-            filename: 'app.manifest',
-            exclude: 'app.manifest'
-        }))
-        .pipe(gulp.dest('public'));
-});
+
 
 
 // // Watch
@@ -104,5 +80,5 @@ gulp.task('manifest', ['css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin']
 
 // Default task
 gulp.task('default', ['clean'], function() {
-    gulp.start('css', 'js', 'movecss', 'movejs', 'moveimages', 'usemin', 'manifest');
+    gulp.start('manifest');
 });
