@@ -19,7 +19,11 @@ $(document).ready(function() {
     $alllistul = $('#alllistul'),
     $lrctimereduce = $('#lrctimereduce'),
     $lrctimeadd = $('#lrctimeadd'),
-    $lrctimecurrent = $('#lrctimecurrent');
+    $lrctimecurrent = $('#lrctimecurrent'),
+    $ensurebtn = $('#ensurebtn'),
+    $showtext = $('#showtext'),
+    $notsurebtn = $('#notsurebtn'),
+    $textdiv = $('.textdiv');
 
   var currentprogress = 0, //当前进度
     currentIndex = -1, // 当前播放 index
@@ -37,6 +41,9 @@ $(document).ready(function() {
     if (localInfo) {
       playlistinfo = localInfo.playlistinfo || [];
       for (var i = 0; i < playlistinfo.length; i++) {
+        if (!playlistinfo[i]) {
+          continue;
+        }
         addAudiolisthtml(playlistinfo[i]['rate128'], i);
       }
     }
@@ -49,7 +56,12 @@ $(document).ready(function() {
   var volumBarlen = $volumebar.width();
   var lrcObj;
 
-  //noinspection JSCheckFunctionSignatures
+  $(document).on('keydown', function(e) {
+    if (e.keyCode === 13) {
+      $mayplay.trigger('click');
+    }
+  });
+
   $(document).on('mousedown', function() {
     if (isProgressBar || isVolumBar) {
       document.body.style.cursor = 'pointer';
@@ -166,12 +178,12 @@ $(document).ready(function() {
   }
 
 
-  $('#showtext').on('hidden.bs.modal', function() {
+  $showtext.on('hidden.bs.modal', function() {
     $mayplay.first().button('reset');
-    $('#ensurebtn').show();
-    $('#ensurebtn').unbind();
-    $('#notsurebtn').html('关闭');
-    $('#notsurebtn').unbind();
+    $ensurebtn.show();
+    $ensurebtn.unbind();
+    $notsurebtn.html('关闭');
+    $notsurebtn.unbind();
     clearTimeout(temptimer);
   });
 
@@ -194,15 +206,15 @@ $(document).ready(function() {
             playAudioById(id);
           }
           else {
-            $('#notsurebtn').html('否');
-            $('.textdiv').html('检测到ID,直接播放?');
-            $('#showtext').modal('show');
-            $('#ensurebtn').one('click', function() {
+            $notsurebtn.html('否');
+            $textdiv.html('检测到ID,直接播放?');
+            $showtext.modal('show');
+            $ensurebtn.one('click', function() {
               id = temp[0];
               playAudioById(id);
             });
-            $('#notsurebtn').one('click', function() {
-              $('#notsurebtn').html('关闭');
+            $notsurebtn.one('click', function() {
+              $notsurebtn.html('关闭');
               playAudioById('');
             });
           }
@@ -219,18 +231,18 @@ $(document).ready(function() {
     if (id) {
       var hadNu = -1;
       for (var i = 0; i < playlistinfo.length; i++) {
-        if (id === playlistinfo[i]['rate128'].id) {
+        if (playlistinfo[i] && id === playlistinfo[i]['rate128'].id) {
           hadNu = i;
           break;
         }
       }
 
       if (hadNu !== -1) {
-        $('#ensurebtn').show();
-        $('.textdiv').html('已经在列表中,点击确定跳转播放');
-        $('#showtext').modal('show');
-        $('#ensurebtn').one('click', function() {
-          $('#showtext').modal('hide');
+        $ensurebtn.show();
+        $textdiv.html('已经在列表中,点击确定跳转播放');
+        $showtext.modal('show');
+        $ensurebtn.one('click', function() {
+          $showtext.modal('hide');
           currentIndex = hadNu;
           palynewaudio(currentIndex);
         });
@@ -247,39 +259,41 @@ $(document).ready(function() {
             if (/pan.baidu/.test(obj.mp3)) {
               playlistinfo.length = playlistinfo.length - 1;
 
-              var tempstr = $('.textdiv').html();
-              $('.textdiv').html('此音乐为百度网盘音乐, 点击确定打开此音乐网盘地址, 点击返回重新选取');
-              $('#ensurebtn').show();
-              $('#notsurebtn').html('返回');
-              $('#ensurebtn').one('click', function() {
-                $('#showtext').modal('hide');
-                window.open(obj.mp3);
+              var tempstr = $textdiv.html();
+              $textdiv.html('此音乐为百度网盘音乐, 点击确定打开此音乐网盘地址, 点击返回重新选取');
+              $ensurebtn.show();
+              $notsurebtn.html('返回');
+              $ensurebtn.html('<a href="' + obj.mp3 + '" target = "_blank">返回</a>');
+              $ensurebtn.one('click', function() {
+                $showtext.modal('hide');
+                return true;
               });
-              $('#notsurebtn').one('click', function() {
-                $('.textdiv').html(tempstr);
+              $notsurebtn.one('click', function() {
+                $textdiv.html(tempstr);
 
                 setTimeout(function() {
-                  $('#showtext').modal('show');
+                  $showtext.modal('show');
 
-                  $('.textdiv').find('li').each(function() {
+                  $textdiv.find('li').each(function() {
                     $(this).on('click', function() {
                         var id = $(this).data('songid') + '';
                         playAudioById(id);
                       }
                     );
-                  })
+                  });
                 }, 500);
               });
             }
             else {
               palynewaudio(currentIndex, true);
-              $('#showtext').modal('hide');
+              $showtext.modal('hide');
             }
 
 
             //本地存储
-            localInfo.playlistinfo = playlistinfo;
-            localStorage['shang_music'] = JSON.stringify(localInfo);
+            asyncSave();
+            //localInfo.playlistinfo = playlistinfo;
+            //localStorage['shang_music'] = JSON.stringify(localInfo);
 
           }
         });
@@ -294,12 +308,12 @@ $(document).ready(function() {
   function searchSong(str) {
     if (!str) {
 
-      $('.textdiv').html('请输入 歌曲名/歌手/百度音乐ID链接');
-      $('#ensurebtn').hide();
-      $('#showtext').modal('show');
+      $textdiv.html('请输入 歌曲名/歌手/百度音乐ID链接');
+      $ensurebtn.hide();
+      $showtext.modal('show');
 
       setTimeout(function() {
-        $('#showtext').modal('hide');
+        $showtext.modal('hide');
       }, 3 * 1000);
 
       return;
@@ -329,26 +343,33 @@ $(document).ready(function() {
 
       $searchSongDiv.append($ul);
 
-      $('.textdiv').html('');
-      $('.textdiv').append($searchSongDiv);
-      $('#ensurebtn').hide();
-      $('#showtext').modal('show');
-
-      $('#showtext').one('hidden.bs.modal', function(e) {
-        $('#ensurebtn').show();
-      });
+      $textdiv.html('');
+      $textdiv.append($searchSongDiv);
+      $ensurebtn.hide();
+      $showtext.modal('show');
     });
   }
 
 
   $addplay.on('click', function() {
+    alert();
 
     $addplay.button('loading');
     temptimer = setTimeout(function() {
       $addplay.button('reset');
     }, 10000);
 
-    var temp = ($addr.val()).match('\\d+');
+    var tempstr = $addr.val();
+    if (!tempstr) {
+
+      $textdiv.html('请输入 搜索内容!');
+      $ensurebtn.hide();
+      $showtext.modal('show');
+
+      return;
+    }
+
+    var temp = tempstr.match('\\d+');
     var id = '';
     if (temp) {
       id = temp[0];
@@ -363,10 +384,10 @@ $(document).ready(function() {
     }
 
     if (hadNu !== -1) {
-      $('.textdiv').html('已经在列表中,点击确定跳转播放');
-      $('#showtext').modal('show');
-      $('#ensurebtn').one('click', function() {
-        $('#showtext').modal('hide');
+      $textdiv.html('已经在列表中,点击确定跳转播放');
+      $showtext.modal('show');
+      $ensurebtn.one('click', function() {
+        $showtext.modal('hide');
 
         currentIndex = hadNu;
         palynewaudio(currentIndex);
@@ -409,8 +430,9 @@ $(document).ready(function() {
         currentIndex = playlistinfo.length - 1;
         palynewaudio(currentIndex, true);
         //本地存储
-        localInfo.playlistinfo = playlistinfo;
-        localStorage['shang_music'] = JSON.stringify(localInfo);
+        asyncSave();
+        //localInfo.playlistinfo = playlistinfo;
+        //localStorage['shang_music'] = JSON.stringify(localInfo);
       }
     });
   });
@@ -454,21 +476,25 @@ $(document).ready(function() {
   });
 
 
-  function palynewaudio(nu, isaddlist) {
+  function palynewaudio(nu, isaddlist, which) {
+    if (!playlistinfo[nu]) {
+      nextpreview(which || 1);
+      return;
+    }
 
     var audioobj = playlistinfo[nu]['rate128'];
 
     if (/pan.baidu/.test(audioobj.mp3)) {
-      $('.textdiv').html('此音乐为百度网盘音乐, 删除并播放下一首?');
-      $('#ensurebtn').show();
-      $('#showtext').modal('show');
-      $('#ensurebtn').one('click', function() {
+      $textdiv.html('此音乐为百度网盘音乐, 删除并播放下一首?');
+      $ensurebtn.show();
+      $showtext.modal('show');
+      $ensurebtn.one('click', function() {
 
         if (playlistinfo.length !== 1) {
           nextpreview(1);
         }
 
-        $alllistul.find('li').each(function(i) {
+        $alllistul.find('li').each(function() {
           $(this).find('img').first().trigger('click');
         });
       });
@@ -518,7 +544,12 @@ $(document).ready(function() {
     for (var i = 0; i < audiolisthtml.length; i++) {
       audiolisthtml[i].removeClass('playing');
     }
-    audiolisthtml[nu].addClass('playing');
+
+    $alllistul.find('li').each(function(i) {
+      if ($(this).data('nu') == nu) {
+        audiolisthtml[i].addClass('playing');
+      }
+    });
   }
 
   function addAudiolisthtml(obj, nu) {
@@ -530,8 +561,9 @@ $(document).ready(function() {
     $li.on('click', function() {
       palynewaudio(nu, false);
     });
-    $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.title || 'SHANG') + '">' + (obj.title || 'SHANG') + '</div><div class="col-md-2 col-xs-3 text-right">' + (minute + ":" + second) + '</div><div class="col-md-1 col-xs-1"><img class="visible-xs" src="images/delete.png" alt="删除"/></div></div>');
+    $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.title || 'SHANG') + '">' + (obj.title || 'SHANG') + ' - ' + (obj.artist || 'SHANG') + '</div><div class="col-md-2 col-xs-3 text-right">' + (minute + ":" + second) + '</div><div class="col-md-1 col-xs-1"><img class="visible-xs" src="images/delete.png" alt="删除"/></div></div>');
     $alllistul.append($li);
+    $li.data('nu', nu);
 
     $li.on('mouseover', function() {
       $(this).addClass('maydelete');
@@ -544,25 +576,23 @@ $(document).ready(function() {
       $(this).find('img').css('display', 'none');
     });
     $li.find('img').on('click', function(e) {
-      //console.log(currentIndex);
-      //console.log(nu);
       if (currentIndex === nu) {
         if (playlistinfo.length === 1) {
+          currentIndex = -1;
           removeAllInfo();
         }
         else {
           nextpreview(1);
         }
       }
-      else if (currentIndex > nu) {
-        currentIndex--;
-      }
-
-      playlistinfo.splice(nu, 1);
+      //else if (currentIndex > nu) {
+      //  currentIndex--;
+      //}
+      playlistinfo[nu] = undefined;
+      //playlistinfo.splice(nu, 1);
       audiolisthtml.splice(nu, 1);
       $alllistul.find('li').remove('.maydelete');
-      localInfo.playlistinfo = playlistinfo;
-      localStorage['shang_music'] = JSON.stringify(localInfo);
+      asyncSave();
       e.stopPropagation();
     });
 
@@ -570,9 +600,10 @@ $(document).ready(function() {
   }
 
   function nextpreview(nu) {
+    console.log(currentIndex);
     if (currentIndex !== -1) {
       currentIndex = (currentIndex + playlistinfo.length + nu) % playlistinfo.length;
-      palynewaudio(currentIndex, false);
+      palynewaudio(currentIndex, false, nu);
     }
   }
 
@@ -609,5 +640,20 @@ $(document).ready(function() {
     $coverimg.attr('src', 'http://i1.tietuku.com/f3f9084123926501.jpg');
     $currentprogressbar.width(0);
     $info.html('');
+  }
+
+
+  function asyncSave() {
+    setTimeout(function() {
+      var arr = [];
+      //去除 undefined
+      for (var i = 0; i < playlistinfo.length; i++) {
+        if (playlistinfo[i]) {
+          arr.push(playlistinfo[i]);
+        }
+      }
+      localInfo.playlistinfo = arr;
+      localStorage['shang_music'] = JSON.stringify(localInfo);
+    }, 0);
   }
 });

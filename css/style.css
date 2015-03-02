@@ -77,11 +77,9 @@ a {
     color: #fff;
     font-weight: bold;
 }
-
 #alllist ul li img {
     display: none;
 }
-
 #alllist ul li.playing {
     color: #fff;
     font-weight: bolder;
@@ -112,48 +110,40 @@ hr {
 #lrcdiv p {
     line-height: 22px;
 }
-
 .lrctime:hover {
     cursor: pointer;
 }
-
 #searchsongdiv {
     background: #ffffff;
     /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);*/
+    
     margin: 0;
     padding: 0;
     height: 400px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
-
 #searchsongdiv::-webkit-scrollbar {
     width: 5px;
     height: 5px;
     border-radius: 4px;
 }
-
 #searchsongdiv::-webkit-scrollbar-button {
     display: none;
 }
-
 #searchsongdiv::-webkit-scrollbar-track {
     background: #aaa;
 }
-
 #searchsongdiv::-webkit-scrollbar-thumb {
     background: #000000;
     border-radius: 4px;
 }
-
 #searchsongdiv::-webkit-scrollbar-corner {
     display: none;
 }
-
 #searchsongdiv ul {
     list-style: none;
 }
-
 #searchsongdiv ul li {
     color: #1f1f1f;
     font-size: 12px;
@@ -161,7 +151,6 @@ hr {
     cursor: pointer;
     text-overflow: ellipsis;
 }
-
 #searchsongdiv ul li:hover {
     color: #000000;
     font-weight: bold;
