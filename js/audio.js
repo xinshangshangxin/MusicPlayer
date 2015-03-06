@@ -1,3 +1,4 @@
+//{"playlistinfo":[{"rate128":{"id":"7276963","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/52456966/7276963241200128.mp3?xcode=4734b53eeb88864534568fd8d7fa32a2e619f1cfa997b285","cover":"http://musicdata.baidu.com/data2/pic/115993826/115993826.jpg","title":"天空","time":278,"artist":"蔡依林","lrc":"http://play.baidu.com/data2/lrc/13818970/13818970.lrc"}},{"rate128":{"id":"2084983","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/41830533/20849831425592861128.mp3?xcode=4734b53eeb8886455f65adcfd775b5301489e1db000d3934","cover":"http://b.hiphotos.baidu.com/ting/pic/item/d0c8a786c9177f3e34e8ae1b72cf3bc79e3d56c3.jpg","title":"来不及","time":203,"artist":"田馥甄","lrc":"http://play.baidu.com/data2/lrc/14967169/14967169.lrc"}}]}
 $(document).ready(function() {
 
   var audio = null,
@@ -55,6 +56,47 @@ $(document).ready(function() {
   var isVolumBar = false;
   var volumBarlen = $volumebar.width();
   var lrcObj;
+
+
+  // 列表点击 事件代理
+  $alllistul.on('click', 'li', function(e) {
+    var nu = $(this).data('nu');
+    palynewaudio(nu, false);
+    e.stopPropagation();
+  });
+
+  $alllistul.on('click', 'li img', function(e) {
+    var parentLi = $(this).parents('li.maydelete');
+    var nu = parentLi.data('nu');
+    playlistinfo[nu] = undefined;
+    audiolisthtml.splice(nu, 1);
+    parentLi.remove();
+    var ishad = saveInfo();
+    if (ishad) {
+      nextpreview(1);
+    }
+    else {
+      removeAllInfo();
+    }
+    e.stopPropagation();
+  });
+
+  $alllistul.on('mouseover', 'li', function() {
+    $(this).addClass('maydelete');
+    $(this).find('img').removeClass('visible-xs');
+    $(this).find('img').css('display', 'block');
+  });
+  $alllistul.on('mouseout', 'li', function() {
+    $(this).removeClass('maydelete');
+    $(this).find('img').addClass('visible-xs');
+    $(this).find('img').css('display', 'none');
+  });
+
+  $textdiv.on('click', 'li', function(e) {
+    var id = '' + $(this).data('songid');
+    playAudioById(id);
+    e.stopPropagation();
+  });
 
   $(document).on('keydown', function(e) {
     if (e.keyCode === 13) {
@@ -239,8 +281,18 @@ $(document).ready(function() {
 
       if (hadNu !== -1) {
         $ensurebtn.show();
+        var tempstr = $textdiv.html();
         $textdiv.html('已经在列表中,点击确定跳转播放');
         $showtext.modal('show');
+        $notsurebtn.html('返回');
+        $notsurebtn.get(0).dataset.dismiss = '';
+        $notsurebtn.one('click', function() {
+          $textdiv.html(tempstr);
+          $notsurebtn.html('关闭');
+          setTimeout(function() {
+            $notsurebtn.get(0).dataset.dismiss = 'modal';
+          }, 200);
+        });
         $ensurebtn.one('click', function() {
           $showtext.modal('hide');
           currentIndex = hadNu;
@@ -251,7 +303,7 @@ $(document).ready(function() {
         var newaudio = {};
         playlistinfo.push(newaudio);
 
-        getbdmInfo(id, [], function(obj) {
+        getbdmInfo(id, ['128'], function(obj) {
           newaudio['rate' + obj.rate] = obj;
           if (obj.rate === '128') {
             currentIndex = playlistinfo.length - 1;
@@ -263,25 +315,19 @@ $(document).ready(function() {
               $textdiv.html('此音乐为百度网盘音乐, 点击确定打开此音乐网盘地址, 点击返回重新选取');
               $ensurebtn.show();
               $notsurebtn.html('返回');
-              $ensurebtn.html('<a href="' + obj.mp3 + '" target = "_blank">返回</a>');
+              $ensurebtn.html('<a href="' + obj.mp3 + '" target = "_blank" style="color: white">跳转</a>');
               $ensurebtn.one('click', function() {
                 $showtext.modal('hide');
                 return true;
               });
+              $notsurebtn.get(0).dataset.dismiss = '';
               $notsurebtn.one('click', function() {
                 $textdiv.html(tempstr);
-
+                $notsurebtn.html('关闭');
+                $ensurebtn.hide();
                 setTimeout(function() {
-                  $showtext.modal('show');
-
-                  $textdiv.find('li').each(function() {
-                    $(this).on('click', function() {
-                        var id = $(this).data('songid') + '';
-                        playAudioById(id);
-                      }
-                    );
-                  });
-                }, 500);
+                  $notsurebtn.get(0).dataset.dismiss = 'modal';
+                }, 200);
               });
             }
             else {
@@ -291,7 +337,7 @@ $(document).ready(function() {
 
 
             //本地存储
-            asyncSave();
+            saveInfo();
             //localInfo.playlistinfo = playlistinfo;
             //localStorage['shang_music'] = JSON.stringify(localInfo);
 
@@ -332,11 +378,11 @@ $(document).ready(function() {
         var $li = $('<li data-songid="' + obj.songid + '">');
         $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div></div>');
 
-        $li.on('click', function() {
-            var id = $(this).data('songid') + '';
-            playAudioById(id);
-          }
-        );
+        //$li.on('click', function() {
+        //    var id = $(this).data('songid') + '';
+        //    playAudioById(id);
+        //  }
+        //);
 
         $ul.append($li);
       }
@@ -430,7 +476,7 @@ $(document).ready(function() {
         currentIndex = playlistinfo.length - 1;
         palynewaudio(currentIndex, true);
         //本地存储
-        asyncSave();
+        saveInfo();
         //localInfo.playlistinfo = playlistinfo;
         //localStorage['shang_music'] = JSON.stringify(localInfo);
       }
@@ -477,6 +523,9 @@ $(document).ready(function() {
 
 
   function palynewaudio(nu, isaddlist, which) {
+
+
+    console.log(nu);
     if (!playlistinfo[nu]) {
       nextpreview(which || 1);
       return;
@@ -558,44 +607,11 @@ $(document).ready(function() {
     var second = Math.round(all % 60) < 10 ? "0" + Math.round(all % 60) : Math.round(all % 60);
 
     var $li = $('<li>');
-    $li.on('click', function() {
-      palynewaudio(nu, false);
-    });
+
     $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.title || 'SHANG') + '">' + (obj.title || 'SHANG') + ' - ' + (obj.artist || 'SHANG') + '</div><div class="col-md-2 col-xs-3 text-right">' + (minute + ":" + second) + '</div><div class="col-md-1 col-xs-1"><img class="visible-xs" src="images/delete.png" alt="删除"/></div></div>');
-    $alllistul.append($li);
+
     $li.data('nu', nu);
-
-    $li.on('mouseover', function() {
-      $(this).addClass('maydelete');
-      $(this).find('img').removeClass('visible-xs');
-      $(this).find('img').css('display', 'block');
-    });
-    $li.on('mouseout', function() {
-      $(this).removeClass('maydelete');
-      $(this).find('img').addClass('visible-xs');
-      $(this).find('img').css('display', 'none');
-    });
-    $li.find('img').on('click', function(e) {
-      if (currentIndex === nu) {
-        if (playlistinfo.length === 1) {
-          currentIndex = -1;
-          removeAllInfo();
-        }
-        else {
-          nextpreview(1);
-        }
-      }
-      //else if (currentIndex > nu) {
-      //  currentIndex--;
-      //}
-      playlistinfo[nu] = undefined;
-      //playlistinfo.splice(nu, 1);
-      audiolisthtml.splice(nu, 1);
-      $alllistul.find('li').remove('.maydelete');
-      asyncSave();
-      e.stopPropagation();
-    });
-
+    $alllistul.append($li);
     audiolisthtml.push($li);
   }
 
@@ -643,17 +659,19 @@ $(document).ready(function() {
   }
 
 
-  function asyncSave() {
-    setTimeout(function() {
-      var arr = [];
-      //去除 undefined
-      for (var i = 0; i < playlistinfo.length; i++) {
-        if (playlistinfo[i]) {
-          arr.push(playlistinfo[i]);
-        }
+  function saveInfo() {
+    var arr = [];
+    var ishad = false;
+    //去除 undefined
+    for (var i = 0; i < playlistinfo.length; i++) {
+      if (playlistinfo[i]) {
+        arr.push(playlistinfo[i]);
+        ishad = true;
       }
-      localInfo.playlistinfo = arr;
-      localStorage['shang_music'] = JSON.stringify(localInfo);
-    }, 0);
+    }
+    localInfo.playlistinfo = arr;
+    localStorage['shang_music'] = JSON.stringify(localInfo);
+
+    return ishad;
   }
 });

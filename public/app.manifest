@@ -16,7 +16,7 @@ images/shang.png
 images/volume.png
 js/bootstrap.min.js
 js/jquery-1.11.1.min.js
-js/user.min-e7a59712.js
+js/user.min-fd46e056.js
 
 
 NETWORK:
@@ -28,4 +28,4 @@ https://*
 SETTINGS:
 prefer-online
 
-# hash: f2328897b89d4fd7280a59c16be71a7ddf0839912160a7a1859b3d9b704fdd56
+# hash: 91e5db244dbf5902f262b129db9942c622c699fc38b92aa51a727b6e14340e13
