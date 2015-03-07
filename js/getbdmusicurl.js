@@ -20,13 +20,15 @@ function getoInfo(url, id, rate, fun) {
         var obj = {
             'id': id,
             'rate': rate,
-            'mp3': songinfo.showLink.replace('yinyueshiting', 'musicdata'),
+            'mp3': songinfo.songLink.replace('yinyueshiting', 'musicdata').replace(/&src=.*/, ''),
+            'showLink': songinfo.showLink,
             'cover': songinfo.songPicBig,
             'title': songinfo.songName,
             'time': songinfo.time,
             'artist': songinfo.artistName,
             'lrc': 'http://play.baidu.com' + songinfo.lrcLink
         };
+      console.log(obj.mp3);
         if (fun) {
             fun(obj);
         }

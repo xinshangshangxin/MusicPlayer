@@ -1,4 +1,4 @@
-//{"playlistinfo":[{"rate128":{"id":"7276963","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/52456966/7276963241200128.mp3?xcode=4734b53eeb88864534568fd8d7fa32a2e619f1cfa997b285","cover":"http://musicdata.baidu.com/data2/pic/115993826/115993826.jpg","title":"天空","time":278,"artist":"蔡依林","lrc":"http://play.baidu.com/data2/lrc/13818970/13818970.lrc"}},{"rate128":{"id":"2084983","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/41830533/20849831425592861128.mp3?xcode=4734b53eeb8886455f65adcfd775b5301489e1db000d3934","cover":"http://b.hiphotos.baidu.com/ting/pic/item/d0c8a786c9177f3e34e8ae1b72cf3bc79e3d56c3.jpg","title":"来不及","time":203,"artist":"田馥甄","lrc":"http://play.baidu.com/data2/lrc/14967169/14967169.lrc"}}]}
+//{"playlistinfo":[{"rate128":{"id":"7276963","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/52456966/7276963241200128.mp3?xcode=4734b53eeb88864534568fd8d7fa32a2e619f1cfa997b285","cover":"http://musicdata.baidu.com/data2/pic/115993826/115993826.jpg","title":"天空","time":278,"artist":"蔡依林","lrc":"http://play.baidu.com/data2/lrc/13818970/13818970.lrc"},"repaireTimeNu":-6},{"rate128":{"id":"2084983","rate":"128","mp3":"http://musicdata.baidu.com/data2/music/41830533/20849831425592861128.mp3?xcode=4734b53eeb8886455f65adcfd775b5301489e1db000d3934","cover":"http://b.hiphotos.baidu.com/ting/pic/item/d0c8a786c9177f3e34e8ae1b72cf3bc79e3d56c3.jpg","title":"来不及","time":203,"artist":"田馥甄","lrc":"http://play.baidu.com/data2/lrc/14967169/14967169.lrc"}}]}
 $(document).ready(function() {
 
   var audio = null,
@@ -72,11 +72,14 @@ $(document).ready(function() {
     audiolisthtml.splice(nu, 1);
     parentLi.remove();
     var ishad = saveInfo();
-    if (ishad) {
-      nextpreview(1);
-    }
-    else {
-      removeAllInfo();
+
+    if (nu === currentIndex) {
+      if (ishad) {
+        nextpreview(1);
+      }
+      else {
+        removeAllInfo();
+      }
     }
     e.stopPropagation();
   });
@@ -100,7 +103,7 @@ $(document).ready(function() {
 
   $(document).on('keydown', function(e) {
     if (e.keyCode === 13) {
-      $mayplay.trigger('click');
+      $mayplay.first().trigger('click');
     }
   });
 
@@ -249,6 +252,7 @@ $(document).ready(function() {
           }
           else {
             $notsurebtn.html('否');
+            $notsurebtn.get(0).dataset.dismiss = '';
             $textdiv.html('检测到ID,直接播放?');
             $showtext.modal('show');
             $ensurebtn.one('click', function() {
@@ -258,6 +262,9 @@ $(document).ready(function() {
             $notsurebtn.one('click', function() {
               $notsurebtn.html('关闭');
               playAudioById('');
+              setTimeout(function() {
+                $notsurebtn.get(0).dataset.dismiss = 'modal';
+              }, 200);
             });
           }
         }
@@ -308,14 +315,14 @@ $(document).ready(function() {
           if (obj.rate === '128') {
             currentIndex = playlistinfo.length - 1;
 
-            if (/pan.baidu/.test(obj.mp3)) {
+            if (/pan.baidu/.test(obj.showLink)) {
               playlistinfo.length = playlistinfo.length - 1;
 
               var tempstr = $textdiv.html();
-              $textdiv.html('此音乐为百度网盘音乐, 点击确定打开此音乐网盘地址, 点击返回重新选取');
+              $textdiv.html('此音乐为网网盘音乐, 点击确定打开此音乐网盘地址, 点击返回重新选取');
               $ensurebtn.show();
               $notsurebtn.html('返回');
-              $ensurebtn.html('<a href="' + obj.mp3 + '" target = "_blank" style="color: white">跳转</a>');
+              $ensurebtn.html('<a href="' + obj.showLink + '" target = "_blank" style="color: white">跳转</a>');
               $ensurebtn.one('click', function() {
                 $showtext.modal('hide');
                 return true;
@@ -372,22 +379,26 @@ $(document).ready(function() {
       var data = JSON.parse(d).data;
 
       var $searchSongDiv = $('<div id="searchsongdiv">');
-      var $ul = $('<ul>');
-      for (var i = 0; i < data.song.length; i++) {
-        var obj = data.song[i];
-        var $li = $('<li data-songid="' + obj.songid + '">');
-        $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div></div>');
 
-        //$li.on('click', function() {
-        //    var id = $(this).data('songid') + '';
-        //    playAudioById(id);
-        //  }
-        //);
-
-        $ul.append($li);
+      if (!data.song.length) {
+        $searchSongDiv.html('未找到....');
       }
+      else {
+        var $ul = $('<ul>');
+        for (var i = 0; i < data.song.length; i++) {
+          var obj = data.song[i];
+          var $li = $('<li data-songid="' + obj.songid + '">');
+          $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div></div>');
+          $ul.append($li);
 
-      $searchSongDiv.append($ul);
+          //$li.on('click', function() {
+          //    var id = $(this).data('songid') + '';
+          //    playAudioById(id);
+          //  }
+          //);
+        }
+        $searchSongDiv.append($ul);
+      }
 
       $textdiv.html('');
       $textdiv.append($searchSongDiv);
@@ -524,16 +535,17 @@ $(document).ready(function() {
 
   function palynewaudio(nu, isaddlist, which) {
 
-
     console.log(nu);
     if (!playlistinfo[nu]) {
       nextpreview(which || 1);
       return;
     }
 
+
+
     var audioobj = playlistinfo[nu]['rate128'];
 
-    if (/pan.baidu/.test(audioobj.mp3)) {
+    if (/pan.baidu/.test(audioobj.showLink)) {
       $textdiv.html('此音乐为百度网盘音乐, 删除并播放下一首?');
       $ensurebtn.show();
       $showtext.modal('show');
@@ -561,6 +573,11 @@ $(document).ready(function() {
     audio.volume = currentVolum;
     audio.play();
     currentIndex = nu;
+
+    if (!isplaying) {
+      $playpushbtn.attr('src', './images/pause.png');
+      isplaying = true;
+    }
 
     $(audio).on('timeupdate', function() {
       updateShowTime();
@@ -590,13 +607,16 @@ $(document).ready(function() {
       addAudiolisthtml(obj, nu);
     }
 
-    for (var i = 0; i < audiolisthtml.length; i++) {
-      audiolisthtml[i].removeClass('playing');
-    }
+    //for (var i = 0; i < audiolisthtml.length; i++) {
+    //  audiolisthtml[i].removeClass('playing');
+    //}
 
     $alllistul.find('li').each(function(i) {
-      if ($(this).data('nu') == nu) {
+      if ($(this).data('nu') === nu) {
         audiolisthtml[i].addClass('playing');
+      }
+      else {
+        audiolisthtml[i].removeClass('playing');
       }
     });
   }
@@ -616,7 +636,6 @@ $(document).ready(function() {
   }
 
   function nextpreview(nu) {
-    console.log(currentIndex);
     if (currentIndex !== -1) {
       currentIndex = (currentIndex + playlistinfo.length + nu) % playlistinfo.length;
       palynewaudio(currentIndex, false, nu);
