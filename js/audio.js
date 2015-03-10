@@ -35,7 +35,7 @@ $(document).ready(function() {
     temptimer = null;
 
   //本地存储
-  var localStr = localStorage['shang_music'];
+  var localStr = localStorage.shang_music;
   var localInfo = {};
   if (localStr) {
     localInfo = JSON.parse(localStr);
@@ -45,7 +45,7 @@ $(document).ready(function() {
         if (!playlistinfo[i]) {
           continue;
         }
-        addAudiolisthtml(playlistinfo[i]['rate128'], i);
+        addAudiolisthtml(playlistinfo[i].rate128, i);
       }
     }
   }
@@ -57,6 +57,11 @@ $(document).ready(function() {
   var volumBarlen = $volumebar.width();
   var lrcObj;
 
+
+
+  $(window).on('beforeunload', function() {
+    return "提示: ";
+  });
 
   // 列表点击 事件代理
   $alllistul.on('click', 'li', function(e) {
@@ -161,20 +166,23 @@ $(document).ready(function() {
     clearTimeout($lrctimecurrent.timer);
 
     if (nu === 0) {
-      playlistinfo[currentIndex].repaireTimeNu = 0;
+      playlistinfo[currentIndex].rate128.repaireTimeNu = 0;
     }
     else {
-      playlistinfo[currentIndex].repaireTimeNu = (playlistinfo[currentIndex].repaireTimeNu || 0) + nu;
+      playlistinfo[currentIndex].rate128.repaireTimeNu = (playlistinfo[currentIndex].rate128.repaireTimeNu || 0) + nu;
     }
 
-    lrcObj.repaireTimeNu = playlistinfo[currentIndex].repaireTimeNu;
+
+    lrcObj.repaireTimeNu = playlistinfo[currentIndex].rate128.repaireTimeNu;
 
     $lrctimecurrent.html('[' + lrcObj.repaireTimeNu / 10 + ']');
 
+
+    saveInfo();
     $lrctimecurrent.timer = setTimeout(function() {
       $lrctimecurrent.html('');
-      localInfo.playlistinfo = playlistinfo;
-      localStorage['shang_music'] = JSON.stringify(localInfo);
+      //localInfo.playlistinfo = playlistinfo;
+      //localStorage.shang_music = JSON.stringify(localInfo);
     }, 2000);
   }
 
@@ -280,7 +288,7 @@ $(document).ready(function() {
     if (id) {
       var hadNu = -1;
       for (var i = 0; i < playlistinfo.length; i++) {
-        if (playlistinfo[i] && id === playlistinfo[i]['rate128'].id) {
+        if (playlistinfo[i] && id === playlistinfo[i].rate128.id) {
           hadNu = i;
           break;
         }
@@ -409,7 +417,6 @@ $(document).ready(function() {
 
 
   $addplay.on('click', function() {
-    alert();
 
     $addplay.button('loading');
     temptimer = setTimeout(function() {
@@ -434,7 +441,7 @@ $(document).ready(function() {
 
     var hadNu = -1;
     for (var i = 0; i < playlistinfo.length; i++) {
-      if (id === playlistinfo[i]['rate128'].id) {
+      if (id === playlistinfo[i].rate128.id) {
         hadNu = i;
         break;
       }
@@ -535,7 +542,8 @@ $(document).ready(function() {
 
   function palynewaudio(nu, isaddlist, which) {
 
-    console.log(nu);
+    var ismute = false;
+    //console.log(nu);
     if (!playlistinfo[nu]) {
       nextpreview(which || 1);
       return;
@@ -543,7 +551,7 @@ $(document).ready(function() {
 
 
 
-    var audioobj = playlistinfo[nu]['rate128'];
+    var audioobj = playlistinfo[nu].rate128;
 
     if (/pan.baidu/.test(audioobj.showLink)) {
       $textdiv.html('此音乐为百度网盘音乐, 删除并播放下一首?');
@@ -563,7 +571,10 @@ $(document).ready(function() {
       return;
     }
 
+
+
     if (audio) {
+      ismute = audio.muted;
       document.body.removeChild(audio);
     }
     //audio = null;
@@ -579,6 +590,12 @@ $(document).ready(function() {
       isplaying = true;
     }
 
+    if (ismute) {
+      audio.muted = ismute;
+      $mutebtn.attr('src', './images/mute.png');
+    }
+
+
     $(audio).on('timeupdate', function() {
       updateShowTime();
     });
@@ -591,6 +608,7 @@ $(document).ready(function() {
     jsonpGet('http://cors.coding.io?method=get&url=' + audioobj.lrc, function(data) {
       lrcObj.parseLrc(data.data);
       lrcObj.repaireTimeNu = audioobj.repaireTimeNu || 0;
+      console.log(audioobj.repaireTimeNu);
       lrcObj.init();
     });
 
@@ -689,7 +707,7 @@ $(document).ready(function() {
       }
     }
     localInfo.playlistinfo = arr;
-    localStorage['shang_music'] = JSON.stringify(localInfo);
+    localStorage.shang_music = JSON.stringify(localInfo);
 
     return ishad;
   }
