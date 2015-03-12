@@ -3,7 +3,7 @@ CACHE MANIFEST
 
 CACHE:
 css/bootstrap.css
-css/user-b0d7833a.css
+css/user-4e506cdc.css
 images/delete.png
 images/fastforward.png
 images/favicon.ico
@@ -16,7 +16,7 @@ images/shang.png
 images/volume.png
 js/bootstrap.min.js
 js/jquery-1.11.1.min.js
-js/user-e6eb13f5.js
+js/user-4799b273.js
 
 
 NETWORK:
@@ -28,4 +28,4 @@ https://*
 SETTINGS:
 prefer-online
 
-# hash: bbf8ea3e561ba9aabbda0d42344ca91e07ff0b1502fd97788604e15a0a0b375b
+# hash: d03cb113b4817ba1b2b1d5658910cda7f7a0b9a3c16a471138598bbeebcd77e5

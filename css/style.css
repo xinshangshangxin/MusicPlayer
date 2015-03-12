@@ -35,6 +35,7 @@ a {
 }
 .control, .volume, .progressbar {
     margin-top: 20px;
+    position: relative;
 }
 #alllist {
     background: rgba(0, 0, 0, 0.5);
@@ -92,6 +93,14 @@ a {
     height: 5px;
     background: #7700C7;
     width: 0;
+    position: absolute;
+}
+
+#loadedprogress {
+    height: 5px;
+    background: #4c4c48;
+    width: 0;
+    position: absolute;
 }
 #currentvolumebar {
     height: 5px;

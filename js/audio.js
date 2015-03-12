@@ -13,6 +13,7 @@ $(document).ready(function() {
     $currentvolumebar = $('#currentvolumebar'), //当前音量
     $progressbar = $('#progressbar'), // 进度条
     $currentprogressbar = $('#currentprogress'), //当前进度
+    $loadedprogress = $('#loadedprogress'), // 已经载入的长度
     $coverimg = $('#coverimg'),
     $title = $('#title'),
     $artist = $('#artist'),
@@ -56,7 +57,6 @@ $(document).ready(function() {
   var isVolumBar = false;
   var volumBarlen = $volumebar.width();
   var lrcObj;
-
 
 
   $(window).on('beforeunload', function() {
@@ -196,14 +196,20 @@ $(document).ready(function() {
       else if (percentLen > 1) {
         percentLen = 1;
       }
-      $currentprogressbar.width(percentLen * 100 + '%');
 
+      var bufper = getBufferPercent();
+      if (percentLen > bufper) {
+        percentLen = bufper;
+      }
+      $currentprogressbar.width(percentLen * progressbarLen);
+      $loadedprogress.width(bufper * progressbarLen);
       if (isupdate) {
         audio.currentTime = Math.floor(percentLen * audio.duration);
         lrcObj.clearClass();
       }
     }
   }
+
 
   function calculateVolumBar(e) {
 
@@ -230,6 +236,17 @@ $(document).ready(function() {
     }
   }
 
+  function getBufferPercent() {
+    if (!audio) {
+      return 0;
+    }
+    var timeRanges = audio.buffered;
+    // 获取以缓存的时间
+    var timeBuffered = timeRanges.end(timeRanges.length - 1);
+    // 获取缓存进度，值为0到1
+    var bufferPercent = timeBuffered / audio.duration;
+    return bufferPercent;
+  }
 
   $showtext.on('hidden.bs.modal', function() {
     $mayplay.first().button('reset');
@@ -550,7 +567,6 @@ $(document).ready(function() {
     }
 
 
-
     var audioobj = playlistinfo[nu].rate128;
 
     if (/pan.baidu/.test(audioobj.showLink)) {
@@ -570,7 +586,6 @@ $(document).ready(function() {
 
       return;
     }
-
 
 
     if (audio) {
@@ -672,7 +687,8 @@ $(document).ready(function() {
     $info.html(minute + ":" + second);
 
     if (!isProgressBar) {
-      $currentprogressbar.width(audio.currentTime / audio.duration * 100 + "%");
+      $currentprogressbar.width(audio.currentTime / audio.duration * progressbarLen);
+      $loadedprogress.width( getBufferPercent() * progressbarLen);
     }
   }
 
@@ -692,6 +708,7 @@ $(document).ready(function() {
     $artist.html('SHANG');
     $coverimg.attr('src', 'http://i1.tietuku.com/f3f9084123926501.jpg');
     $currentprogressbar.width(0);
+    $loadedprogress.width(0);
     $info.html('');
   }
 
@@ -711,4 +728,5 @@ $(document).ready(function() {
 
     return ishad;
   }
+
 });
