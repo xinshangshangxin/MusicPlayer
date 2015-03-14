@@ -25,7 +25,11 @@ $(document).ready(function() {
     $ensurebtn = $('#ensurebtn'),
     $showtext = $('#showtext'),
     $notsurebtn = $('#notsurebtn'),
-    $textdiv = $('.textdiv');
+    $textdiv = $('.textdiv'),
+    $searcharea = $('#searcharea'),
+    $player = $('#player'),
+    $alllist = $('#alllist'),
+    $lrcdiv = $('#lrcdiv');
 
   var currentprogress = 0, //当前进度
     currentIndex = -1, // 当前播放 index
@@ -33,30 +37,19 @@ $(document).ready(function() {
     playlistinfo = [], // 所有 歌曲
     audiolisthtml = [], // 所有歌曲 的 html 格式
     isplaying = true, // 是否正在播放
-    temptimer = null;
+    temptimer = null,
+    isProgressBar = false, //判断是否鼠标移动在 进度条上
+    isVolumBar = false, // 判断是否鼠标移动在 音量条上
+    lrcObj,             // 歌词对象
+    localInfo = {},  //localStorage 存储对象
+    progressbarLen,  // 进度条长度
+    volumBarlen;    //音量条长度
 
-  //本地存储
-  var localStr = localStorage.shang_music;
-  var localInfo = {};
-  if (localStr) {
-    localInfo = JSON.parse(localStr);
-    if (localInfo) {
-      playlistinfo = localInfo.playlistinfo || [];
-      for (var i = 0; i < playlistinfo.length; i++) {
-        if (!playlistinfo[i]) {
-          continue;
-        }
-        addAudiolisthtml(playlistinfo[i].rate128, i);
-      }
-    }
-  }
+  initLocalInfo();
 
-
-  var isProgressBar = false;
-  var progressbarLen = $progressbar.width();
-  var isVolumBar = false;
-  var volumBarlen = $volumebar.width();
-  var lrcObj;
+  $(window).on('resize', function() {
+    resizeInit();
+  });
 
 
   $(window).on('beforeunload', function() {
@@ -159,6 +152,36 @@ $(document).ready(function() {
     lrctimeUpdate(0);
   });
 
+
+  function resizeInit() {
+    progressbarLen = $progressbar.width();
+    volumBarlen = $volumebar.width();
+
+    var height = $(window).height() - $searcharea.height() - $player.height() - 50;
+    $alllist.height(height > 0 ? height : 100);
+    $lrcdiv.height(height - 20 > 0 ? (height - 20) : 100);
+  }
+
+  //界面初始化
+  function initLocalInfo() {
+    resizeInit();
+
+    var localStr = localStorage.shang_music;
+
+    if (localStr) {
+      localInfo = JSON.parse(localStr);
+      if (localInfo) {
+        playlistinfo = localInfo.playlistinfo || [];
+        for (var i = 0; i < playlistinfo.length; i++) {
+          if (!playlistinfo[i]) {
+            continue;
+          }
+          addAudiolisthtml(playlistinfo[i].rate128, i);
+        }
+      }
+    }
+  }
+
   function lrctimeUpdate(nu) {
     if (!audio) {
       return;
@@ -172,17 +195,12 @@ $(document).ready(function() {
       playlistinfo[currentIndex].rate128.repaireTimeNu = (playlistinfo[currentIndex].rate128.repaireTimeNu || 0) + nu;
     }
 
-
     lrcObj.repaireTimeNu = playlistinfo[currentIndex].rate128.repaireTimeNu;
-
     $lrctimecurrent.html('[' + lrcObj.repaireTimeNu / 10 + ']');
-
 
     saveInfo();
     $lrctimecurrent.timer = setTimeout(function() {
       $lrctimecurrent.html('');
-      //localInfo.playlistinfo = playlistinfo;
-      //localStorage.shang_music = JSON.stringify(localInfo);
     }, 2000);
   }
 
@@ -241,11 +259,13 @@ $(document).ready(function() {
       return 0;
     }
     var timeRanges = audio.buffered;
-    // 获取以缓存的时间
-    var timeBuffered = timeRanges.end(timeRanges.length - 1);
-    // 获取缓存进度，值为0到1
-    var bufferPercent = timeBuffered / audio.duration;
-    return bufferPercent;
+    if (timeRanges.length) {
+      // 获取以缓存的时间
+      var timeBuffered = timeRanges.end(timeRanges.length - 1);
+      // 获取缓存进度，值为0到1
+      var bufferPercent = timeBuffered / audio.duration;
+      return bufferPercent;
+    }
   }
 
   $showtext.on('hidden.bs.modal', function() {
@@ -367,12 +387,7 @@ $(document).ready(function() {
               $showtext.modal('hide');
             }
 
-
-            //本地存储
             saveInfo();
-            //localInfo.playlistinfo = playlistinfo;
-            //localStorage['shang_music'] = JSON.stringify(localInfo);
-
           }
         });
       }
@@ -398,7 +413,8 @@ $(document).ready(function() {
     }
 
     //var serverUrl = 'http://cors.coding.io/';
-    var serverUrl = 'http://azure.xinshangshangxin.com/getbyurl';
+    //var serverUrl = 'http://azure.xinshangshangxin.com/getbyurl';
+    var serverUrl = 'http://121.40.81.63:1337/'
 
     ajaxGet(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0'), function(d) {
       var data = JSON.parse(d).data;
@@ -415,12 +431,6 @@ $(document).ready(function() {
           var $li = $('<li data-songid="' + obj.songid + '">');
           $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div></div>');
           $ul.append($li);
-
-          //$li.on('click', function() {
-          //    var id = $(this).data('songid') + '';
-          //    playAudioById(id);
-          //  }
-          //);
         }
         $searchSongDiv.append($ul);
       }
@@ -512,8 +522,6 @@ $(document).ready(function() {
         palynewaudio(currentIndex, true);
         //本地存储
         saveInfo();
-        //localInfo.playlistinfo = playlistinfo;
-        //localStorage['shang_music'] = JSON.stringify(localInfo);
       }
     });
   });
@@ -640,10 +648,6 @@ $(document).ready(function() {
       addAudiolisthtml(obj, nu);
     }
 
-    //for (var i = 0; i < audiolisthtml.length; i++) {
-    //  audiolisthtml[i].removeClass('playing');
-    //}
-
     $alllistul.find('li').each(function(i) {
       if ($(this).data('nu') === nu) {
         audiolisthtml[i].addClass('playing');
@@ -688,7 +692,7 @@ $(document).ready(function() {
 
     if (!isProgressBar) {
       $currentprogressbar.width(audio.currentTime / audio.duration * progressbarLen);
-      $loadedprogress.width( getBufferPercent() * progressbarLen);
+      $loadedprogress.width(getBufferPercent() * progressbarLen);
     }
   }
 
