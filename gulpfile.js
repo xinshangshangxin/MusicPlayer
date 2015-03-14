@@ -64,14 +64,14 @@ gulp.task('manifest', ['index'], function() {
                 preferOnline: true,
                 network: ['http://*', 'https://*', '*'],
                 filename: 'app.manifest',
-                exclude: 'app.manifest'
+                exclude: ['app.manifest', 'CNAME']
             })
         ).pipe(gulp.dest('dist'));
 });
 
 // Clean
 gulp.task('clean', function(cb) {
-    del(['dist'], cb);
+    del(['dist/**/*', '!dist/CNAME'], cb);
 });
 
 
