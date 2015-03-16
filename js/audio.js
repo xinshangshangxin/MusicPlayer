@@ -29,7 +29,8 @@ $(document).ready(function() {
     $searcharea = $('#searcharea'),
     $player = $('#player'),
     $alllist = $('#alllist'),
-    $lrcdiv = $('#lrcdiv');
+    $lrcdiv = $('#lrcdiv'),
+    $download = $('#download');
 
   var currentprogress = 0, //当前进度
     currentIndex = -1, // 当前播放 index
@@ -99,6 +100,7 @@ $(document).ready(function() {
     e.stopPropagation();
   });
 
+
   $(document).on('keydown', function(e) {
     if (e.keyCode === 13) {
       $mayplay.first().trigger('click');
@@ -152,6 +154,25 @@ $(document).ready(function() {
     lrctimeUpdate(0);
   });
 
+  $download.on('click', function() {
+    if (currentIndex >= 0) {
+      downloadNu = currentIndex;
+      $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
+      $showtext.modal('show');
+      $ensurebtn.hide();
+    }
+  });
+
+
+  function downloadhref(href, fileName) {
+    var aLink = document.createElement('a');
+    aLink.href = href;
+    fileName && (aLink.download = fileName);
+    var evt = document.createEvent("MouseEvents");
+    evt.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    aLink.dispatchEvent(evt);
+    $showtext.modal('hide');
+  }
 
   function resizeInit() {
     progressbarLen = $progressbar.width();

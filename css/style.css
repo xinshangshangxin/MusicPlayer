@@ -164,3 +164,22 @@ hr {
     color: #000000;
     font-weight: bold;
 }
+
+#playpaush {
+    width: 32px;
+    margin: 0 10px;
+}
+
+#previewsong, #nextsong, #download, #mute {
+    width: 16px;
+    margin-top: 8px;
+}
+
+#volumebar {
+    margin-top: 14px;
+}
+
+.text-nowrap {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
