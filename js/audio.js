@@ -44,7 +44,9 @@ $(document).ready(function() {
     lrcObj,             // 歌词对象
     localInfo = {},  //localStorage 存储对象
     progressbarLen,  // 进度条长度
-    volumBarlen;    //音量条长度
+    volumBarlen,    //音量条长度
+    downloadId,    //下载音乐的 编号
+    timedownload;      //下载音乐 按钮点击 时间
 
   initLocalInfo();
 
@@ -54,7 +56,10 @@ $(document).ready(function() {
 
 
   $(window).on('beforeunload', function() {
-    return "提示: ";
+    // 判断是否点击下载音乐
+    if (new Date().getTime() - (timedownload || 0) > 1000) {
+      return "提示: ";
+    }
   });
 
   // 列表点击 事件代理
@@ -64,20 +69,32 @@ $(document).ready(function() {
     e.stopPropagation();
   });
 
+
   $alllistul.on('click', 'li img', function(e) {
     var parentLi = $(this).parents('li.maydelete');
     var nu = parentLi.data('nu');
-    playlistinfo[nu] = undefined;
-    audiolisthtml.splice(nu, 1);
-    parentLi.remove();
-    var ishad = saveInfo();
 
-    if (nu === currentIndex) {
-      if (ishad) {
-        nextpreview(1);
+    if (e.target.id === 'imgdel') {
+      playlistinfo[nu] = undefined;
+      audiolisthtml.splice(nu, 1);
+      parentLi.remove();
+      var ishad = saveInfo();
+
+      if (nu === currentIndex) {
+        if (ishad) {
+          nextpreview(1);
+        }
+        else {
+          removeAllInfo();
+        }
       }
-      else {
-        removeAllInfo();
+    }
+    else {
+      if (nu >= 0) {
+        $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
+        $showtext.modal('show');
+        $ensurebtn.hide();
+        downloadId = playlistinfo[nu].rate128.id;
       }
     }
     e.stopPropagation();
@@ -94,9 +111,32 @@ $(document).ready(function() {
     $(this).find('img').css('display', 'none');
   });
 
+  // 播放监听
   $textdiv.on('click', 'li', function(e) {
     var id = '' + $(this).data('songid');
     playAudioById(id);
+    e.stopPropagation();
+  });
+
+  // 下载监听
+  $textdiv.on('click', 'a', function() {
+    getbdmInfo(downloadId, [this.getAttribute('data-rate')], function(obj) {
+      timedownload = new Date().getTime();
+      if (/pan.baidu/.test(obj.showLink)) {
+        prompt("网盘音乐,请复制链接下载~~", obj.mp3);
+      }
+      else {
+        downloadhref(obj.mp3);
+      }
+    });
+  });
+
+  // 下载监听
+  $textdiv.on('click', 'li img', function(e) {
+    downloadId = $(this).parents('li').data('songid') + "";
+    $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
+    $showtext.modal('show');
+    $ensurebtn.hide();
     e.stopPropagation();
   });
 
@@ -156,7 +196,7 @@ $(document).ready(function() {
 
   $download.on('click', function() {
     if (currentIndex >= 0) {
-      downloadNu = currentIndex;
+      downloadId = playlistinfo[currentIndex].rate128.id;
       $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
       $showtext.modal('show');
       $ensurebtn.hide();
@@ -167,7 +207,7 @@ $(document).ready(function() {
   function downloadhref(href, fileName) {
     var aLink = document.createElement('a');
     aLink.href = href;
-    fileName && (aLink.download = fileName);
+    fileName ? (aLink.download = fileName) : (aLink.download = 'download');
     var evt = document.createEvent("MouseEvents");
     evt.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     aLink.dispatchEvent(evt);
@@ -180,7 +220,7 @@ $(document).ready(function() {
 
     var height = $(window).height() - $searcharea.height() - $player.height() - 50;
     $alllist.height(height > 0 ? height : 100);
-    $lrcdiv.height(height - 20 > 0 ? (height - 20) : 100);
+    $lrcdiv.height(height - 50 > 0 ? (height - 50) : 100);
   }
 
   //界面初始化
@@ -308,7 +348,7 @@ $(document).ready(function() {
         }, 5000);
 
 
-        var temp = ($addr.val()).match('\\d+');
+        var temp = ($addr.val()).match('\\d{9,}');
         var id = '';
 
         if (temp) {
@@ -375,7 +415,6 @@ $(document).ready(function() {
       else {
         var newaudio = {};
         playlistinfo.push(newaudio);
-
         getbdmInfo(id, ['128'], function(obj) {
           newaudio['rate' + obj.rate] = obj;
           if (obj.rate === '128') {
@@ -434,8 +473,8 @@ $(document).ready(function() {
     }
 
     //var serverUrl = 'http://cors.coding.io/';
-    //var serverUrl = 'http://azure.xinshangshangxin.com/getbyurl';
-    var serverUrl = 'http://121.40.81.63:1337/'
+    //var serverUrl = 'http://nodecors.sturgeon.mopaas.com/';
+    var serverUrl = 'http://121.40.81.63:1337/';
 
     ajaxGet(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0'), function(d) {
       var data = JSON.parse(d).data;
@@ -450,7 +489,7 @@ $(document).ready(function() {
         for (var i = 0; i < data.song.length; i++) {
           var obj = data.song[i];
           var $li = $('<li data-songid="' + obj.songid + '">');
-          $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div></div>');
+          $li.html('<hr><div class="row"> <div class="col-md-7 col-xs-5 text-nowrap" title="' + (obj.songname || 'SHANG') + '">' + (obj.songname || 'SHANG') + '</div><div class="col-md-4 col-xs-5 text-nowrap" title="' + (obj.artistname || 'SHANG') + '">' + (obj.artistname || 'SHANG') + '</div><div class="col-md-1 col-xs-2"><img class="liimg pull-left" src="images/download.png"/></div></div>');
           $ul.append($li);
         }
         $searchSongDiv.append($ul);
@@ -686,7 +725,7 @@ $(document).ready(function() {
 
     var $li = $('<li>');
 
-    $li.html('<hr><div class="row"> <div class="col-md-8 col-xs-7 text-nowrap" title="' + (obj.title || 'SHANG') + '">' + (obj.title || 'SHANG') + ' - ' + (obj.artist || 'SHANG') + '</div><div class="col-md-2 col-xs-3 text-right">' + (minute + ":" + second) + '</div><div class="col-md-1 col-xs-1"><img class="visible-xs" src="images/delete.png" alt="删除"/></div></div>');
+    $li.html('<hr><div class="row"> <div class="col-md-7 col-xs-6 text-nowrap" title="' + (obj.title || 'SHANG') + ' - ' + (obj.artist || 'SHANG') + '">' + (obj.title || 'SHANG') + ' - ' + (obj.artist || 'SHANG') + '</div><div class="col-md-2 col-xs-3 text-right">' + (minute + ":" + second) + '</div><div class="col-md-2 col-xs-3"><img id="imgdel" class="liimg pull-left" src="images/delete.png"/><img class="liimg pull-left" src="images/download.png"/></div></div>');
 
     $li.data('nu', nu);
     $alllistul.append($li);

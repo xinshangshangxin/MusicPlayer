@@ -16,6 +16,7 @@ function getbdmInfo(info, rate, funsuccess) {
 
 function getoInfo(url, id, rate, fun) {
     jsonpGet(url, function (json) {
+      console.log(json);
         var songinfo = json.data.songList[0];
         var obj = {
             'id': id,

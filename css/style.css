@@ -183,3 +183,7 @@ hr {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+.liimg {
+    margin-left: 2px;
+    width: 16px;
+}
