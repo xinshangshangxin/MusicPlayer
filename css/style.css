@@ -183,6 +183,15 @@ hr {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
+#lrcrepair {
+    max-width: 140px;
+}
+
+.lrctime {
+    display: inline-block;
+}
+
 .liimg {
     margin-left: 2px;
     width: 16px;

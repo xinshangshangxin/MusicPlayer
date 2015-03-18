@@ -91,10 +91,8 @@ $(document).ready(function() {
     }
     else {
       if (nu >= 0) {
-        $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
-        $showtext.modal('show');
-        $ensurebtn.hide();
         downloadId = playlistinfo[nu].rate128.id;
+        showdownloadhtml();
       }
     }
     e.stopPropagation();
@@ -127,6 +125,17 @@ $(document).ready(function() {
       }
       else {
         downloadhref(obj.mp3);
+        var tempstr = $textdiv.html();
+        $notsurebtn.html('返回');
+        $notsurebtn.get(0).dataset.dismiss = '';
+        $notsurebtn.one('click', function() {
+          $textdiv.html(tempstr);
+          setTimeout(function() {
+            $notsurebtn.get(0).dataset.dismiss = 'modal';
+          }, 200);
+          $notsurebtn.html('关闭');
+        });
+        $textdiv.html('备用链接; 复制下面链接至迅雷/旋风等下载;如果下载的不是音频文件;说明没有此码率<br><input type="text" id="backdownload" selected="selected" value="' + obj.downloadhref + '"></input>');
       }
     });
   });
@@ -134,9 +143,7 @@ $(document).ready(function() {
   // 下载监听
   $textdiv.on('click', 'li img', function(e) {
     downloadId = $(this).parents('li').data('songid') + "";
-    $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
-    $showtext.modal('show');
-    $ensurebtn.hide();
+    showdownloadhtml();
     e.stopPropagation();
   });
 
@@ -167,7 +174,7 @@ $(document).ready(function() {
   $(document).on('mousemove', function(e) {
     calculateProgressBar(e);
     calculateVolumBar(e);
-    return (e.target.id === 'addr');
+    return (e.target.id === 'addr' || e.target.id === 'backdownload');
   });
 
   $progressbar.on('mousedown', function() {
@@ -197,21 +204,25 @@ $(document).ready(function() {
   $download.on('click', function() {
     if (currentIndex >= 0) {
       downloadId = playlistinfo[currentIndex].rate128.id;
-      $textdiv.html('<a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
-      $showtext.modal('show');
-      $ensurebtn.hide();
+      showdownloadhtml();
     }
   });
+
+  function showdownloadhtml() {
+    $textdiv.html('如果下载的码率不存在,默认下载为128码率[如果文件大小为3~4M就是128码率]<br><a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
+    $showtext.modal('show');
+    $ensurebtn.hide();
+  }
 
 
   function downloadhref(href, fileName) {
     var aLink = document.createElement('a');
     aLink.href = href;
+    aLink.target = '_blank';
     fileName ? (aLink.download = fileName) : (aLink.download = 'download');
     var evt = document.createEvent("MouseEvents");
     evt.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     aLink.dispatchEvent(evt);
-    $showtext.modal('hide');
   }
 
   function resizeInit() {
@@ -336,6 +347,7 @@ $(document).ready(function() {
     $notsurebtn.html('关闭');
     $notsurebtn.unbind();
     clearTimeout(temptimer);
+    $notsurebtn.get(0).dataset.dismiss = 'modal';
   });
 
 
@@ -348,7 +360,7 @@ $(document).ready(function() {
         }, 5000);
 
 
-        var temp = ($addr.val()).match('\\d{9,}');
+        var temp = ($addr.val()).match('\\d{7,}');
         var id = '';
 
         if (temp) {
@@ -359,6 +371,7 @@ $(document).ready(function() {
           else {
             $notsurebtn.html('否');
             $notsurebtn.get(0).dataset.dismiss = '';
+
             $textdiv.html('检测到ID,直接播放?');
             $showtext.modal('show');
             $ensurebtn.one('click', function() {
@@ -465,7 +478,7 @@ $(document).ready(function() {
       $ensurebtn.hide();
       $showtext.modal('show');
 
-      setTimeout(function() {
+      temptimer = setTimeout(function() {
         $showtext.modal('hide');
       }, 3 * 1000);
 

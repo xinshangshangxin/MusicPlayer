@@ -21,6 +21,7 @@ function getoInfo(url, id, rate, fun) {
         var obj = {
             'id': id,
             'rate': rate,
+            'downloadhref': 'http://yinyueyun.baidu.com/data/cloud/downloadsongfile?songIds=' + id + '&rate=' + (rate === 'flac' ? 835 : rate) + '&format=' + rate,
             'mp3': songinfo.songLink.replace('yinyueshiting', 'musicdata').replace(/&src=.*/, ''),
             'showLink': songinfo.showLink,
             'cover': songinfo.songPicBig,
