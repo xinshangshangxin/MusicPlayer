@@ -640,8 +640,6 @@ $(document).ready(function() {
 
   function palynewaudio(nu, isaddlist, which) {
 
-    var ismute = false;
-    //console.log(nu);
     if (!playlistinfo[nu]) {
       nextpreview(which || 1);
       return;
@@ -668,16 +666,25 @@ $(document).ready(function() {
       return;
     }
 
-
     if (audio) {
-      ismute = audio.muted;
-      document.body.removeChild(audio);
+      audio.src = null;
+      audio.load();
     }
-    //audio = null;
-    audio = document.createElement('audio');
-    audio.innerHTML = '<source src=' + audioobj.mp3 + '>';
-    document.body.appendChild(audio);
-    audio.volume = currentVolum;
+    else {
+      audio = new Audio();
+
+      audio.onerror = function(e) {
+        console.log(e)
+      };
+      audio.ontimeupdate = function() {
+        updateShowTime();
+      };
+      audio.onended = function() {
+        nextpreview(1);
+      };
+    }
+
+    audio.src = audioobj.mp3;
     audio.play();
     currentIndex = nu;
 
@@ -685,19 +692,6 @@ $(document).ready(function() {
       $playpushbtn.attr('src', './images/pause.png');
       isplaying = true;
     }
-
-    if (ismute) {
-      audio.muted = ismute;
-      $mutebtn.attr('src', './images/mute.png');
-    }
-
-
-    $(audio).on('timeupdate', function() {
-      updateShowTime();
-    });
-    $(audio).on('ended', function() {
-      nextpreview(1);
-    });
 
 
     lrcObj = shangLrcLoad(audio, 'lrcdiv');
