@@ -30,7 +30,8 @@ $(document).ready(function() {
     $player = $('#player'),
     $alllist = $('#alllist'),
     $lrcdiv = $('#lrcdiv'),
-    $download = $('#download');
+    $download = $('#download'),
+    $single = $('#single');
 
   var currentprogress = 0, //当前进度
     currentIndex = -1, // 当前播放 index
@@ -46,7 +47,9 @@ $(document).ready(function() {
     progressbarLen,  // 进度条长度
     volumBarlen,    //音量条长度
     downloadId,    //下载音乐的 编号
-    timedownload;      //下载音乐 按钮点击 时间
+    timedownload,      //下载音乐 按钮点击 时间
+    isSingle = false,  //是否 单曲循环
+    lastPlayId = -1;  // 上次播放ID;
 
   initLocalInfo();
 
@@ -58,6 +61,7 @@ $(document).ready(function() {
   $(window).on('beforeunload', function() {
     // 判断是否点击下载音乐
     if (new Date().getTime() - (timedownload || 0) > 1000) {
+      saveInfo(playlistinfo[currentIndex].rate128.id);
       return "提示: ";
     }
   });
@@ -125,17 +129,17 @@ $(document).ready(function() {
       }
       else {
         downloadhref(obj.mp3);
-        var tempstr = $textdiv.html();
-        $notsurebtn.html('返回');
-        $notsurebtn.get(0).dataset.dismiss = '';
-        $notsurebtn.one('click', function() {
-          $textdiv.html(tempstr);
-          setTimeout(function() {
-            $notsurebtn.get(0).dataset.dismiss = 'modal';
-          }, 200);
-          $notsurebtn.html('关闭');
-        });
-        $textdiv.html('备用链接; 复制下面链接至迅雷/旋风等下载;如果下载的不是音频文件;说明没有此码率<br><input type="text" id="backdownload" selected="selected" value="' + obj.downloadhref + '"></input>');
+        //var tempstr = $textdiv.html();
+        //$notsurebtn.html('返回');
+        //$notsurebtn.get(0).dataset.dismiss = '';
+        //$notsurebtn.one('click', function() {
+        //  $textdiv.html(tempstr);
+        //  setTimeout(function() {
+        //    $notsurebtn.get(0).dataset.dismiss = 'modal';
+        //  }, 200);
+        //  $notsurebtn.html('关闭');
+        //});
+        //$textdiv.html('备用链接; 复制下面链接至迅雷/旋风等下载;如果下载的不是音频文件;说明没有此码率<br><input type="text" id="backdownload" onfocus="this.select();" value="' + obj.downloadhref + '"></input>');
       }
     });
   });
@@ -208,6 +212,16 @@ $(document).ready(function() {
     }
   });
 
+  $single.on('click', function() {
+    isSingle = !isSingle;
+    if (!isSingle) {
+      $single.attr('src', 'images/all.png');
+    }
+    else {
+      $single.attr('src', 'images/single.png');
+    }
+  });
+
   function showdownloadhtml() {
     $textdiv.html('如果下载的码率不存在,默认下载为128码率[如果文件大小为3~4M就是128码率]<br><a data-rate="128" href = "javascript:void(0);">128</a><br><a data-rate="192" href = "javascript:void(0);">192</a><br><a data-rate="320" href = "javascript:void(0);">320</a><br><a data-rate="flac" href = "javascript:void(0);">flac</a>');
     $showtext.modal('show');
@@ -243,12 +257,21 @@ $(document).ready(function() {
     if (localStr) {
       localInfo = JSON.parse(localStr);
       if (localInfo) {
+        isSingle = localInfo.isSingle;
+        if (!isSingle) {
+          $single.attr('src', 'images/all.png');
+        }
+        lastPlayId = localInfo.lastPlayId || 0;
         playlistinfo = localInfo.playlistinfo || [];
         for (var i = 0; i < playlistinfo.length; i++) {
           if (!playlistinfo[i]) {
             continue;
           }
-          addAudiolisthtml(playlistinfo[i].rate128, i);
+          var temp = playlistinfo[i].rate128;
+          addAudiolisthtml(temp, i);
+          if (temp.id === lastPlayId) {
+            palynewaudio(i, false);
+          }
         }
       }
     }
@@ -291,6 +314,7 @@ $(document).ready(function() {
       if (percentLen > bufper) {
         percentLen = bufper;
       }
+      // 不能直接使用百分比; 可能出现长度不正确问题
       $currentprogressbar.width(percentLen * progressbarLen);
       $loadedprogress.width(bufper * progressbarLen);
       if (isupdate) {
@@ -563,31 +587,7 @@ $(document).ready(function() {
     playlistinfo.push(newaudio);
 
 
-    //if (false) {
-    //    newaudio['rate128'] = {
-    //        'id': '123',
-    //        'rate': 128,
-    //        'mp3': 'http://xinshangshangxin.com/test/tiankong.mp3',
-    //        'cover': '',
-    //        'title': '天空',
-    //        'time': '436',
-    //        'artist': '蔡依林',
-    //        'lrc': 'http://xinshangshangxin.com/test/test.txt'
-    //    };
-    //
-    //    clearTimeout(temptimer);
-    //    $addplay.button('reset');
-    //    currentIndex = playlistinfo.length - 1;
-    //    palynewaudio(currentIndex, true);
-    //    //本地存储
-    //    localInfo.playlistinfo = playlistinfo;
-    //    localStorage['shang_music'] = JSON.stringify(localInfo);
-    //
-    //    return;
-    //}
-
-
-    getbdmInfo(id, [], function(obj) {
+    getbdmInfo(id, ['128'], function(obj) {
       newaudio['rate' + obj.rate] = obj;
       if (obj.rate === '128') {
         $addplay.button('reset');
@@ -601,10 +601,10 @@ $(document).ready(function() {
 
 
   $previewsong.on('click', function() {
-    nextpreview(-1);
+    nextpreview(-1, true);
   });
   $nextsong.on('click', function() {
-    nextpreview(1);
+    nextpreview(1, true);
   });
 
   $mutebtn.on('click', function() {
@@ -648,7 +648,7 @@ $(document).ready(function() {
 
     var audioobj = playlistinfo[nu].rate128;
 
-    if (/pan.baidu/.test(audioobj.showLink)) {
+    if (/pan\.baidu/.test(audioobj.showLink)) {
       $textdiv.html('此音乐为百度网盘音乐, 删除并播放下一首?');
       $ensurebtn.show();
       $showtext.modal('show');
@@ -667,6 +667,7 @@ $(document).ready(function() {
     }
 
     if (audio) {
+      // 设为null 并且 load() 为了让android不在下载此歌曲
       audio.src = null;
       audio.load();
     }
@@ -688,9 +689,14 @@ $(document).ready(function() {
     audio.play();
     currentIndex = nu;
 
+    // 新歌 进度条重置
+    $currentprogressbar.width(0);
+    $loadedprogress.width(0);
+
     if (!isplaying) {
-      $playpushbtn.attr('src', './images/pause.png');
-      isplaying = true;
+      audio.pause();
+      //$playpushbtn.attr('src', './images/pause.png');
+      //isplaying = true;
     }
 
 
@@ -739,8 +745,14 @@ $(document).ready(function() {
     audiolisthtml.push($li);
   }
 
-  function nextpreview(nu) {
+  function nextpreview(nu, isClick) {
     if (currentIndex !== -1) {
+      // 循环播放  isClick判断是否人为切换下一首
+      if (isSingle && !isClick) {
+        palynewaudio(currentIndex, false, nu);
+        return;
+      }
+
       currentIndex = (currentIndex + playlistinfo.length + nu) % playlistinfo.length;
       palynewaudio(currentIndex, false, nu);
     }
@@ -784,7 +796,7 @@ $(document).ready(function() {
   }
 
 
-  function saveInfo() {
+  function saveInfo(id) {
     var arr = [];
     var ishad = false;
     //去除 undefined
@@ -795,9 +807,11 @@ $(document).ready(function() {
       }
     }
     localInfo.playlistinfo = arr;
+    localInfo.isSingle = isSingle;
+    if (id) {
+      localInfo.lastPlayId = id;
+    }
     localStorage.shang_music = JSON.stringify(localInfo);
-
     return ishad;
   }
-
 });

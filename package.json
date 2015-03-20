@@ -1,6 +1,6 @@
 {
     "name": "MusicPlayer",
-    "version": "1.5.3",
+    "version": "1.6.2",
     "devDependencies": {
         "del": "^1.1.1",
         "gulp": "^3.8.11",

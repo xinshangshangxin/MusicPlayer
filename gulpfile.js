@@ -13,7 +13,7 @@ var gulp = require('gulp'),
 // move
 gulp.task('move', function() {
     return gulp.src(
-        ['js/**/*jquery*js', 'js/**/*bootstrap*js', 'images/**/*', 'css/**/*bootstrap*css', 'index.html'], {
+        ['js/**/*jquery*js', 'js/**/*bootstrap*js', 'images/**/*', 'css/**/*bootstrap*', 'index.html'], {
             base: './'
         }
     ).pipe(gulp.dest('dist'));
