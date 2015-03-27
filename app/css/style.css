@@ -2,10 +2,12 @@ body {
     background: #333;
     color: #fff;
 }
+
 a {
     outline: none;
     text-decoration: none;
 }
+
 #background {
     position: fixed;
     top: 0;
@@ -13,15 +15,19 @@ a {
     width: 100%;
     height: 100%;
 }
+
 #player .cover {
     background: rgba(0, 0, 0, 0.5);
     border: 1px solid #333;
     overflow: hidden;
     box-shadow: 0 2px 10px black;
 }
+
 #coverimg {
     width: 140px;
+    height: 140px;
 }
+
 .slider {
     background: rgba(0, 0, 0, 0.3);
     height: 5px;
@@ -30,13 +36,16 @@ a {
     margin-top: 9px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) inset;
 }
+
 .control img:hover, .volume img:hover {
     cursor: pointer;
 }
+
 .control, .volume, .progressbar {
     margin-top: 20px;
     position: relative;
 }
+
 #alllist {
     background: rgba(0, 0, 0, 0.5);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
@@ -46,29 +55,36 @@ a {
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
 #alllist::-webkit-scrollbar {
     width: 5px;
     height: 5px;
     border-radius: 4px;
 }
+
 #alllist::-webkit-scrollbar-button {
     display: none;
 }
+
 #alllist::-webkit-scrollbar-track {
     background: #191919;
 }
+
 #alllist::-webkit-scrollbar-thumb {
     background: #333;
     border-radius: 4px;
 }
+
 #alllist::-webkit-scrollbar-corner {
     display: none;
 }
+
 #alllist ul {
     list-style: none;
     padding: 0;
     padding-left: 15px;
 }
+
 #alllist ul li {
     color: #aaa;
     font-size: 12px;
@@ -76,21 +92,30 @@ a {
     cursor: pointer;
     text-overflow: ellipsis;
 }
+
 #alllist ul li:hover {
     color: #fff;
     font-weight: bold;
 }
+
 #alllist ul li img {
-    display: none;
+    /*display: none;*/
 }
+
+#alllist ul li img.maydelete {
+    display: block;
+}
+
 #alllist ul li.playing {
     color: #fff;
     font-weight: bolder;
 }
+
 #alllist li div {
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
 #currentprogress {
     height: 5px;
     background: #7700C7;
@@ -104,57 +129,66 @@ a {
     width: 0;
     position: absolute;
 }
+
 #currentvolumebar {
     height: 5px;
     background: #7700C7;
 }
+
 hr {
     border: none;
 }
+
 #lrcdiv {
     color: #fff;
     font-size: 22px;
-    /*text-shadow: 0 0 5px #CCCCCC, 0 0 10px #CCCCCC, 0 0 15px #CCCCCC, 0 0 20px black, 0 0 25px black, 0 0 30px black;*/
-    
     height: 400px;
 }
+
 #lrcdiv p {
     line-height: 22px;
 }
+
 .lrctime:hover {
     cursor: pointer;
 }
+
 #searchsongdiv {
     background: #ffffff;
-    /*box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);*/
-    
     margin: 0;
     padding: 0;
     height: 400px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
+
 #searchsongdiv::-webkit-scrollbar {
     width: 5px;
     height: 5px;
     border-radius: 4px;
 }
+
 #searchsongdiv::-webkit-scrollbar-button {
     display: none;
 }
+
 #searchsongdiv::-webkit-scrollbar-track {
     background: #aaa;
 }
+
 #searchsongdiv::-webkit-scrollbar-thumb {
     background: #000000;
     border-radius: 4px;
 }
+
 #searchsongdiv::-webkit-scrollbar-corner {
     display: none;
 }
+
 #searchsongdiv ul {
     list-style: none;
 }
+
 #searchsongdiv ul li {
     color: #1f1f1f;
     font-size: 12px;
@@ -162,6 +196,7 @@ hr {
     cursor: pointer;
     text-overflow: ellipsis;
 }
+
 #searchsongdiv ul li:hover {
     color: #000000;
     font-weight: bold;
@@ -202,4 +237,8 @@ hr {
 #searchsongdiv ul {
     list-style: none;
     padding: 0;
+}
+
+.imghide {
+    display: none;
 }

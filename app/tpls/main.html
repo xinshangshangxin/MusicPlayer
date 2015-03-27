@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-md-9">
+        <div id="searchDiv">
+            <div ui-view="search"></div>
+        </div>
+        <hr/>
+        <div id="alllist">
+            <div ui-view="list" id="songDiv"></div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div ui-view="lrc"></div>
+    </div>
+</div>
+<div class="row" id="control">
+    <div class="rol-xs-12">
+        <div ui-view="control"></div>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+<div class="row" ng-controller="lrcCtrl">
+    <div class="col-xs-12">
+        <div class="cover" id="cover">
+            <img id='coverimg' src='{{songObj.cover}}' class="img-rounded center-block">
+        </div>
+        <div class="text-center center-block" id="lrcrepair">
+            <div class="lrctime pull-left" id="lrctimereduce" ng-click="decrease()">-</div>
+            <div class="lrctime" id="lrctimecurrent" ng-click="reset()"></div>
+            <div class="lrctime pull-right" id="lrctimeadd" ng-click="increase()">+</div>
+        </div>
+        <hr>
+        <div class="text-center" id="lrcdiv">
+            {{str}}
+        </div>
+    </div>
+</div>

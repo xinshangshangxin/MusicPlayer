@@ -1,0 +1,21 @@
+<hr/>
+<div class="row"  ng-controller="listCtrl">
+    <div class="col-xs-12" >
+        <ul>
+            <li ng-repeat="song in songs" ng-click="play($event)" hover>
+                <hr>
+                    <div class="row">
+                        <div class="col-md-8 col-xs-7 text-nowrap" title="{{song.title}}-{{song.artist}}">
+                            {{song.title}}-{{song.artist}}
+                        </div>
+                        <div class="col-md-2 col-xs-3 text-right">
+                            {{changeTime(song.time)}}
+                        </div>
+                        <div class="col-md-1 col-xs-1" >
+                            <img class="imghide" src="images/delete.png" alt="删除" ng-click="del($event)"/>
+                        </div>
+                    </div>
+            </li>
+        </ul>
+    </div>
+</div>

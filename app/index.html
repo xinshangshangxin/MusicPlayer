@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app="MusicPlayer">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>MusicPlayer</title>
+    <link rel="stylesheet" href="framework/bootstrap3.3.2/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+
+    <div class="modal fade bs-example-modal-sm" id="showtext" tabindex="-1" role="dialog"
+         aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="color: #333">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p class="textdiv"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="notsurebtn">关闭</button>
+                    <button type="button" class="btn btn-primary" id="ensurebtn">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" ng-controller="mainCtrl">
+        <hr/>
+        <div ui-view></div>
+    </div>
+
+    <script src="framework/angular1.3.0.14/angular.min.js"></script>
+    <script src="framework/angular1.3.0.14/angular-ui-router.js"></script>
+    <script src="framework/jquery-1.11.1.min.js"></script>
+    <script src="framework/bootstrap3.3.2/bootstrap.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/shang_lrc.js"></script>
+</body>
+</html>
