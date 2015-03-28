@@ -1,92 +1,19 @@
 var MusicModule = angular.module('MusicModule', []);
+
+//var serverUrl = 'http://cors.coding.io/';
+//var serverUrl = 'http://nodecors.sturgeon.mopaas.com/';
+var serverUrl = 'http://121.40.81.63:1337/';
+
 MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
 
-    var _allSongs = [
-        {
-            "id": "7276963",
-            "rate": "128",
-            "mp3": "http://musicdata.baidu.com/data2/music/52456966/7276963241200128.mp3?xcode=4734b53eeb88864534568fd8d7fa32a2e619f1cfa997b285",
-            "cover": "http://musicdata.baidu.com/data2/pic/115993826/115993826.jpg",
-            "title": "天空",
-            "time": 278,
-            "artist": "蔡依林",
-            "lrc": "http://play.baidu.com/data2/lrc/13818970/13818970.lrc",
-            "repaireTimeNu": -6
-        }, {
-            "id": "1257283",
-            "rate": "128",
-            "mp3": "http://musicdata.baidu.com/data2/music/123982096/12572831425636061128.mp3?xcode=619064273af1701989caae3c4179826d0adc63c2c22bd960",
-            "cover": "http://musicdata.baidu.com/data2/pic/115457837/115457837.jpg",
-            "title": "安静了",
-            "time": 271,
-            "artist": "S.H.E",
-            "lrc": "http://play.baidu.com/data2/lrc/13821752/13821752.lrc",
-            "repaireTimeNu": 1
-        }
-        //, {
-        //    "id": "10291107",
-        //    "rate": "128",
-        //    "mp3": "http://musicdata.baidu.com/data2/music/123005173/102911071425837661128.mp3?xcode=e4ed2dc61ab225b49519e57d242c0df1ac1d750e675deb75",
-        //    "showLink": "http://yinyueshiting.baidu.com/data2/music/123005173/102911071425837661128.mp3?xcode=e4ed2dc61ab225b49519e57d242c0df1ac1d750e675deb75",
-        //    "cover": "",
-        //    "title": "遇到",
-        //    "time": 181,
-        //    "artist": "方雅贤",
-        //    "lrc": "http://play.baidu.com/data2/lrc/13894818/13894818.lrc"
-        //}, {
-        //    "id": "16020672",
-        //    "rate": "128",
-        //    "mp3": "http://musicdata.baidu.com/data2/music/64369953/1602067286400128.mp3?xcode=f884d25a042d2833b4a29c06de6d36961a9947b7e295abf2",
-        //    "showLink": "http://yinyueshiting.baidu.com/data2/music/64369953/1602067286400128.mp3?xcode=f884d25a042d2833b4a29c06de6d36961a9947b7e295abf2",
-        //    "cover": "http://b.hiphotos.baidu.com/ting/pic/item/71cf3bc79f3df8dc7a9dafb0cf11728b4710286a.jpg",
-        //    "title": "月光",
-        //    "time": 272,
-        //    "artist": "胡彦斌",
-        //    "lrc": "http://play.baidu.com/data2/lrc/31540057/31540057.lrc",
-        //    "repaireTimeNu": 3
-        //}, {
-        //    "id": "8212741",
-        //    "rate": "128",
-        //    "mp3": "http://musicdata.baidu.com/data2/music/134367211/8212741219600128.mp3?xcode=46ba0569e47afe6983068cd7eae54ff8091a9e0497e92a7b",
-        //    "showLink": "http://yinyueshiting.baidu.com/data2/music/134367211/8212741219600128.mp3?xcode=46ba0569e47afe6983068cd7eae54ff8091a9e0497e92a7b",
-        //    "cover": "http://musicdata.baidu.com/data2/pic/115363578/115363578.jpg",
-        //    "title": "Innocence",
-        //    "time": 233,
-        //    "artist": "Avril Lavigne",
-        //    "lrc": "http://play.baidu.com/data2/lrc/15367672/15367672.lrc",
-        //    "repaireTimeNu": 0
-        //}, {
-        //    "id": "7478534",
-        //    "rate": "128",
-        //    "downloadhref": "http://yinyueyun.baidu.com/data/cloud/downloadsongfile?songIds=7478534&rate=128&format=128",
-        //    "mp3": "http://musicdata.baidu.com/data2/music/134380977/74785341427259661128.mp3?xcode=f55ab1779a87a0a525a3aea980cb2fa63e538734e9d44d4d",
-        //    "showLink": "http://yinyueshiting.baidu.com/data2/music/134380977/74785341427259661128.mp3?xcode=f55ab1779a87a0a525a3aea980cb2fa63e538734e9d44d4d",
-        //    "cover": "http://musicdata.baidu.com/data2/pic/115364048/115364048.jpg",
-        //    "title": "Love The Way You Lie (Part Ii)",
-        //    "time": 296,
-        //    "artist": "Rihanna,Eminem",
-        //    "lrc": "http://play.baidu.com/data2/lrc/13897497/13897497.lrc"
-        //}, {
-        //    "id": "5738289",
-        //    "rate": "128",
-        //    "downloadhref": "http://yinyueyun.baidu.com/data/cloud/downloadsongfile?songIds=5738289&rate=128&format=128",
-        //    "mp3": "http://musicdata.baidu.com/data2/music/64012031/5738289118800128.mp3?xcode=f138c3a0e79897ade9b3d05f2523081980e33211bd4619fd",
-        //    "showLink": "http://yinyueshiting.baidu.com/data2/music/64012031/5738289118800128.mp3?xcode=f138c3a0e79897ade9b3d05f2523081980e33211bd4619fd",
-        //    "cover": "http://musicdata.baidu.com/data2/pic/115459336/115459336.jpg",
-        //    "title": "她说",
-        //    "time": 320,
-        //    "artist": "林俊杰",
-        //    "lrc": "http://play.baidu.com/data2/lrc/14894429/14894429.lrc"
-        //}
-    ];
+    var _allSongs = [];
     var _audio = new Audio();
-
 
     _audio.onerror = function(e) {
         console.log(e)
     };
     _audio.ontimeupdate = function() {
-        //updateShowTime();
+        updateShowTime();
     };
     _audio.onended = function() {
         _nextpreview(1);
@@ -96,6 +23,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
     var _isPlaying = false;
     var _isMute = false;
 
+
     function _playMusic(index, isnotbroadcast) {
         _currentIndex = index;
         _audio.src = _allSongs[_currentIndex].mp3;
@@ -103,6 +31,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
         _audio.mute = _isMute;
         _isPlaying = true;
         !isnotbroadcast && $rootScope.$broadcast('songs.update');
+        _saveInfo();
     }
 
 
@@ -113,17 +42,185 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
         }
     }
 
+    function _saveInfo() {
+        var arr = [];
+        for (var i = 0; i < _allSongs.length; i++) {
+            arr.push({
+                "id": _allSongs[i].id,
+                "rate": _allSongs[i].rate,
+                "mp3": _allSongs[i].mp3,
+                "cover": _allSongs[i].cover,
+                "title": _allSongs[i].title,
+                "time": _allSongs[i].time,
+                "artist": _allSongs[i].artist,
+                "lrc": _allSongs[i].lrc,
+                "repaireTimeNu": _allSongs[i].repaireTimeNu
+            });
+        }
+        localStorage.shang_music = JSON.stringify({
+                data: arr
+            }
+        );
+        console.log(localStorage.shang_music);
+    }
+
+
+    // 不知道 angularjs 下应该怎么实现..............
+    var isProgressBar = false;
+    var isVolumBar = false;
+    var $info;
+    var $currentprogressbar = $('#currentprogress'),
+        $loadedprogress = $('#loadedprogress'); // 已经载入的长度
+    var progressbarLen,  // 进度条长度
+        currentVolum,
+        volumBarlen;    //音量条长度
+    function updateShowTime() {
+        if (_currentIndex === -1) {
+            return;
+        }
+        var all = _audio.currentTime;
+        var minute = Math.floor(all / 60);
+        var second = Math.round(all % 60) < 10 ? "0" + Math.round(all % 60) : Math.round(all % 60);
+        $info.html(minute + ":" + second);
+
+        if (!isProgressBar) {
+            $currentprogressbar.width(_audio.currentTime / _audio.duration * progressbarLen);
+            $loadedprogress.width(getBufferPercent() * progressbarLen);
+        }
+    }
+
+    function getBufferPercent() {
+        if (_currentIndex === -1) {
+            return 0;
+        }
+        var timeRanges = _audio.buffered;
+        if (timeRanges.length) {
+            // 获取以缓存的时间
+            var timeBuffered = timeRanges.end(timeRanges.length - 1);
+            // 获取缓存进度，值为0到1
+            return timeBuffered / _audio.duration;
+        }
+    }
+
+
+    $(window).on('resize', function() {
+        _chageSize();
+    });
+
+    _allSongs = (localStorage.shang_music && JSON.parse(localStorage.shang_music).data) || [];
+    $rootScope.$broadcast('songs.update');
+
     function _chageSize() {
+
         var availableHeight = $(window).height() - $('#control').height() - 50;
         var $searchDiv = $('#searchDiv');
         var $alllist = $('#alllist');
         var $lrcDiv = $('#lrcdiv');
         var $cover = $('#cover');
+        $info = $('#info');
         var songListHeight = availableHeight - $searchDiv.height();
         var lrcHeight = availableHeight - $cover.height() - 70;
         $alllist.height(songListHeight);
         $lrcDiv.height(lrcHeight);
+
+        var $progressbar = $('#progressbar'),// 进度条
+            $volumebar = $('#volumebar'),
+            $currentvolumebar = $('#currentvolumebar'), //当前音量
+            $mutebtn = $('#mute'); //静音按钮
+
+
+        $currentprogressbar = $('#currentprogress'); //当前进度
+        $loadedprogress = $('#loadedprogress'); // 已经载入的长度
+
+
+        $(document).unbind();
+        $progressbar.unbind();
+        $volumebar.unbind();
+
+        $(document).on('mousedown', function() {
+            if (isProgressBar || isVolumBar) {
+                document.body.style.cursor = 'pointer';
+            }
+        });
+
+        $(document).on('mouseup', function(e) {
+
+            calculateProgressBar(e, true);
+            calculateVolumBar(e);
+
+            isProgressBar = false;
+            isVolumBar = false;
+            document.body.style.cursor = 'default';
+        });
+
+        $(document).on('mousemove', function(e) {
+            calculateProgressBar(e);
+            calculateVolumBar(e);
+            return (e.target.id === 'addr' || e.target.id === 'backdownload');
+        });
+
+        $progressbar.on('mousedown', function() {
+            isProgressBar = true;
+        });
+
+        $volumebar.on('mousedown', function() {
+            isVolumBar = true;
+        });
+
+
+        function calculateProgressBar(e, isupdate) {
+            if (isProgressBar && _currentIndex !== -1) {
+                var len = e.clientX - $progressbar.offset().left;
+                var percentLen = len / progressbarLen;
+                if (percentLen < 0) {
+                    percentLen = 0;
+                }
+                else if (percentLen > 1) {
+                    percentLen = 1;
+                }
+
+                var bufper = getBufferPercent();
+                if (percentLen > bufper) {
+                    percentLen = bufper;
+                }
+                // 不能直接使用百分比; 可能出现长度不正确问题
+                $currentprogressbar.width(percentLen * progressbarLen);
+                $loadedprogress.width(bufper * progressbarLen);
+                if (isupdate) {
+                    _audio.currentTime = Math.floor(percentLen * _audio.duration);
+                }
+            }
+        }
+
+        function calculateVolumBar(e) {
+
+            if (isVolumBar) {
+                var len = e.clientX - $volumebar.offset().left;
+                var percentLen = len / volumBarlen;
+                if (percentLen < 0) {
+                    percentLen = 0;
+                }
+                else if (percentLen > 1) {
+                    percentLen = 1;
+                }
+                $currentvolumebar.width(percentLen * 100 + '%');
+                currentVolum = percentLen;
+
+                if (_currentIndex !== -1) {
+                    _audio.volume = percentLen;
+
+                    if (_audio.muted) {
+                        _audio.muted = false;
+                        $mutebtn.attr('src', './images/volume.png');
+                    }
+                }
+            }
+        }
+
+        progressbarLen = $progressbar.width();
+        volumBarlen = $volumebar.width();
     }
+
 
     return {
         chageSize: _chageSize,      //修改页面高度
@@ -139,6 +236,8 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
             return _allSongs;
         },
         addOneSong: function(songObj, isPlay) {
+            console.log(_allSongs);
+            console.log(songObj);
             _allSongs.push(songObj);
             if (isPlay) {
                 _playMusic(_allSongs.length - 1);
@@ -165,6 +264,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
                 }
             }
             $rootScope.$broadcast('songs.update');
+            _saveInfo();
         },
         getIsPlaying: function() {
             return _isPlaying;
@@ -207,7 +307,7 @@ MusicModule.controller("lrcCtrl", ['$scope', '$http', 'MusicService', function($
         $scope.songObj.lrcObj = null;
         $scope.songObj.lrcObj = shangLrcLoad(MusicService.getAudio(), 'lrcdiv');
 
-        $http.get('http://localhost:1337/?method=get&callback=obj&url=' + $scope.songObj.lrc)
+        $http.get(serverUrl + '?method=get&callback=obj&url=' + $scope.songObj.lrc)
             .success(function(data) {
                 $scope.songObj.lrcObj.parseLrc(data.data);
                 $scope.songObj.lrcObj.init();
@@ -288,18 +388,112 @@ MusicModule.directive('hover', [function() {
 }]);
 
 
-MusicModule.controller('searchCtrl', ['$scope', function($scope) {
+MusicModule.controller('searchCtrl', ['$scope', '$http', 'MusicService', function($scope, $http, MusicService) {
+
+    $scope.add = function(song) {
+
+        getbdmInfo(song.id + '', ['128'], function(obj) {
+            if (/pan.baidu/.test(obj.showLink)) {
+                prompt('此音乐为网网盘音乐,复制打开百度网盘~~~', obj.showLink);
+            }
+            else if (obj.showLink === '') {
+                prompt('未获取到内容....', obj.showLink);
+            }
+            else {
+                MusicService.addOneSong(obj, true);
+            }
+        });
+        $scope.songs = [];
+    };
     // 监控输入
     $scope.$watch('searchStr', function(str) {
         $scope.searchStr = str;
     });
 
+    var timer = null;
     $scope.search = function() {
-        console.log($scope.searchStr);
+        clearTimeout(timer);
+        searchSong($scope.searchStr);
+        timer = setTimeout(function() {
+            $scope.$apply($scope.songs = []);
+        }, 5000);
+    };
+
+
+    function getbdmInfo(info, rate, funsuccess) {
+        var id = info.match('\\d+')[0];
+        var url = 'http://music.baidu.com/data/music/fmlink?songIds=' + id + '&type=mp3&rate=';
+        if (typeof (rate) === 'string') {
+            getoInfo(url + rate, id, rate, funsuccess);
+        }
+        else {
+            if (!rate.length) {
+                rate = ['128', '192', '320', 'flac'];
+            }
+            for (var i = 0; i < rate.length; i++) {
+                getoInfo(url + rate[i], id, rate[i], funsuccess);
+            }
+        }
+    }
+
+    function getoInfo(url, id, rate, fun) {
+        $http.get(serverUrl + '?method=get&url=' + url).success(
+            function(json) {
+                console.log(json);
+                var songinfo = json.data.songList[0];
+                var obj = {
+                    'id': id,
+                    'rate': rate,
+                    'downloadhref': 'http://yinyueyun.baidu.com/data/cloud/downloadsongfile?songIds=' + id + '&rate=' + (rate === 'flac' ? 835 : rate) + '&format=' + rate,
+                    'mp3': songinfo.songLink.replace('yinyueshiting', 'musicdata').replace(/&src=.*/, ''),
+                    'showLink': songinfo.showLink,
+                    'cover': songinfo.songPicBig,
+                    'title': songinfo.songName,
+                    'time': songinfo.time,
+                    'artist': songinfo.artistName,
+                    'lrc': 'http://play.baidu.com' + songinfo.lrcLink
+                };
+                console.log(obj.mp3);
+                if (fun) {
+                    fun(obj);
+                }
+            }
+        );
+    }
+
+    function searchSong(str) {
+        if (!str) {
+            return;
+        }
+
+        $http.get(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0')
+        ).success(function(d) {
+                var data = d.data;
+
+                if (!data.song.length) {
+                    $scope.songs = [{
+                        title: '未找到'
+                    }];
+                }
+                else {
+                    var arr = [];
+                    for (var i = 0, l = data.song.length; i < l; i++) {
+                        var obj = data.song[i];
+                        arr.push({
+                            id: obj.songid,
+                            title: obj.songname,
+                            artist: obj.artistname
+                        })
+                    }
+                    $scope.songs = arr;
+                }
+            }
+        );
     }
 }]);
 
 MusicModule.controller('conCtrl', ['$scope', 'MusicService', function($scope, MusicService) {
+
     $scope.changeTime = function(all) {
         var minute = Math.floor(all / 60);
         var second = Math.round(all % 60) < 10 ? "0" + Math.round(all % 60) : Math.round(all % 60);

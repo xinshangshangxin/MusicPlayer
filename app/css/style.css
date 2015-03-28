@@ -203,12 +203,12 @@ hr {
 }
 
 #playpaush {
-    width: 32px;
+    width: 64px;
     margin: 0 10px;
 }
 
 #previewsong, #nextsong, #download, #mute, #single {
-    width: 16px;
+    width: 24px;
     margin-top: 8px;
 }
 
@@ -242,3 +242,9 @@ hr {
 .imghide {
     display: none;
 }
+
+/*.list-group, a.list-group-item {*/
+    /*background: #191919;*/
+    /*border: 0;*/
+    /*color: #AAAAAA;*/
+/*}*/
