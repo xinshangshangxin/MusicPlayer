@@ -58,9 +58,8 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
             });
         }
         localStorage.shang_music = JSON.stringify({
-                data: arr
-            }
-        );
+            data: arr
+        });
         console.log(localStorage.shang_music);
     }
 
@@ -71,9 +70,9 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
     var $info;
     var $currentprogressbar = $('#currentprogress'),
         $loadedprogress = $('#loadedprogress'); // 已经载入的长度
-    var progressbarLen,  // 进度条长度
+    var progressbarLen, // 进度条长度
         currentVolum,
-        volumBarlen;    //音量条长度
+        volumBarlen; //音量条长度
     function updateShowTime() {
         if (_currentIndex === -1) {
             return;
@@ -123,7 +122,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
         $alllist.height(songListHeight);
         $lrcDiv.height(lrcHeight);
 
-        var $progressbar = $('#progressbar'),// 进度条
+        var $progressbar = $('#progressbar'), // 进度条
             $volumebar = $('#volumebar'),
             $currentvolumebar = $('#currentvolumebar'), //当前音量
             $mutebtn = $('#mute'); //静音按钮
@@ -174,8 +173,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
                 var percentLen = len / progressbarLen;
                 if (percentLen < 0) {
                     percentLen = 0;
-                }
-                else if (percentLen > 1) {
+                } else if (percentLen > 1) {
                     percentLen = 1;
                 }
 
@@ -199,8 +197,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
                 var percentLen = len / volumBarlen;
                 if (percentLen < 0) {
                     percentLen = 0;
-                }
-                else if (percentLen > 1) {
+                } else if (percentLen > 1) {
                     percentLen = 1;
                 }
                 $currentvolumebar.width(percentLen * 100 + '%');
@@ -223,16 +220,16 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
 
 
     return {
-        chageSize: _chageSize,      //修改页面高度
-        playMusic: _playMusic,      // 播放一首新歌
-        nextpreview: _nextpreview,  // 下一首/上一首
-        getAudio: function() {      // 获取 audio
+        chageSize: _chageSize, //修改页面高度
+        playMusic: _playMusic, // 播放一首新歌
+        nextpreview: _nextpreview, // 下一首/上一首
+        getAudio: function() { // 获取 audio
             return _audio;
         },
-        getCurrentIndex: function() {   // 获取 当前 播放index
+        getCurrentIndex: function() { // 获取 当前 播放index
             return _currentIndex;
         },
-        getAllSongs: function() {       //获取播放列表
+        getAllSongs: function() { //获取播放列表
             return _allSongs;
         },
         addOneSong: function(songObj, isPlay) {
@@ -243,22 +240,19 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
                 _playMusic(_allSongs.length - 1);
             }
         },
-        removeSong: function(index) {       //删除一首歌
+        removeSong: function(index) { //删除一首歌
             if (index < _currentIndex) {
                 _currentIndex -= 1;
                 _allSongs.splice(index, 1);
-            }
-            else if (index === _currentIndex) {
+            } else if (index === _currentIndex) {
                 if (_allSongs.length === 1) {
                     _allSongs.splice(index, 1);
                     _audio.src = null;
                     _audio.load();
-                }
-                else if (_currentIndex === _allSongs.length - 1) {
+                } else if (_currentIndex === _allSongs.length - 1) {
                     _allSongs.splice(index, 1);
                     _playMusic(0, false);
-                }
-                else {
+                } else {
                     _allSongs.splice(index, 1);
                     _playMusic(_currentIndex, false);
                 }
@@ -279,7 +273,7 @@ MusicModule.service('MusicService', ['$rootScope', function($rootScope) {
             _isMute = mute;
             _audio.muted = _isMute;
         },
-        getCurrentSong: function() {            // 获取当前播放对象
+        getCurrentSong: function() { // 获取当前播放对象
             return _allSongs[_currentIndex];
         }
     };
@@ -312,8 +306,7 @@ MusicModule.controller("lrcCtrl", ['$scope', '$http', 'MusicService', function($
                 $scope.songObj.lrcObj.parseLrc(data.data);
                 $scope.songObj.lrcObj.init();
             })
-            .error(function() {
-            });
+            .error(function() {});
     });
 
     $scope.decrease = function() {
@@ -333,8 +326,7 @@ MusicModule.controller("lrcCtrl", ['$scope', '$http', 'MusicService', function($
             clearTimeout(tempTimer);
             if (nu === 0) {
                 $scope.songObj.lrcObj.repaireTimeNu = 0;
-            }
-            else {
+            } else {
                 $scope.songObj.lrcObj.repaireTimeNu = ($scope.songObj.lrcObj.repaireTimeNu || 0) + nu;
             }
             $('#lrctimecurrent').html('[' + $scope.songObj.lrcObj.repaireTimeNu / 10 + ']');
@@ -394,12 +386,12 @@ MusicModule.controller('searchCtrl', ['$scope', '$http', 'MusicService', functio
 
         getbdmInfo(song.id + '', ['128'], function(obj) {
             if (/pan.baidu/.test(obj.showLink)) {
+                // obj.mp3 = 'http://localhost:1337';
+                // MusicService.addOneSong(obj, true);
                 prompt('此音乐为网网盘音乐,复制打开百度网盘~~~', obj.showLink);
-            }
-            else if (obj.showLink === '') {
+            } else if (obj.showLink === '') {
                 prompt('未获取到内容....', obj.showLink);
-            }
-            else {
+            } else {
                 MusicService.addOneSong(obj, true);
             }
         });
@@ -423,10 +415,9 @@ MusicModule.controller('searchCtrl', ['$scope', '$http', 'MusicService', functio
     function getbdmInfo(info, rate, funsuccess) {
         var id = info.match('\\d+')[0];
         var url = 'http://music.baidu.com/data/music/fmlink?songIds=' + id + '&type=mp3&rate=';
-        if (typeof (rate) === 'string') {
+        if (typeof(rate) === 'string') {
             getoInfo(url + rate, id, rate, funsuccess);
-        }
-        else {
+        } else {
             if (!rate.length) {
                 rate = ['128', '192', '320', 'flac'];
             }
@@ -466,29 +457,26 @@ MusicModule.controller('searchCtrl', ['$scope', '$http', 'MusicService', functio
             return;
         }
 
-        $http.get(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0')
-        ).success(function(d) {
-                var data = d.data;
+        $http.get(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0')).success(function(d) {
+            var data = d.data;
 
-                if (!data.song.length) {
-                    $scope.songs = [{
-                        title: '未找到'
-                    }];
+            if (!data.song.length) {
+                $scope.songs = [{
+                    title: '未找到'
+                }];
+            } else {
+                var arr = [];
+                for (var i = 0, l = data.song.length; i < l; i++) {
+                    var obj = data.song[i];
+                    arr.push({
+                        id: obj.songid,
+                        title: obj.songname,
+                        artist: obj.artistname
+                    })
                 }
-                else {
-                    var arr = [];
-                    for (var i = 0, l = data.song.length; i < l; i++) {
-                        var obj = data.song[i];
-                        arr.push({
-                            id: obj.songid,
-                            title: obj.songname,
-                            artist: obj.artistname
-                        })
-                    }
-                    $scope.songs = arr;
-                }
+                $scope.songs = arr;
             }
-        );
+        });
     }
 }]);
 
@@ -506,8 +494,7 @@ MusicModule.controller('conCtrl', ['$scope', 'MusicService', function($scope, Mu
                 MusicService.getAudio().pause();
                 $scope.pause_play = 'play.png';
                 MusicService.setPlaying(false);
-            }
-            else {
+            } else {
                 MusicService.getAudio().play();
                 $scope.pause_play = 'pause.png';
                 MusicService.setPlaying(true);
@@ -537,8 +524,7 @@ MusicModule.controller('conCtrl', ['$scope', 'MusicService', function($scope, Mu
             if (isMute) {
                 $scope.mutepng = 'volume.png';
                 MusicService.setMute(false);
-            }
-            else {
+            } else {
                 $scope.mutepng = 'mute.png';
                 MusicService.setMute(true);
             }
@@ -552,4 +538,3 @@ MusicModule.controller('conCtrl', ['$scope', 'MusicService', function($scope, Mu
         MusicService.nextpreview(1);
     };
 }]);
-
