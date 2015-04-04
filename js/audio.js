@@ -725,7 +725,7 @@ $(document).ready(function() {
     function showinfo(obj, nu, isaddlist) {
         $title.html(obj.title || 'SHANG');
         $artist.html(obj.artist || 'SHANG');
-        $coverimg.attr('src', (serverUrl + '?fun=fun&url=' + obj.cover) || 'http://i1.tietuku.com/f3f9084123926501.jpg');
+        $coverimg.attr('src', (obj.cover && (serverUrl + '?fun=fun&url=' + obj.cover)) || 'http://i1.tietuku.com/f3f9084123926501.jpg');
 
 
         if (isaddlist) {
