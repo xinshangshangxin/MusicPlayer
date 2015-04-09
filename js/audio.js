@@ -72,7 +72,7 @@ $(document).ready(function() {
     // 列表点击 事件代理
     $alllistul.on('click', 'li', function(e) {
         var nu = $(this).data('nu');
-        palynewaudio(nu, false);
+        palynewaudio(nu, false, null, true);
         e.stopPropagation();
     });
 
@@ -199,7 +199,9 @@ $(document).ready(function() {
     });
 
     $addr.on('focus', function() {
-        $addr.select();
+        setTimeout(function() {
+            $addr.select();
+        }, 20);
     });
 
     $lrctimereduce.on('click', function() {
@@ -277,6 +279,7 @@ $(document).ready(function() {
                         continue;
                     }
                     var temp = playlistinfo[i].rate128;
+                    checkAudio(temp);
                     addAudiolisthtml(temp, i);
                     if (temp.id === lastPlayId) {
                         palynewaudio(i, false);
@@ -332,7 +335,6 @@ $(document).ready(function() {
             }
         }
     }
-
 
     function calculateVolumBar(e) {
 
@@ -647,7 +649,30 @@ $(document).ready(function() {
     });
 
 
-    function palynewaudio(nu, isaddlist, which) {
+    // 判断网盘音乐是否过期
+    function checkAudio(audioobj) {
+        var prevSrc = decodeURIComponent(audioobj.mp3.replace(/(.*url=)|(xcode.*)/gi, ''));
+        if (/file.qianqian.com/.test(prevSrc) && ( !audioobj.timeUpdate || (new Date().getTime() - audioobj.timeUpdate) > 24 * 60 * 60 * 1000) ) {
+            getbdmInfo(audioobj.id, ['128'], function(obj) {
+                audioobj.mp3 = serverUrl + '?fun=fun&url=' + encodeURIComponent(obj.mp3);
+                audioobj.timeUpdate = new Date().getTime();
+                saveInfo(audioobj.id);
+                // 是当前播放的歌曲,并且歌曲处于无法播放状态
+                if (audio && decodeURIComponent(audio.src).match(prevSrc) && audio.currentTime < 500) {
+                    audio.src = null;
+                    audio.load();
+                    audio.src = audioobj.mp3;
+                    audio.play();
+                    if(!isplaying) {
+                        audio.pause();
+                    }
+                }
+            });
+        }
+    }
+
+
+    function palynewaudio(nu, isaddlist, which, isplay) {
 
         if (!playlistinfo[nu]) {
             nextpreview(which || 1);
@@ -657,25 +682,6 @@ $(document).ready(function() {
 
         var audioobj = playlistinfo[nu].rate128;
         console.log(audioobj);
-
-
-        //if (/pan\.baidu/.test(audioobj.showLink)) {
-        //  $textdiv.html('此音乐为百度网盘音乐, 删除并播放下一首?');
-        //  $ensurebtn.show();
-        //  $showtext.modal('show');
-        //  $ensurebtn.one('click', function() {
-        //
-        //    if (playlistinfo.length !== 1) {
-        //      nextpreview(1);
-        //    }
-        //
-        //    $alllistul.find('li').each(function() {
-        //      $(this).find('img').first().trigger('click');
-        //    });
-        //  });
-        //
-        //  return;
-        //}
 
         if (audio) {
             // 设为null 并且 load() 为了让android不在下载此歌曲
@@ -704,10 +710,14 @@ $(document).ready(function() {
         $currentprogressbar.width(0);
         $loadedprogress.width(0);
 
+
+        if (isplay) {
+            $playpushbtn.attr('src', './images/pause.png');
+            isplaying = true;
+        }
+
         if (!isplaying) {
             audio.pause();
-            //$playpushbtn.attr('src', './images/pause.png');
-            //isplaying = true;
         }
 
 
@@ -716,6 +726,10 @@ $(document).ready(function() {
             lrcObj.parseLrc(data.data);
             lrcObj.repaireTimeNu = audioobj.repaireTimeNu || 0;
             console.log(audioobj.repaireTimeNu);
+            lrcObj.init();
+        }, function() {
+            lrcObj.parseLrc('[00:00]未找到(┬＿┬)');
+            lrcObj.repaireTimeNu = audioobj.repaireTimeNu || 0;
             lrcObj.init();
         });
 
