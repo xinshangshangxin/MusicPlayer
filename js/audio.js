@@ -50,9 +50,7 @@ $(document).ready(function() {
         isSingle = false, //是否 单曲循环
         lastPlayId = -1; // 上次播放ID;
 
-    var serverUrl = 'http://cors.coding.io/';
-    // var serverUrl = 'http://nodecors.sturgeon.mopaas.com/';
-    //var serverUrl = 'http://121.40.81.63:1337/';
+    var serverUrl = 'http://cors.xinshangshangxin.com/';
 
     initLocalInfo();
 
@@ -133,7 +131,7 @@ $(document).ready(function() {
                     downloadhref(obj.mp3);
                 }
                 else {
-                    downloadhref(serverUrl + '?fun=fun&url=' + obj.mp3);
+                    downloadhref(serverUrl + '?proxyTo=' + obj.mp3);
                 }
             }
             else {
@@ -469,7 +467,7 @@ $(document).ready(function() {
                         currentIndex = playlistinfo.length - 1;
 
                         if (/pan.baidu/.test(obj.showLink)) {
-                            obj.mp3 = serverUrl + '?fun=fun&url=' + encodeURIComponent(obj.mp3);
+                            obj.mp3 = serverUrl + '?proxyTo=' + encodeURIComponent(obj.mp3);
                             palynewaudio(currentIndex, true);
                             $showtext.modal('hide');
                             //playlistinfo.length = playlistinfo.length - 1;
@@ -524,7 +522,7 @@ $(document).ready(function() {
         }
 
 
-        ajaxGet(serverUrl + '?method=get&url=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0'), function(d) {
+        ajaxGet(serverUrl + '?proxyTo=' + encodeURIComponent('http://sug.music.baidu.com/info/suggestion?format=json&word=' + str + '&version=2&from=0'), function(d) {
             var data = JSON.parse(d).data;
 
             var $searchSongDiv = $('<div id="searchsongdiv">');
@@ -654,7 +652,7 @@ $(document).ready(function() {
         var prevSrc = decodeURIComponent(audioobj.mp3.replace(/(.*url=)|(xcode.*)/gi, ''));
         if (/file.qianqian.com/.test(prevSrc) && ( !audioobj.timeUpdate || (new Date().getTime() - audioobj.timeUpdate) > 24 * 60 * 60 * 1000) ) {
             getbdmInfo(audioobj.id, ['128'], function(obj) {
-                audioobj.mp3 = serverUrl + '?fun=fun&url=' + encodeURIComponent(obj.mp3);
+                audioobj.mp3 = serverUrl + '?proxyTo=' + encodeURIComponent(obj.mp3);
                 audioobj.timeUpdate = new Date().getTime();
                 saveInfo(audioobj.id);
                 // 是当前播放的歌曲,并且歌曲处于无法播放状态
@@ -722,13 +720,13 @@ $(document).ready(function() {
 
 
         lrcObj = shangLrcLoad(audio, 'lrcdiv');
-        jsonpGet('http://cors.coding.io?method=get&url=' + audioobj.lrc, function(data) {
-            lrcObj.parseLrc(data.data);
+        jsonpGet('http://cors.xinshangshangxin.com?proxyTo=' + audioobj.lrc, function(data) {
+            lrcObj.parseLrc(data);
             lrcObj.repaireTimeNu = audioobj.repaireTimeNu || 0;
             console.log(audioobj.repaireTimeNu);
             lrcObj.init();
         }, function() {
-            lrcObj.parseLrc('[00:00]未找到(┬＿┬)');
+            lrcObj.parseLrc('[00:00]歌词加载未修复(┬＿┬)');
             lrcObj.repaireTimeNu = audioobj.repaireTimeNu || 0;
             lrcObj.init();
         });
@@ -739,7 +737,7 @@ $(document).ready(function() {
     function showinfo(obj, nu, isaddlist) {
         $title.html(obj.title || 'SHANG');
         $artist.html(obj.artist || 'SHANG');
-        $coverimg.attr('src', (obj.cover && (serverUrl + '?fun=fun&url=' + obj.cover)) || 'http://i1.tietuku.com/f3f9084123926501.jpg');
+        $coverimg.attr('src', (obj.cover && (serverUrl + '?proxyTo=' + obj.cover)) || 'http://i1.tietuku.com/f3f9084123926501.jpg');
 
 
         if (isaddlist) {

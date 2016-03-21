@@ -28,7 +28,7 @@ function getoInfo(url, id, rate, fun) {
             'title': songinfo.songName,
             'time': songinfo.time,
             'artist': songinfo.artistName,
-            'lrc': 'http://play.baidu.com' + songinfo.lrcLink
+            'lrc': songinfo.lrcLink
         };
       console.log(obj.mp3);
         if (fun) {
