@@ -1,8 +1,7 @@
 # MusicPlayer
 
 > 演示地址:  
-> [开发版_oschina](http://shangmusic.oschina.mopaas.com/)  
-> [dist版_gh-pages](http://musicplayer.xinshangshangxin.com/)  
+> [http://musicplayer.xinshangshangxin.com/](http://musicplayer.xinshangshangxin.com/)  
 
 1. 搜索歌曲/歌手,或者直接百度音乐链接[带有数字ID的链接]
 2. 播放码率为128
