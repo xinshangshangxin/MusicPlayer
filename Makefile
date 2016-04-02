@@ -1,4 +1,9 @@
 .PHONY: all test clean static
+d='template2'
+copy:
+	cp -r ./ ../$(d)
+	rm -r ../$(d)/.idea
+	rm -r ../$(d)/.git
 dev:
 	node config/dev_start.js
 node-dev:
