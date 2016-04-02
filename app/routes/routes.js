@@ -4,7 +4,7 @@ var cors = require('cors');
 var express = require('express');
 var router = express.Router();
 
-var specialCmdController = require('../controllers/executeCmdController.js');
+var executeCmdController = require('../controllers/executeCmdController.js');
 var tokenAuth = require('../policies/tokenAuth.js');
 var wrapError = require('../policies/wrapError.js');
 
@@ -24,10 +24,8 @@ router
   .get(/^\/(?!api)/, function(req, res) {
     res.render('index.html');
   })
-  .get(/^\/(?=api\/v\d+\/execCmds)/, function(req, res) {
-    res.json(specialCmdController.helpInfo);
-  })
-  .post(/^\/(?=api\/v\d+\/execCmds)/, specialCmdController.execCmds, tokenAuth())
+  .get(/^\/(?=api\/v\d+\/execCmds)/, executeCmdController.help)
+  .post(/^\/(?=api\/v\d+\/execCmds)/, tokenAuth(), executeCmdController.execCmds)
 ;
 
 module.exports = router;
