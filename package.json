@@ -5,7 +5,7 @@
     "node": "0.12.7"
   },
   "scripts": {
-    "start": "./node_modules/.bin/pm2 start app.js --no-daemon",
+    "start": "NODE_ENV=openshift pm2 start app.js",
     "test": "mocha --recursive --timeout 10000 --harmony --bail test"
   },
   "dependencies": {

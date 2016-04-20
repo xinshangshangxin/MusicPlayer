@@ -62,14 +62,6 @@ function validConfig(config) {
  *
  */
 
-gulp.task('languages', function(done) {
-  if(!$.isBuild || !validConfig(specConfig.languageJsons)) {
-    return done();
-  }
-  return gulp.src(specConfig.languageJsons.src, specConfig.languageJsons.opt)
-    .pipe(gulp.dest(specConfig.languageJsons.dest));
-});
-
 gulp.task('theme', function(done) {
   if(!$.isBuild || !validConfig(specConfig.theme)) {
     return done();
@@ -83,7 +75,7 @@ gulp.task('theme', function(done) {
 
 });
 
-gulp.task('userTask', gulp.series('theme', 'languages'));
+gulp.task('userTask', gulp.series('theme'));
 
 
 /**

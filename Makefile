@@ -1,9 +1,5 @@
 .PHONY: all test clean static
 d='template2'
-copy:
-	cp -r ./ ../$(d)
-	rm -r ../$(d)/.idea
-	rm -r ../$(d)/.git
 dev:
 	node config/dev_start.js
 node-dev:
@@ -27,3 +23,9 @@ prod:
 static:
 	gulp static
 	cd static && hs
+copy:
+	cp -r ./ ../$(d)
+	rm -r ../$(d)/.idea
+	rm -r ../$(d)/.git
+openshift:
+	NODE_ENV=openshift pm2 start app.js --max-memory-restart 256M

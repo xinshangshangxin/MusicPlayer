@@ -6,7 +6,8 @@ module.exports = {
   execCmdKey: process.env.EXEC_CMD_KEY || 'key',
   mongo: {
     dbName: 'noDbnName'
-  }
+  },
+  bootstrap: []
 };
 
 
