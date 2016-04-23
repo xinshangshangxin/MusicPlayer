@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
 var path = require('path');
-var Promise = require('bluebird');
 var spawn = require('child_process').spawn;
 
 var mailSendService = require('../services/mailSendService.js');
@@ -103,7 +101,7 @@ function wrapResult(arr, email) {
       errResult.push(inspection.reason());
     }
   });
-  
+
   var str = '';
   if(errResult.length) {
     str += 'failed: ' + errResult.length + '    ';
@@ -111,9 +109,9 @@ function wrapResult(arr, email) {
 
   str += 'successed: ' + successResult.length + '    ';
   str += 'all: ' + arr.length;
-  
+
   var body = str + '\n' + errResult.concat(successResult);
-  
+
   return Promise
     .resolve()
     .then(function() {
@@ -154,7 +152,13 @@ function execCmd(option) {
     if(option.platform) {
       option.cmd = (process.platform === 'win32' ? (option.cmd + '.cmd') : option.cmd);
     }
-    var cmd = spawn(option.cmd, option.arg, {stdio: 'inherit'});
+    var opt = {stdio: 'inherit'};
+    // set ENV
+    var env = Object.create(process.env);
+    env.NODE_ENV = process.env.NODE_ENV;
+    opt.env = env;
+
+    var cmd = spawn(option.cmd, option.arg, opt);
     cmd.on('error', function(err) {
       console.log(err);
     });

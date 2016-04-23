@@ -1,7 +1,7 @@
 .PHONY: all test clean static
 d='template2'
 dev:
-	node config/dev_start.js
+	sh config/start.sh
 node-dev:
 	node-dev app/app.js
 supervisor:

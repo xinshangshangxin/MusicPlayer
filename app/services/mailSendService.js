@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
 var nodemailer = require('nodemailer');
-var Promise = require('bluebird');
 
 // 从环境变量中获取账号
 var getEnvSetting = function() {

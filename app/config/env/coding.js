@@ -1,5 +1,6 @@
 'use strict';
 
+/*jshint -W079 */
 var _ = require('lodash');
 
 module.exports = {

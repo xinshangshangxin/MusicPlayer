@@ -1,8 +1,7 @@
 'use strict';
 
-var _ = require('lodash');
 var mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
+mongoose.Promise = Promise;
 
 function close() {
   mongoose.connection.close(function() {
@@ -61,7 +60,7 @@ var mongodbUri = getMongodbUri(config.env.mongo);
 //console.log(mongodbUri);
 var db = mongoose.connect(mongodbUri);
 
-function generateNewMongooseType(modelName, opt) {
+function define(modelName, opt) {
   var modelNameSchema = new mongoose.Schema(_.assign({
     createdAt: {
       type: Date,
@@ -112,6 +111,6 @@ module.exports = {
   mongoose: mongoose,
   Types: mongoose.Schema.Types,
   db: db,
-  generateNewMongooseType: generateNewMongooseType,
+  define: define,
   closeMongoose: close
 };

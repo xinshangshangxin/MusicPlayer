@@ -1,6 +1,7 @@
 'use strict';
 
-var Promise = require('bluebird');
+require('../config/init.js');
+
 function closeConnection() {
   require('../services/dbService').closeMongoose();
 }

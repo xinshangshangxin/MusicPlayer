@@ -2,7 +2,7 @@
 
 var dbService = require('../services/dbService.js');
 
-var user = dbService.generateNewMongooseType('user', {
+var user = dbService.define('user', {
   username: {
     type: String,
     required: true,

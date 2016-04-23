@@ -2,8 +2,8 @@
 
 angular
   .module('shangAngularTemplate')
-  .config(function($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.when('', '/');
+  .config(function($urlRouterProvider, $stateProvider) {
+    //$urlRouterProvider.when('', '/');
 
     $stateProvider
       .state('home', {

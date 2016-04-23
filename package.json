@@ -9,7 +9,6 @@
     "test": "mocha --recursive --timeout 10000 --harmony --bail test"
   },
   "dependencies": {
-    "bcrypt": "^0.8.5",
     "bluebird": "^3.3.1",
     "body-parser": "~1.15.0",
     "cookie-parser": "~1.4.1",
@@ -23,6 +22,7 @@
     "morgan": "~1.7.0",
     "nodemailer": "^2.3.0",
     "pm2": "^1.0.1",
+    "redis": "^2.5.3",
     "require-directory": "^2.1.1"
   },
   "devDependencies": {

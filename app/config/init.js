@@ -3,6 +3,11 @@
 var path = require('path');
 var requireDirectory = require('require-directory');
 
+// set bluebird and lodash
+global.__Promise__ = global.Promise;
+global.Promise = require('bluebird');
+global._ = require('lodash');
+
 var env = process.env.NODE_ENV || 'development';
 global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
   exclude: function(path) {
