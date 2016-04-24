@@ -21,6 +21,24 @@ $.isStatic = false;
 $.specConfig = specConfig;
 $.config = config;
 
+// set default env
+gulpConfig.__alterableSetting__ = {};
+copyAttrValue(gulpConfig.__alterableSetting__ , gulpConfig.alterableSetting);
+setDevEnv();
+
+function copyAttrValue(obj, copyObj) {
+  if(!obj || !copyObj) {
+    return obj;
+  }
+  for(var attr in copyObj) {
+    if(!copyObj.hasOwnProperty(attr)) {
+      return;
+    }
+    obj[attr] = copyObj[attr];
+  }
+  return obj;
+}
+
 function getConfig() {
   config = gulpConfig.getCommonConfig();
   specConfig = gulpConfig.getSpecConfig();
@@ -31,7 +49,7 @@ function getConfig() {
 function setDevEnv(done) {
   gulpConfig.alterableSetting.publicPath = 'app/public';
   getConfig();
-  return done();
+  return done && done();
 }
 
 function changeSrc(src) {
@@ -373,6 +391,7 @@ gulp.task('watchers:sass', function() {
 
 gulp.task('build', gulp.series(
   function setBuildEnv(done) {
+    copyAttrValue(gulpConfig.alterableSetting, gulpConfig.__alterableSetting__);
     getConfig();
     $.isBuild = true;
     return done();
