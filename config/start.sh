@@ -1,17 +1,17 @@
 #!/bin/bash
 
 function startServer {
-  node-dev app/app.js
+	node-dev app/app.js
 }
 
 function startGulp {
 	reniceNode &
-  gulp dev
+	gulp dev
 }
 
 function reniceNode {
-  sleep 1
-  ps -a | grep node | sed "s/ *\([0-9]\{1,\}\) .*/\1/g"  | xargs renice -19
+	sleep 1
+	ps -a | grep node | sed "s/ *\([0-9]\{1,\}\) .*/\1/g"  | xargs renice -19
 }
 
 startServer &
@@ -19,4 +19,4 @@ startServer &
 until startGulp; do
     echo "startGulp exit code $?.  ReStart.." >&2
     sleep 1
-done 
+done

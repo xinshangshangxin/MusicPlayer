@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var path = require('path');
 var browserSync = require('browser-sync').create();
+var reload = browserSync.reload;
 
 var myJshintReporter = require('./myJshintReporter.js');
 
@@ -133,7 +134,8 @@ gulp.task('sass', function() {
     .pipe($.if($.isBuild, $.replace(config.sass.subStr, config.sass.newStr)))
     .pipe($.sass())
     .on('error', $.sass.logError)
-    .pipe(gulp.dest(config.sass.dest));
+    .pipe(gulp.dest(config.sass.dest))
+    .pipe($.if(!$.isBuild, reload({stream: true})));
 });
 
 gulp.task('less', function(done) {
@@ -146,7 +148,8 @@ gulp.task('less', function(done) {
       expand: true,
       ext: '.css'
     }))
-    .pipe(gulp.dest(config.less.dest));
+    .pipe(gulp.dest(config.less.dest))
+    .pipe($.if(!$.isBuild, reload({stream: true})));
 });
 
 gulp.task('injectHtml:dev', function(done) {

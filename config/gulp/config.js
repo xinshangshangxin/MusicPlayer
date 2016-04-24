@@ -233,8 +233,10 @@ function getCommonConfig() {
       development: {
         proxy: 'http://127.0.0.1:1337',
         port: 8888,
+        browser: 'chrome',
         files: [
           'app/public/**/*',
+          '!app/public/css/**/*',
           'app/views/**/*'
         ]
       }
