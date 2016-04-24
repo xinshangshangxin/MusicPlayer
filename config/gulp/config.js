@@ -211,6 +211,7 @@ function getCommonConfig() {
       dest: alterableSetting.publicPath
     },
     cp: [{
+      staticDisabled: true,
       src: [
         'config/**/*'
       ],

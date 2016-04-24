@@ -240,6 +240,9 @@ gulp.task('cp', function(done) {
   var arr = [];
   config.cp.forEach(function(item) {
     if(validConfig(item)) {
+      if(item.staticDisabled) {
+        return;
+      }
       arr.push(function() {
         return gulp.src(item.src, item.opt)
           .pipe(gulp.dest(item.dest));
@@ -394,7 +397,9 @@ gulp.task('watchers:sass', function() {
 
 gulp.task('build', gulp.series(
   function setBuildEnv(done) {
-    copyAttrValue(gulpConfig.alterableSetting, gulpConfig.__alterableSetting__);
+    if(!$.isStatic) {
+      copyAttrValue(gulpConfig.alterableSetting, gulpConfig.__alterableSetting__);
+    }
     getConfig();
     $.isBuild = true;
     return done();
