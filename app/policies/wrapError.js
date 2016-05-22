@@ -1,20 +1,20 @@
 'use strict';
 
-function isError(e) {
-  return e && e.code && e.name !== 'MongoError';
+function isUserDefineError(e) {
+  return e instanceof ApplicationError;
 }
 
 function wrapError(e, otherError, errStatus) {
   /*jshint validthis:true */
-  if(isError(e)) {
-    return this.json(errStatus || 400, e);
+  if(isUserDefineError(e)) {
+    return this.status(errStatus || 400).json(e);
   }
   console.log(e && e.stack || e);
-  return this.json(otherError.status || 400, otherError);
+  return this.status(otherError.status || 400).json(otherError);
 }
 
 module.exports = function(req, res, next) {
-  res.isError = isError;
+  res.isUserDefineError = isUserDefineError;
   res.wrapError = wrapError;
   next();
 };

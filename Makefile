@@ -1,7 +1,7 @@
 .PHONY: all test clean static
 d='template2'
 dev:
-	sh config/start.sh
+	@sh config/start.sh
 node-dev:
 	node-dev app/app.js
 supervisor:
@@ -28,4 +28,4 @@ copy:
 	rm -r ../$(d)/.idea
 	rm -r ../$(d)/.git
 openshift:
-	NODE_ENV=openshift pm2 start app.js --max-memory-restart 256M
+	NODE_ENV=openshift pm2 start app.js

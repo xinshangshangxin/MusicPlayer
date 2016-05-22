@@ -57,7 +57,9 @@ function getMongodbUri(config) {
 }
 
 var mongodbUri = getMongodbUri(config.env.mongo);
-//console.log(mongodbUri);
+
+console.log('connect mongodbUri: ', mongodbUri);
+
 var db = mongoose.connect(mongodbUri);
 
 function define(modelName, opt) {

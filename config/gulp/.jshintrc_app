@@ -46,10 +46,12 @@
     "node"          : true,
     "-W100"         : true,
 
-    "latedef": "nofunc",
+    "latedef"       : "nofunc",
 
-    "predef"        : ["config",
+    "predef"        : [
                         "_",
+                        "ApplicationError",
+                        "config",
                         "Promise"
                       ]
 }
