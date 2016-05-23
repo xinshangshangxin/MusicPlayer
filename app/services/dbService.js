@@ -24,7 +24,7 @@ function resolveEnvUrl(config) {
     mongodbUri += '@';
   }
 
-  mongodbUri += (process.env[config.host] || 'localhost') + ':' + (process.env[config.port] || 27017) + '/' + (process.env[config.name] || config.dbName);
+  mongodbUri += (process.env[config.host] || '127.0.0.1') + ':' + (process.env[config.port] || 27017) + '/' + (process.env[config.name] || config.dbName);
 
   return mongodbUri;
 }
@@ -53,7 +53,7 @@ function getMongodbUri(config) {
     return uri;
   }
 
-  return 'mongodb://localhost:27017/' + config.dbName;
+  return 'mongodb://127.0.0.1:27017/' + config.dbName;
 }
 
 var mongodbUri = getMongodbUri(config.env.mongo);
