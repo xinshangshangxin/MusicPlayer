@@ -7,7 +7,7 @@ node-dev:
 supervisor:
 	supervisor -n error -i 'app/public/,app/views/,config/tasks/' app/app.js
 push:
-	git push origin master
+	git push origin template
 test:
 	@ if [ -n "$(g)" ]; \
 	then \
