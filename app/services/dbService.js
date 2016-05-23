@@ -77,11 +77,13 @@ function define(modelName, opt) {
   modelNameSchema.pre('save', function(next) {
     this.updatedAt = Date.now();
     next();
+    return null;
   });
 
   modelNameSchema.pre('update', function(next) {
     this.updatedAt = Date.now();
     next();
+    return null;
   });
 
   modelNameSchema.pre('findOneAndUpdate', function(next) {
@@ -94,6 +96,7 @@ function define(modelName, opt) {
       updatedAt: Date.now()
     });
     next();
+    return null;
   });
   var modelNameModel = db.model(modelName, modelNameSchema);
 
