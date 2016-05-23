@@ -1,11 +1,11 @@
 'use strict';
 
 module.exports = {
-  dbName: 'noDbnName',
+  dbName: 'noDbName',
   superSecret: process.env.SUPER_SECRET || 'SUPER_SECRET',
   execCmdKey: process.env.EXEC_CMD_KEY || 'key',
   mongo: {
-    dbName: 'noDbnName'
+    dbName: 'noDbName'
   },
   bootstrap: []
 };

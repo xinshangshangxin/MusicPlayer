@@ -9,7 +9,7 @@ module.exports = {
   port: process.env.VCAP_APP_PORT,
   mongo: {
     type: 'fun',
-    dbName: 'noDbnName',
+    dbName: 'noDbName',
     fun: function() {
       try {
         return _.get(JSON.parse(process.env.VCAP_SERVICES), 'mongodb[0].credentials.uri');

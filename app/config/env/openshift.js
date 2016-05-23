@@ -10,6 +10,6 @@ module.exports = {
     condition: 'host',
     host: 'OPENSHIFT_DIY_IP',
     post: 27017,
-    dbName: 'noDbnName'
+    dbName: 'noDbName'
   }
 };
