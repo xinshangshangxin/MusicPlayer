@@ -8,12 +8,12 @@ var executeCmdController = require('../controllers/executeCmdController.js');
 var tokenAuth = require('../policies/tokenAuth.js');
 var wrapError = require('../policies/wrapError.js');
 
-var execCmdKey = config.execCmdKey;
+var execCmdKey = config.env.execCmdKey;
 
 router
   .all('*', wrapError)
   .all(/^\/(?=api)/, cors())
-  .all(/^\/(?=api\/v\d+\/execCmds)/, function(req, res, next) {
+  .all(/^\/(?=api\/v\d+\/cmds)/, function(req, res, next) {
     if((req.query.key || req.body.key) === execCmdKey) {
       return next();
     }
@@ -24,8 +24,8 @@ router
   .get(/^\/(?!api)/, function(req, res) {
     res.render('index.html');
   })
-  .get(/^\/(?=api\/v\d+\/execCmds)/, executeCmdController.help)
-  .post(/^\/(?=api\/v\d+\/execCmds)/, tokenAuth(), executeCmdController.execCmds)
+  .get(/^\/(?=api\/v\d+\/cmds)/, executeCmdController.help)
+  .post(/^\/(?=api\/v\d+\/cmds)/, tokenAuth(), executeCmdController.execCmds)
 ;
 
 module.exports = router;
