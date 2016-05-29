@@ -15,7 +15,7 @@ var ctrl = {
       });
   },
   help: function(req, res) {
-    return res.json(executeCmdService.helpInfo);
+    return res.send('<pre>' + JSON.stringify(executeCmdService.helpInfo, null, 2) + '</pre>');
   }
 };
 
