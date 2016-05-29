@@ -7,6 +7,10 @@ module.exports = {
   mongo: {
     dbName: 'noDbName'
   },
+  update: {
+    ref: 'master'
+  },
+  port: process.env.PORT,
   bootstrap: []
 };
 

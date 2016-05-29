@@ -19,7 +19,7 @@ util.inherits(ApplicationError, Promise.OperationalError);
 ApplicationError.prototype.name = 'Application Error';
 
 // set env
-var env = process.env.NODE_ENV || 'development';
+var env = (process.env.NODE_ENV || 'development').trim();
 global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
   exclude: function(path) {
     var reg = new RegExp('[\\/\\\\]env[\\/\\\\](?!' + env + ')');

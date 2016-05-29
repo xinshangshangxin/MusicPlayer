@@ -54,3 +54,4 @@ app/public/css/*
 app/public/fonts/*
 static
 production
+deploy
