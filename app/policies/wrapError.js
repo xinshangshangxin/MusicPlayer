@@ -1,7 +1,7 @@
 'use strict';
 
 function isUserDefineError(e) {
-  return e instanceof ApplicationError;
+  return e instanceof ApplicationError || !(e instanceof Error);
 }
 
 function wrapError(e, otherError, errStatus) {
@@ -10,7 +10,13 @@ function wrapError(e, otherError, errStatus) {
     return this.status(errStatus || 400).json(e);
   }
   console.log(e && e.stack || e);
-  return this.status(otherError.status || 400).json(otherError);
+  if(otherError) {
+    return this.status(otherError.status || 400).json(otherError);
+  }
+  return this.status(400).json({
+    code: 100,
+    msg: '未知错误，请反馈！'
+  });
 }
 
 module.exports = function(req, res, next) {

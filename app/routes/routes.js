@@ -6,7 +6,7 @@ var router = express.Router();
 
 var executeCmdController = require('../controllers/executeCmdController.js');
 var tokenAuth = require('../policies/tokenAuth.js');
-var webService = require('../services/webHookService');
+var webHookService = require('../services/webHookService.js');
 var wrapError = require('../policies/wrapError.js');
 
 var execCmdKey = config.env.execCmdKey;
@@ -29,7 +29,7 @@ router
   .post(/^\/(?=api\/v\d+\/cmds)/, tokenAuth(), executeCmdController.execCmds)
   .post(/^\/(?=api\/v\d+\/webhook)/, function(req, res) {
     res.end('ok');
-    webService
+    webHookService
       .tryUpdate(req.body)
       .then(function(data) {
         console.log(data);
