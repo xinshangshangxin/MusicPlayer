@@ -16,7 +16,7 @@ var svc = {
     var name = _.get(body, 'repository.name');
     var appPath = env === 'development' ? 'app/app.js' : 'app.js';
     if(!url || !name) {
-      return Promise.reject('no url or no name');
+      return Promise.reject(new Error('no url or no name'));
     }
 
     // svc.tryPm2Start({
