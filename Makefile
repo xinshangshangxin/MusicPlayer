@@ -9,6 +9,7 @@ supervisor:
 push:
 	git push origin template
 merge:
+	git fetch template template
 	git merge remotes/template/template
 test:
 	@ if [ -n "$(g)" ]; \
