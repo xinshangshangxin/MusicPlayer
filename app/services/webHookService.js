@@ -19,14 +19,9 @@ var svc = {
       return Promise.reject(new Error('no url or no name'));
     }
 
-    // svc.tryPm2Start({
-    //   ref: ref,
-    //   url: url,
-    //   name: name,
-    //   appPath: appPath
-    // });
-
+    var dir = path.resolve(__dirname, '../');
     var cmds = [
+      'cd ' + dir,
       'git pull origin ' + ref,
       'pm2 restart ' + appPath
     ];
@@ -46,53 +41,6 @@ var svc = {
           html: '<p>' + (new Date().toLocaleString()) + '</p>' + JSON.stringify(e)
         });
       });
-  },
-  tryPm2Start: function(options) {
-    var ref = options.ref;
-    var url = options.url;
-    var name = options.name;
-    var appPath = options.appPath;
-
-    var cmds = [
-      'rm -rf deploy',
-      'mkdir deploy',
-      'cd deploy',
-      'git clone -b ' + ref + ' ' + url
-    ];
-
-    return utilitiesService
-      .execAsync(cmds.join(' && '))
-      .then(function() {
-        return svc.tryStartUp(path.resolve('./deploy/' + name), appPath);
-      })
-      .then(function() {
-        console.log('pm2 start');
-        var cmds = [
-          'git pull',
-          'pm2 restart ' + appPath
-        ];
-        return utilitiesService.execAsync(cmds.join(' && '));
-      })
-      .then(function(info) {
-        console.log('pm2 start info: ', info);
-      })
-      .catch(function(e) {
-        console.log(e);
-        return mailSendService.sendMail({
-          subject: '自动部署失败',
-          html: '<p>' + (new Date().toLocaleString()) + '</p>' + JSON.stringify(e)
-        });
-      });
-  },
-  tryStartUp: function(dir, appPath) {
-    console.log('tryStartUp');
-    var cmds = [
-      'cd ' + dir,
-      'set NODE_ENV=' + env,
-      'set PORT=' + 1357,
-      'node ' + appPath
-    ];
-    return utilitiesService.execAsync(cmds.join(' && '));
   }
 };
 
