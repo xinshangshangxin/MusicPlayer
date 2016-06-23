@@ -263,7 +263,7 @@ gulp.task('cp', function(done) {
 });
 
 // jshint 用户的js
-gulp.task('js', function() {
+gulp.task('js', function(done) {
   if(!validConfig(config.js)) {
     return done();
   }

@@ -28,6 +28,17 @@ static:
 	cd static && hs
 copy:
 	cp -r ./ ../$(d)
+	if [ -n "$(b)" ]; \
+	then \
+		rm -rf ../$(d)/app/public; \
+		rm -rf ../$(d)/config/gulp/config.js; \
+		mv ../$(d)/config/gulp/backendConfig.js ../$(d)/config/gulp/config.js; \
+		rm -rf ../$(d)/app/views/index.html; \
+		mv ../$(d)/app/views/backendIndex.html ../$(d)/app/views/index.html; \
+	else \
+		rm -rf ../$(d)/config/gulp/backendConfig.js; \
+		rm -rf ../$(d)/app/views/backendIndex.html; \
+	fi
 	rm -r ../$(d)/.idea
 	rm -r ../$(d)/.git
 openshift:
