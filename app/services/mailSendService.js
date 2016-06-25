@@ -2,11 +2,6 @@
 
 var nodemailer = require('nodemailer');
 
-// 从环境变量中获取账号
-var getEnvSetting = function() {
-  return config.mail || {};
-};
-
 // 默认配置
 var defaultMailOptions = {
   from: 'test4code@sina.com',
@@ -16,21 +11,7 @@ var defaultMailOptions = {
   html: '<b>Hello world ✔</b>' // html body
 };
 
-var defaultTransport = {
-  host: 'smtp.sina.com',
-  port: 465,
-  secure: true,
-  tls: {rejectUnauthorized: false},
-  auth: {
-    user: 'test4code@sina.com',
-    pass: 'Test4code;'
-  }
-};
-
-var transporter = Promise
-  .promisifyAll(
-    nodemailer.createTransport(_.assign(defaultTransport, getEnvSetting()))
-  );
+var transporter = Promise.promisifyAll(nodemailer.createTransport(config.mailTransport));
 
 var sendMail = function(mailOtions) {
   return transporter
