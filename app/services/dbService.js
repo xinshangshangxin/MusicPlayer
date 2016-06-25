@@ -63,9 +63,15 @@ console.log('connect mongodbUri: ', mongodbUri);
 var db = mongoose.connect(mongodbUri);
 
 function define(modelName, opt, index) {
-  var modelNameSchema = new mongoose.Schema(opt, {
-    timestamps: true
-  });
+  var modelNameSchema = new mongoose.Schema(_.assign({
+    createdAt: {
+      type: Date,
+      default: Date.now()
+    },
+    updatedAt: {
+      type: Date
+    }
+  }, opt));
 
   if(index) {
     modelNameSchema.index.apply(modelNameSchema, index);
