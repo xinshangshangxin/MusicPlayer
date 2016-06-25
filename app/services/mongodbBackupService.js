@@ -28,10 +28,12 @@ var svc = {
       console.log('skip mongodb backup');
       return Promise.resolve('skip mongodb backup');
     }
-
+  },
+  getGitSettingPath: function() {
+    return path.resolve(config.env.mongo.backupDirPrefixes || path.resolve(__dirname, '../'), './mongod_back/git_back', '.git');
   },
   envCheck: function() {
-    var gitSettingPath = path.resolve(config.env.mongo.backupDirPrefixes || './', './mongod_back/git_back', '.git');
+    var gitSettingPath = svc.getGitSettingPath();
 
     console.log('mongodbBackupService.js; gitSettingPath', JSON.stringify(gitSettingPath, null, 2));
     return fs.accessAsync(gitSettingPath);
