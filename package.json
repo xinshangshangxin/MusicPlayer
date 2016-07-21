@@ -2,28 +2,27 @@
   "name": "shangTemplate",
   "version": "0.1.0",
   "engines": {
-    "node": "0.12.7"
+    "node": "6.0.0"
   },
   "scripts": {
     "start": "NODE_ENV=openshift pm2 start app.js",
     "test": "mocha --recursive --timeout 10000 --harmony --bail test"
   },
   "dependencies": {
-    "bluebird": "^3.3.1",
-    "body-parser": "~1.15.0",
-    "cookie-parser": "~1.4.1",
-    "cors": "^2.7.1",
-    "debug": "~2.2.0",
-    "ejs": "~2.4.1",
-    "express": "~4.13.0",
-    "jsonwebtoken": "^5.7.0",
-    "lodash": "^4.7.0",
-    "mongoose": "4.4.10",
-    "morgan": "~1.7.0",
-    "nodemailer": "^2.3.0",
-    "pm2": "^1.0.1",
-    "redis": "^2.5.3",
-    "require-directory": "^2.1.1"
+    "bluebird": "3.4.1",
+    "body-parser": "1.15.2",
+    "cookie-parser": "1.4.3",
+    "cors": "2.7.1",
+    "debug": "2.2.0",
+    "ejs": "2.4.2",
+    "express": "4.14.0",
+    "jsonwebtoken": "7.1.6",
+    "lodash": "4.13.1",
+    "mongoose": "4.5.5",
+    "morgan": "1.7.0",
+    "nodemailer": "2.5.0",
+    "redis": "2.6.2",
+    "require-directory": "2.1.1"
   },
   "devDependencies": {
     "browser-sync": "^2.11.0",

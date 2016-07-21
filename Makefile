@@ -39,7 +39,7 @@ copy:
 		rm -rf ../$(d)/config/gulp/backendConfig.js; \
 		rm -rf ../$(d)/app/views/backendIndex.html; \
 	fi
-	rm -r ../$(d)/.idea
-	rm -r ../$(d)/.git
+	rm -rf ../$(d)/.idea
+	rm -rf ../$(d)/.git
 openshift:
 	NODE_ENV=openshift pm2 start app.js

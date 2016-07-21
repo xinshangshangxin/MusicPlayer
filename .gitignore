@@ -50,8 +50,7 @@ Temporary Items
 .idea
 
 app/public/vendor/*
-app/public/css/*
-app/public/fonts/*
+app/public/styles/*
 static
 production
 deploy

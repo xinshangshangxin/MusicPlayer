@@ -5,7 +5,7 @@ function startServer {
 }
 
 function startGulp {
-	reniceNode &
+#	reniceNode &
 	gulp dev
 }
 

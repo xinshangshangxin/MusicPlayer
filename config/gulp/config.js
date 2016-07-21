@@ -15,8 +15,7 @@ function getCommonConfig() {
     clean: {                   // 清除生成文件的路径
       src: [
         alterableSetting.basePath + '**/*',
-        'app/public/css/',
-        'app/public/fonts/',
+        'app/public/styles/',
         '!' + alterableSetting.basePath + '/.git/',
         '!' + alterableSetting.basePath + '/CNAME',
         '!' + alterableSetting.basePath + '/Makefile'
@@ -42,7 +41,7 @@ function getCommonConfig() {
         'app/public/components/**/*.less'
       ],
       opt: {},
-      dest: 'app/public/css'
+      dest: 'app/public/styles'
     },
     injectHtmlDev: {            // development环境
       src: 'index.html',
@@ -50,8 +49,8 @@ function getCommonConfig() {
         cwd: 'app/views',
         base: 'app/views'
       },
-      cssSoruce: [                    // 需要引入的css
-        'app/public/css/**/*.css'
+      cssSource: [                    // 需要引入的css
+        'app/public/styles/**/*.css'
       ],
       jsSource: [         // 需要引入的js, config.specJs会加载在其上面
         'app/public/**/*.js',
@@ -59,6 +58,7 @@ function getCommonConfig() {
         '!app/public/framework/**/*'
       ],
       libJsPrefix: 'app/public/vendor',  // libJS  依赖于 config.libJs.src; 需要加上前缀
+      libCssPrefix: 'app/public',       // libCss  依赖于 config.libCss.src; 需要加上前缀
       ignorePath: 'app/public/',       // 路径去除, 相当于 base
       dest: 'app/views'
     },
@@ -70,7 +70,7 @@ function getCommonConfig() {
       opt: {
         cwd: 'app/public/'
       },
-      dest: 'app/public/css'
+      dest: 'app/public/styles'
     },
     libJs: {              // lib js, 需要按照顺序书写
       'src': [
@@ -82,7 +82,7 @@ function getCommonConfig() {
         'angular-loading-bar/build/loading-bar.min.js',
         'angular-translate/angular-translate.min.js',
         'angular-translate-loader-static-files/angular-translate-loader-static-files.min.js',
-        'lodash/lodash.min.js'
+        'lodash/dist/lodash.min.js'
       ],
       'opt': {
         'cwd': 'app/public/vendor',
@@ -141,9 +141,9 @@ function getCommonConfig() {
         cwd: 'app/views',
         base: 'app/views'
       },
-      cssSoruce: [                    // 需要引入的cs
-        'app/public/css/bootstrap.min.css',
-        'app/public/css/**/*.css'
+      cssSource: [                    // 需要引入的cs
+        'app/public/styles/bootstrap.min.css',
+        'app/public/styles/**/*.css'
       ],
       injectSource: [
         path.join(alterableSetting.publicPath, 'css/**/*.css'),
@@ -233,11 +233,11 @@ function getCommonConfig() {
     browsersync: {
       development: {
         proxy: 'http://127.0.0.1:1337',
-        port: 8888,
-        browser: 'chrome',
+        online: true,
+        port: 9999,
         files: [
           'app/public/**/*',
-          '!app/public/css/**/*',
+          '!app/public/styles/**/*',
           'app/views/**/*'
         ]
       }
