@@ -3,7 +3,7 @@
 var path = require('path');
 var requireDirectory = require('require-directory');
 var util = require('util');
- 
+
 // set bluebird and lodash
 global.__Promise__ = global.Promise;
 global.Promise = require('bluebird');
@@ -28,12 +28,3 @@ global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
 });
 // reset env value
 global.config.env = global.config.env[env];
-
-// bootStrap Service
-if(global.config.env.bootstrap && global.config.env.bootstrap.length) {
-  var services = requireDirectory(module, path.resolve(__dirname, '../services'));
-  return Promise.each(global.config.env.bootstrap, function(name, i) {
-      console.log(name + ' start at ' + i);
-      return services[name].lift();
-    });
-}

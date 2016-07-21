@@ -1,83 +1,92 @@
 'use strict';
 
-require('./config/init.js');
+require('./config/globalInit');
 
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var express = require('express');
-var http = require('http');
-var logger = require('morgan');
-var path = require('path');
+var appStart = require('./config/bootstrap')()
+  .then(function() {
+    return new Promise(function(resolve, reject) {
+      var bodyParser = require('body-parser');
+      var cookieParser = require('cookie-parser');
+      var express = require('express');
+      var http = require('http');
+      var logger = require('morgan');
+      var path = require('path');
 
-var routes = require('./routes/routes');
+      var routes = require('./routes/routes');
 
-var app = express();
+      var app = express();
 
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
-app.engine('.html', require('ejs').__express);
+      app.set('views', path.join(__dirname, 'views'));
+      app.set('view engine', 'ejs');
+      app.engine('.html', require('ejs').__express);
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+      app.use(logger('dev'));
+      app.use(bodyParser.json());
+      app.use(bodyParser.urlencoded({
+        extended: false
+      }));
+      app.use(cookieParser());
+      app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+      app.use('/', routes);
 
-// 404
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+      // 404
+      app.use(function(req, res, next) {
+        var err = new Error('Not Found');
+        err.status = 404;
+        next(err);
+      });
 
 
-// err
-app.use(function(err, req, res) {
-  res.status(err.status || 500);
-  res.json({
-    err: err
+      // err
+      app.use(function(err, req, res) {
+        res.status(err.status || 500);
+        res.json({
+          err: err
+        });
+      });
+
+      var port = config.env.port || '1337';
+      var ip = config.env.ip || 'localhost';
+      var server = http.createServer(app);
+      server.listen(port, ip);
+      server.on('error', onError);
+      server.on('listening', onListening);
+
+      function onError(error) {
+        reject(error);
+        if(error.syscall !== 'listen') {
+          throw error;
+        }
+
+        var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+
+        // handle specific listen errors with friendly messages
+        switch(error.code) {
+          case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+          case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+          default:
+            throw error;
+        }
+      }
+
+      /**
+       * Event listener for HTTP server "listening" event.
+       */
+      function onListening() {
+        var addr = server.address();
+        var bind = typeof addr === 'string' ? 'pipe ' + addr : ('http://' + addr.address + ':' + addr.port);
+        console.log('Listening on: ' + bind);
+        resolve(app);
+      }
+    });
   });
-});
 
-var port = config.env.port || '1337';
-var ip = config.env.ip || 'localhost';
-var server = http.createServer(app);
-server.listen(port, ip);
 
-function onError(error) {
-  if(error.syscall !== 'listen') {
-    throw error;
-  }
-
-  var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
-
-  // handle specific listen errors with friendly messages
-  switch(error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ? 'pipe ' + addr : ('http://' + addr.address + ':' + addr.port);
-  console.log('Listening on: ' + bind);
-}
-
-server.on('error', onError);
-server.on('listening', onListening);
+module.exports = appStart;
