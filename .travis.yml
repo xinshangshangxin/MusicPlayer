@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "4.2.2"
+services:
+  - mongodb
+before_script:
+  - npm install -g mocha
+env:
+  - key="mykey"
