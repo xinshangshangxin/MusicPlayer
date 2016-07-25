@@ -2,14 +2,14 @@
 
 angular
   .module('musicPlayer')
-  .directive('lrc', function() {
+  .directive('lrc', function($timeout, $window) {
     return {
       restrict: 'AE',
       scope: {
         lrcStr: '=lrcStr',
         mediaElement: '=mediaElement'
       },
-      templateUrl: 'components/directives/lrc.tpl.html',
+      templateUrl: 'common/lrc/lrc.tpl.html',
       link: function(scope, element) {
         let audio = scope.mediaElement[0];
         let lrcLineEleList = [];
@@ -33,6 +33,11 @@ angular
         audio.onseeked = function() {
           initLrc(true);
         };
+
+        angular.element($window).bind('resize', function() {
+          console.log('window resize, lrc recalculate!!');
+          setTop(scope.lrcList, lrcLineEleList, prefixHeight);
+        });
 
 
         function initLrc(noScroll){
@@ -130,18 +135,24 @@ angular
           return parsedLrcList;
         }
 
-        function setTop(lrcList, lrcLineEles, prefixHeight) {
-          if(lrcLineEles.length !== lrcList.length) {
-            console.warn('歌词长度不相等, 请注意', 'lrcLineEles.length: ', lrcLineEles.length, 'lrcList.length: ', lrcList.length);
+        function setTop(lrcList, lrcLineEleList, prefixHeight) {
+          if(lrcLineEleList.length !== lrcList.length) {
+            console.warn('歌词长度不相等, 忽略设置高度', 'lrcLineEles.length: ', lrcLineEleList.length, 'lrcList.length: ', lrcList.length);
             return;
           }
 
-          var sum = 0;
-          lrcList.map(function(item, index) {
-            item.top = prefixHeight - sum;
-            sum += getEleOuterHeight(lrcLineEles[index]);
-          });
-          initLrc();
+          // $timeout 防止元素计算高度错误
+          $timeout(function(){
+            var sum = 0;
+            lrcList.map(function(item, index) {
+              item.top = prefixHeight - sum;
+              // 去除空语句
+              if(item && item.lineLrc.replace(/\s/gi, '')) {
+                sum += getEleOuterHeight(lrcLineEleList[index]);
+              }
+            });
+            initLrc();
+          }, 0);
         }
 
         function getEleOuterHeight(ele) {
@@ -149,7 +160,7 @@ angular
           let margin = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
           let padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
           let border = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
-
+          
           return ele.offsetHeight + margin - padding + border;
         }
       }

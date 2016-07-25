@@ -1,0 +1,21 @@
+#lyric {
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+
+  .lyric-wrap {
+    div {
+      padding: 5px;
+      -webkit-transition: 800ms ease-out;
+
+      p {
+        font-size: 15px;
+        &.on {
+          font-weight: bold;
+          color: blueviolet;
+          -webkit-transition: 1000ms ease-out;
+        }
+      }
+    }
+  }
+}
