@@ -9,6 +9,7 @@ angular
     'ngResource',
     'ui.router',
     'angular-loading-bar',
+    'ngAnimate',
     'pascalprecht.translate',
     'common'
   ])

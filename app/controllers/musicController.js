@@ -50,41 +50,77 @@ var ctrl = {
         return false;
       })
       .catch(()=> {
-        return false;
+        return fs.removeAsync(downloadPath)
+          .then(function() {
+            return false;
+          })
+          .catch((e) => {
+            console.log(e);
+            return false;
+          });
       })
       .then((data)=> {
         if(data) {
           return null;
         }
-
-        return musicService.parse(id, type)
-          .then(function(obj){
+        console.log('cachePath: ', cachePath);
+        return fs
+          .removeAsync(cachePath)
+          .reflect()
+          .then(function() {
+            return musicService.parse(id, type);
+          })
+          .then(function(obj) {
             url = obj.url || url;
             console.log(`边下边播: ${cachePath}`);
-            var writeStream = fs.createWriteStream(cachePath);
-
-            writeStream.on('finish', ()=> {
-              fs.moveAsync(cachePath, downloadPath)
-                .then(()=> {
-                  console.log(`下载完成: ${downloadPath}`);
-                });
-            });
+            var writeStream = null;
 
             request(url)
+              .on('error', function(err) {
+                console.log(`request url: ${url} error: ${err}`);
+              })
               .on('response', (response) => {
+                console.log('content-length: ', response.headers['content-length']);
+                if(response.statusCode >= 300) {
+                  return res.writeHead(400, response.headers);
+                }
+                // 设置缓存文件
+                if(writeStream) {
+                  return;
+                }
+                writeStream = fs.createWriteStream(cachePath);
+                // 缓存文件重命名成正常文件
+                writeStream.on('finish', ()=> {
+                  fs.moveAsync(cachePath, downloadPath)
+                    .then(()=> {
+                      console.log(`下载完成: ${downloadPath}`);
+                    })
+                    .catch(function(e) {
+                      console.warn('rename file error: ', e);
+                    });
+                });
+
+                // 设置头
                 res.writeHead(200, response.headers);
               })
               .pipe(through2(function(chunk, enc, callback) {
+                //边下边播
                 writeStream.write(chunk, () => {
                   this.push(chunk);
                   callback();
                 });
               }))
               .on('end', ()=> {
-                writeStream.end();
+                // 结束文件写入
+                if(writeStream) {
+                  writeStream.end();
+                }
               })
               .pipe(res);
           });
+      })
+      .catch((e) => {
+        return res.wrapError(e);
       });
   }
 };

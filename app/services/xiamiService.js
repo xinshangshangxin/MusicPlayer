@@ -54,7 +54,6 @@ var svc = {
         return parseString(body, {explicitArray: false});
       })
       .then(function(obj) {
-        console.log('obj: ', JSON.stringify(obj, null, 2));
         var result = {
           type: svc.typeCode,
           id: _.get(obj, 'playlist.trackList.track.songId'),
@@ -111,9 +110,3 @@ var svc = {
 
 
 module.exports = svc;
-
-// svc.parse('http://www.xiami.com/song/1773110382')
-//   .then(function(data){
-//     console.log(data);
-//   });
-// svc.search('田馥甄');

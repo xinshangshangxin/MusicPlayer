@@ -47,7 +47,7 @@ var svc = {
     }
 
     if(typeCode === svc.typeCodes.qq) {
-      return {};
+      return Promise.resolve({});
     }
 
     if(typeCode === svc.typeCodes.netease) {

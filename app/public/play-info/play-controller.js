@@ -2,14 +2,9 @@
 
 angular
   .module('musicPlayer')
-  .controller('playController', function($scope, $state, playListService) {
+  .controller('playController', function($scope, $state) {
     $scope.key = '';
     $scope.keyChange = keyChange;
-    $scope.deleteSong = deleteSong;
-    
-    function deleteSong(song) {
-      playListService.deleteSongFromFavor(song);
-    }
 
     function keyChange(e) {
       if(!e || e.keyCode !== 13) {
