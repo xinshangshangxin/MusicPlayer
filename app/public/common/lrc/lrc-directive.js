@@ -29,6 +29,7 @@ angular
         scope.$watch('lrcStr', function(newValue) {
           console.log('lrcStr change: ', scope.lrcStr && scope.lrcStr.length);
           scope.lrcList = parseLrc(newValue);
+          initLrc();
           // setTop(scope.lrcList, prefixHeight);
         });
 
@@ -134,7 +135,7 @@ angular
           return parsedLrcList;
         }
 
-        function setTop(lrcList, prefixHeight, lrcLineEleList) {
+        function setTop(lrcList, prefixHeight, lrcLineEleList, nu) {
           // $timeout 防止元素计算高度错误
           $timeout(function() {
 
@@ -142,12 +143,19 @@ angular
             if(lrcLineEleList.length !== lrcList.length) {
               console.warn('歌词长度不相等, 忽略设置高度', 'lrcLineEleList.length: ', lrcLineEleList.length, 'lrcList.length: ', lrcList.length);
 
-              if(lrcLineEleList.length !== 0 && lrcList.length !== 0) {
+              nu = nu || 0;
 
+              // 因为存在动画效果, 导致获取的元素不相等, 重试2次
+              if(lrcLineEleList.length !== 0 && lrcList.length !== 0 && nu < 3) {
+                console.log('set lrc top try again nu: ', nu);
+                $timeout(function(){
+                  setTop(lrcList, prefixHeight, null, nu + 1);
+                }, 1000);
               }
 
               return;
             }
+
             var sum = 0;
             lrcList.map(function(item, index) {
               item.top = prefixHeight - sum;
