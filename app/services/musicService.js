@@ -59,6 +59,9 @@ var svc = {
   },
   getNeteaseLrc: function(id) {
     return neteaseService.getLrc(id);
+  },
+  getQQMusicLrc: function(id) {
+    return QQService.getLrc(id);
   }
 };
 

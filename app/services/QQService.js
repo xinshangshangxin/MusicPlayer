@@ -4,6 +4,8 @@ const request = Promise.promisify(require('request'), {
   multiArgs: true
 });
 
+const utilitiesService = require('./utilitiesService');
+
 var svc = {
   typeCode: 1,
   search: function(key) {
@@ -80,6 +82,34 @@ var svc = {
     return request(url).spread(function(res, data) {
       return data.match(/"key":\s*"(\w+)"}/)[1];
     });
+  },
+  getLrc: (id) => {
+    let url = 'http://i.y.qq.com/lyric/fcgi-bin/fcg_query_lyric.fcg?pcachetime=' + new Date().getTime() + '&songmid=' + id + '&g_tk=938407465&loginUin=0&hostUin=0&format=jsonp&inCharset=utf-8&outCharset=utf-8&notice=0&platform=yqq&jsonpCallback=MusicJsonCallback_lrc&needNewCode=0';
+
+    return request(
+      {
+        url: url,
+        headers: {
+          host: 'i.y.qq.com',
+          referer: 'http://y.qq.com/'
+        }
+      })
+      .spread(function(response, data) {
+        return data.replace('MusicJsonCallback_lrc(', '').replace(/\)\s*$/, '');
+      })
+      .then(function(data) {
+        let str;
+        try {
+          str = JSON.parse(data).lyric;
+        }
+        catch(e) {
+          console.log(e);
+        }
+        return str;
+      })
+      .then(function(data) {
+        return utilitiesService.changeEncoding(new Buffer(data, 'base64'));
+      });
   }
 };
 

@@ -18,6 +18,7 @@
     "ejs": "2.4.2",
     "express": "4.14.0",
     "fs-extra": "0.30.0",
+    "iconv-lite": "0.4.13",
     "jsonwebtoken": "7.1.6",
     "lodash": "4.13.1",
     "mediaserver": "0.1.0",

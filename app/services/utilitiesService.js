@@ -1,6 +1,7 @@
 'use strict';
 
 var exec = require('child_process').exec;
+var iconv = require('iconv-lite');
 var spawn = require('child_process').spawn;
 
 var svc = {
@@ -64,7 +65,14 @@ var svc = {
       reject: reject,
       promise: promise
     };
-  }
+  },
+  changeEncoding: function(data, encoding, noCheck) {
+    var val = iconv.decode(data, encoding || 'utf8');
+    if(!noCheck && encoding !== 'gbk' && val.indexOf('�') !== -1) {
+      val = iconv.decode(data, 'gbk');
+    }
+    return val;
+  },
 };
 
 module.exports = svc;

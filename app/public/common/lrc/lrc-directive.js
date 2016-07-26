@@ -12,7 +12,6 @@ angular
       templateUrl: 'common/lrc/lrc.tpl.html',
       link: function(scope, element) {
         let audio = scope.mediaElement[0];
-        let lrcLineEleList = [];
         let prefixHeight = 100;
 
         scope.lrcIndex = 0;

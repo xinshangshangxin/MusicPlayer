@@ -29,6 +29,18 @@ var ctrl = {
           res.wrapError(e);
         });
     }
+    else if(type === utilitiesService.typeCodes.qq) {
+      return musicService
+        .getQQMusicLrc(id)
+        .then(function(data) {
+          return res.json({
+            data: data
+          });
+        })
+        .catch((e) => {
+          res.wrapError(e);
+        });
+    }
 
     if(req.method === 'GET') {
       request({
