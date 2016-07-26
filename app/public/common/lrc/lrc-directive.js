@@ -20,10 +20,16 @@ angular
           'margin-top': prefixHeight + 'px'
         };
         scope.load = lrcLoad;
+
+        angular.element($window).bind('resize', function() {
+          console.log('window resize, lrc recalculate!!');
+          setTop(scope.lrcList, prefixHeight);
+        });
+
         scope.$watch('lrcStr', function(newValue) {
           console.log('lrcStr change: ', scope.lrcStr && scope.lrcStr.length);
           scope.lrcList = parseLrc(newValue);
-          setTop(scope.lrcList, lrcLineEleList, prefixHeight);
+          // setTop(scope.lrcList, prefixHeight);
         });
 
         audio.ontimeupdate = function() {
@@ -34,13 +40,7 @@ angular
           initLrc(true);
         };
 
-        angular.element($window).bind('resize', function() {
-          console.log('window resize, lrc recalculate!!');
-          setTop(scope.lrcList, lrcLineEleList, prefixHeight);
-        });
-
-
-        function initLrc(noScroll){
+        function initLrc(noScroll) {
           scope.lrcIndex = 0;
 
           if(noScroll) {
@@ -71,11 +71,10 @@ angular
           }
         }
 
-        function lrcLoad(index) {
-          console.log('load: ~~~');
-          if(scope.lrcList.length - 1 === index) {
-            lrcLineEleList = element[0].querySelectorAll('p');
-            setTop(scope.lrcList, lrcLineEleList, prefixHeight);
+        function lrcLoad(last) {
+          console.log('last: ~~~' + last);
+          if(last) {
+            setTop(scope.lrcList, prefixHeight);
           }
         }
 
@@ -135,14 +134,20 @@ angular
           return parsedLrcList;
         }
 
-        function setTop(lrcList, lrcLineEleList, prefixHeight) {
-          if(lrcLineEleList.length !== lrcList.length) {
-            console.warn('歌词长度不相等, 忽略设置高度', 'lrcLineEles.length: ', lrcLineEleList.length, 'lrcList.length: ', lrcList.length);
-            return;
-          }
-
+        function setTop(lrcList, prefixHeight, lrcLineEleList) {
           // $timeout 防止元素计算高度错误
-          $timeout(function(){
+          $timeout(function() {
+
+            var lrcLineEleList = lrcLineEleList || element[0].querySelectorAll('p');
+            if(lrcLineEleList.length !== lrcList.length) {
+              console.warn('歌词长度不相等, 忽略设置高度', 'lrcLineEleList.length: ', lrcLineEleList.length, 'lrcList.length: ', lrcList.length);
+
+              if(lrcLineEleList.length !== 0 && lrcList.length !== 0) {
+
+              }
+
+              return;
+            }
             var sum = 0;
             lrcList.map(function(item, index) {
               item.top = prefixHeight - sum;
@@ -160,7 +165,7 @@ angular
           let margin = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
           let padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
           let border = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
-          
+
           return ele.offsetHeight + margin - padding + border;
         }
       }
