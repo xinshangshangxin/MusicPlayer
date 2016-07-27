@@ -13,6 +13,9 @@ angular
       link: function(scope, element) {
         let audio = scope.mediaElement[0];
         let prefixHeight = 100;
+        let generateLrcUniqueClass = lrcUniqueClass();
+        // 因为lrc上有动画, 直接通过元素P 会获取上一次歌词的残留,故对每个歌词使用独立的class
+        scope.lrcUniqueClass  = generateLrcUniqueClass();
 
         scope.lrcIndex = 0;
         scope.marginTop = {
@@ -27,9 +30,9 @@ angular
 
         scope.$watch('lrcStr', function(newValue) {
           console.log('lrcStr change: ', scope.lrcStr && scope.lrcStr.length);
+          scope.lrcUniqueClass = generateLrcUniqueClass();
           scope.lrcList = parseLrc(newValue);
-          initLrc();
-          // setTop(scope.lrcList, prefixHeight);
+          initLrc(true);
         });
 
         audio.ontimeupdate = function() {
@@ -38,10 +41,11 @@ angular
 
         audio.onseeked = function() {
           initLrc(true);
+          checkUpdate(audio.currentTime);
         };
 
         function initLrc(noScroll) {
-          scope.lrcIndex = 0;
+          scope.lrcIndex = -1;
 
           if(noScroll) {
             return;
@@ -62,8 +66,9 @@ angular
           var curLrc = scope.lrcList[scope.lrcIndex + 1];
           // console.log('time: ', time, curLrc);
 
-          if(curLrc && time >= curLrc.time) {
+          if(time >= curLrc.time) {
             scope.lrcIndex++;
+
             scope.marginTop = {
               'margin-top': curLrc.top + 'px'
             };
@@ -134,24 +139,12 @@ angular
           return parsedLrcList;
         }
 
-        function setTop(lrcList, prefixHeight, lrcLineEleList, nu) {
+        function setTop(lrcList, prefixHeight, lrcLineEleList) {
           // $timeout 防止元素计算高度错误
           $timeout(function() {
-
-            var lrcLineEleList = lrcLineEleList || element[0].querySelectorAll('p');
+            lrcLineEleList = lrcLineEleList || element[0].querySelectorAll('.' + scope.lrcUniqueClass);
             if(lrcLineEleList.length !== lrcList.length) {
               console.warn('歌词长度不相等, 忽略设置高度', 'lrcLineEleList.length: ', lrcLineEleList.length, 'lrcList.length: ', lrcList.length);
-
-              nu = nu || 0;
-
-              // 因为存在动画效果, 导致获取的元素不相等, 重试2次
-              if(lrcLineEleList.length !== 0 && lrcList.length !== 0 && nu < 3) {
-                console.log('set lrc top try again nu: ', nu);
-                $timeout(function(){
-                  setTop(lrcList, prefixHeight, null, nu + 1);
-                }, 1000);
-              }
-
               return;
             }
 
@@ -174,6 +167,14 @@ angular
           let border = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
 
           return ele.offsetHeight + margin - padding + border;
+        }
+
+        function lrcUniqueClass(){
+          let nu = 0;
+          return function(){
+            nu++;
+            return 'lrcUniqueClass' + nu;
+          };
         }
       }
     };
