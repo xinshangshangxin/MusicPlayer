@@ -5,8 +5,9 @@ angular
   .module('musicPlayer')
   .constant('SERVER_URL', '')
   .constant('MUSIC_TYPES', {
-    0: 'xiami',
-    1: 'qq',
-    2: '163'
+    1: 'local',
+    2: 'xiami',
+    3: 'qq',
+    4: '163'
   })
 ;

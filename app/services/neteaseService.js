@@ -4,8 +4,10 @@ const request = Promise.promisify(require('request'), {
   multiArgs: true
 });
 
+const utilitiesService = require('./utilitiesService');
+
 var svc = {
-  typeCode: 2,
+  typeCode: utilitiesService.typeCodes.netease,
   search: function(key) {
     let pageNu = 1;
     let perPage = 10;

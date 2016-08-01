@@ -40,6 +40,7 @@ router
   .get('/api/v1/music/search/:key', musicController.search)
   .get('/api/v1/music/detail/:id', musicController.detail)
   .get('/api/v1/music/play', musicController.play)
+  .get('/api/v1/music/lyric', musicController.lyric)
   .get('/api/v1/request/forward', requestForwardController.forward)
 ;
 

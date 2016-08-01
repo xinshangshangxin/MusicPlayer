@@ -6,9 +6,10 @@ var spawn = require('child_process').spawn;
 
 var svc = {
   typeCodes: {
-    xiami: 0,
-    qq: 1,
-    netease: 2,
+    local: 1,
+    xiami: 2,
+    qq: 3,
+    netease: 4,
   },
   isMongoError: function(err) {
     return err.name === 'MongoError';

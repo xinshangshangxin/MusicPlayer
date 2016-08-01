@@ -31,16 +31,15 @@ var svc = {
         return Promise.all([
           fs.ensureDirAsync(path.resolve(svc.userDataPath, 'temp/')),
           fs.ensureDirAsync(path.resolve(svc.userDataPath, 'download/')),
+          fs.ensureDirAsync(path.resolve(svc.userDataPath, 'download/lyric')),
         ]);
       });
   },
-  getSongCachePath: function(id, type, suffix) {
-    suffix = suffix || '.tmp';
-    return path.resolve(svc.userDataPath, 'temp/', `${id}_${type}${suffix}`);
+  getSongCachePath: function(name, id, type, preDir = './', suffix = '.tmp') {
+    return path.resolve(svc.userDataPath, 'temp/', preDir, `${name}_${id}_${type}${suffix}`);
   },
-  getSongDownloadPath: function(id, type, suffix) {
-    suffix = suffix || '.mp3';
-    return path.resolve(svc.userDataPath, 'download/', `${id}_${type}${suffix}`);
+  getSongDownloadPath: function(name, id, type, preDir = './', suffix = '.mp3') {
+    return path.resolve(svc.userDataPath, 'download/', preDir, `${name}_${id}_${type}${suffix}`);
   }
 
 };

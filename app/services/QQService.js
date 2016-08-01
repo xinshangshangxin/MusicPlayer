@@ -7,7 +7,7 @@ const request = Promise.promisify(require('request'), {
 const utilitiesService = require('./utilitiesService');
 
 var svc = {
-  typeCode: 1,
+  typeCode: utilitiesService.typeCodes.qq,
   search: function(key) {
     key = encodeURI(key);
 

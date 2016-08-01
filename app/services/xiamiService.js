@@ -5,9 +5,10 @@ const request = Promise.promisify(require('request'), {
   multiArgs: true
 });
 
+const utilitiesService = require('./utilitiesService');
 
 var svc = {
-  typeCode: 0,
+  typeCode: utilitiesService.typeCodes.xiami,
   search: function(key) {
     return request(
       {

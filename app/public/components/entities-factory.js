@@ -20,6 +20,15 @@ angular
       }
     );
   })
+  .factory('lyricEntity', function($resource) {
+    return $resource(
+      '/api/v1/music/lyric',
+      {},
+      {
+        update: {method: 'PUT'}
+      }
+    );
+  })
   .factory('forwardEntity', function($resource) {
     return $resource(
       '/api/v1/request/forward',

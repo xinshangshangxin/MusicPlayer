@@ -2,10 +2,10 @@
 
 angular
   .module('musicPlayer')
-  .controller('homeController', function($scope, $sce, $q, $timeout, playListService, notificationService, musicInfoEntity, forwardEntity, MUSIC_TYPES) {
-    let favorName = 'temp';
-    let errorIndex = -1;
-    let errorTimer = null;
+  .controller('homeController', function($scope, $sce, $q, $timeout, playListService, notificationService, musicInfoEntity, lyricEntity, MUSIC_TYPES) {
+    var favorName = 'temp';
+    var errorIndex = -1;
+    var errorTimer = null;
 
     $scope.currentIndex = -1;
     $scope.currentSong = null;
@@ -50,18 +50,15 @@ angular
       }
 
       $q.resolve()
-        .then(() => {
+        .then(function() {
           console.log('song: ', song);
-          if(song.url && song.lrc) {
+          if(song.url) {
             return song;
           }
 
           // 没有链接/lrc 从后台重新获取
           return musicInfoEntity
-            .get({
-              id: song.id,
-              type: song.type
-            })
+            .get(getBaseSongInfo(song))
             .$promise
             .then(function(_song) {
               _.assign(song, _song);
@@ -70,12 +67,10 @@ angular
                 return $q.reject('这首歌无法播放!!');
               }
 
-              playListService.saveSong($scope.songList, favorName);
-
               if(!song.lrc) {
-                _song.lrc = 'NONE';
-                return $q.reject(new Error('没有找到歌词链接'));
+                song.lrc = 'NONE';
               }
+              playListService.saveSong($scope.songList, favorName);
               return song;
             });
         })
@@ -92,8 +87,8 @@ angular
     }
 
     function getPlayUrl(song) {
-      let playUrlPrefix = '/api/v1/music/play';
-      return playUrlPrefix + '?id=' + song.id + '&type=' + song.type + '&url=' + encodeURIComponent(song.url);
+      var playUrlPrefix = '/api/v1/music/play';
+      return playUrlPrefix + '?name=' + getSongInfoStr(song) + '&id=' + song.id + '&type=' + song.type + '&url=' + encodeURIComponent(song.url);
     }
 
     function playNext() {
@@ -107,7 +102,7 @@ angular
     }
 
     function setCurrentSong(song) {
-      let index = getSongIndex(song);
+      var index = getSongIndex(song);
       if(index >= 0) {
         $scope.currentIndex = index;
       }
@@ -129,7 +124,9 @@ angular
         errorIndex = -1;
       }, 5000);
 
-      notificationService.warn(getSongInfoStr($scope.currentSong) + '  播放失败');
+      if($scope.currentSong) {
+        notificationService.warn(getSongInfoStr($scope.currentSong, true) + '  播放失败');
+      }
 
       if(errorIndex !== $scope.currentIndex) {
         if(errorIndex === -1) {
@@ -139,25 +136,25 @@ angular
       }
     }
 
-    function getSongInfoStr(song) {
+    function getSongInfoStr(song, isNeedType) {
       if(!song) {
-        return '没有歌曲!!';
+        return 'NONE!';
       }
 
-      return song.song + '-' + song.singer + '-' + MUSIC_TYPES[song.type];
+      var str = song.name || (song.song + '-' + song.singer);
+      if(isNeedType) {
+        str += '-' + MUSIC_TYPES[song.type];
+      }
+      return str;
     }
 
     function setLrc(song) {
       $scope.lrcStr = '';
 
-      return forwardEntity
-        .get({
-          url: song.lrc,
-          type: song.type,
-          id: song.id
-        })
+      return lyricEntity
+        .get(getBaseSongInfo(song))
         .$promise
-        .then((data) => {
+        .then(function(data) {
           if($scope.currentIndex === getSongIndex(song)) {
             $scope.lrcStr = data.data;
           }
@@ -172,7 +169,7 @@ angular
     }
 
     function deleteSong(song) {
-      let index = getSongIndex(song);
+      var index = getSongIndex(song);
       if(index === -1) {
         return;
       }
@@ -189,6 +186,19 @@ angular
 
       }
 
+    }
+
+    function getBaseSongInfo(song){
+      return {
+        id: song.id,
+        song: song.song,
+        singer: song.singer,
+        name: song.name || (song.song + '-' + song.singer),
+        type: parseInt(song.type),
+        url: song.url,
+        lrc: song.lrc,
+        updatedAt: song.updatedAt,
+      };
     }
   });
 
