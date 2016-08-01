@@ -11,9 +11,9 @@ angular
       },
       templateUrl: 'common/lrc/lrc.tpl.html',
       link: function(scope, element) {
-        let audio = scope.mediaElement[0];
-        let prefixHeight = 100;
-        let generateLrcUniqueClass = lrcUniqueClass();
+        var audio = scope.mediaElement[0];
+        var prefixHeight = 100;
+        var generateLrcUniqueClass = lrcUniqueClass();
         // 因为lrc上有动画, 直接通过元素P 会获取上一次歌词的残留,故对每个歌词使用独立的class
         scope.lrcUniqueClass  = generateLrcUniqueClass();
 
@@ -89,24 +89,24 @@ angular
             return [];
           }
 
-          let lrcLines = lrcStr.split('\n');
-          let parsedLrcList = [];
+          var lrcLines = lrcStr.split('\n');
+          var parsedLrcList = [];
           lrcLines.forEach(function(line) {
-            let arr = line.split(']');
+            var arr = line.split(']');
             if(!arr || !arr.length) {
               return;
             }
-            let lineLrc = arr.splice(arr.length - 1)[0];
+            var lineLrc = arr.splice(arr.length - 1)[0];
             if(!lineLrc) {
               return;
             }
 
             arr.forEach(function(timeStr) {
-              let timeTemp = timeStr.match(/(\d+)\:(\d+)((\.|\:)(\d+))?/);
+              var timeTemp = timeStr.match(/(\d+)\:(\d+)((\.|\:)(\d+))?/);
               if(!timeTemp) {
                 return;
               }
-              let time = (parseInt(timeTemp[1]) || 0) * 60 +
+              var time = (parseInt(timeTemp[1]) || 0) * 60 +
                 (parseInt(timeTemp[2]) || 0) +
                 (parseInt(timeTemp[4]) || 0) / 100;
 
@@ -161,16 +161,16 @@ angular
         }
 
         function getEleOuterHeight(ele) {
-          let style = ele.currentStyle || window.getComputedStyle(ele);
-          let margin = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
-          let padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-          let border = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
+          var style = ele.currentStyle || window.getComputedStyle(ele);
+          var margin = parseFloat(style.marginTop) + parseFloat(style.marginBottom);
+          var padding = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+          var border = parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth);
 
           return ele.offsetHeight + margin - padding + border;
         }
 
         function lrcUniqueClass(){
-          let nu = 0;
+          var nu = 0;
           return function(){
             nu++;
             return 'lrcUniqueClass' + nu;

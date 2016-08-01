@@ -15,7 +15,8 @@ angular
         $scope.resizeWithOffset = function(nu) {
           $scope.offsetH = nu || $scope.offsetH || 0;
           return {
-            'maxHeight': (newValue.h - $scope.offsetH) + 'px'
+            'maxHeight': (newValue.h - $scope.offsetH) + 'px',
+            'minHeight': (newValue.h - $scope.offsetH) + 'px'
           };
         };
       }, true);
