@@ -120,7 +120,7 @@ function getCommonConfig() {
         newStr: '.constant(\'SERVER_URL\', \'' + (alterableSetting.noServer ? '' : '') + '\')'
       }, {
         src: ['this_is_a_template.js'],
-        subStr: /shangAngularTemplate/,
+        subStr: /musicPlayer/,
         newStr: function($) {
           var filepath = $.storeFileName.get($.specConfig.theme.storeFileNameSpaceName, 'relative') || [];
           return filepath[0];
@@ -129,16 +129,20 @@ function getCommonConfig() {
       dest: path.join(alterableSetting.publicPath, 'js')        // userJs在prod环境下才需要 输出, 故dest为 prod环境的dest
     },
     images: {
-      src: [],
+      src: ['**/*'],
       opt: {
-        cwd: 'app/public/imgs',
+        cwd: 'app/public/images',
         base: 'app/public'
       },
       dest: alterableSetting.publicPath
     },
     fonts: {
-      src: ['app/public/vendor/font-awesome/fonts/**/*'],
-      dest: path.join(alterableSetting.publicPath, 'fonts')
+      src: [
+        'app/public/vendor/bootstrap/fonts/**/*',
+        'app/public/vendor/font-awesome/fonts/**/*',
+        'app/public/vendor/videogular-themes-default/fonts/**/*',
+      ],
+      dest: path.join(alterableSetting.publicPath, 'styles/fonts')
     },
     injectHtmlProd: {
       src: 'index.html',
@@ -151,11 +155,16 @@ function getCommonConfig() {
         'app/public/styles/**/*.css'
       ],
       injectSource: [
-        path.join(alterableSetting.publicPath, 'css/**/*.css'),
+        path.join(alterableSetting.publicPath, 'styles/**/*.css'),
         path.join(alterableSetting.publicPath, 'js/lib*.min*.js'),
         path.join(alterableSetting.publicPath, 'js/user*.min*.js')
       ],
-      cssDest: path.join(alterableSetting.publicPath, 'css'),
+      cssDest: path.join(alterableSetting.publicPath, 'styles'),
+      cssFilters: [{
+        src: ['bootstrap.min.css', 'font-awesome.min.css'],
+        subStr: '../fonts/',
+        newStr: 'fonts/'
+      }],
       dest: alterableSetting.viewPath,
       injectIgnorePath: alterableSetting.publicPath,
       isHtmlmin: true,
@@ -175,7 +184,7 @@ function getCommonConfig() {
         'base': 'app/'
       },
       config: {
-        module: 'shangAngularTemplate',
+        module: 'musicPlayer',
         transformUrl: function(url) {
           return url.replace(/.*[\/\\]public[\/\\]/, '');
         }
@@ -237,7 +246,7 @@ function getCommonConfig() {
     }],
     browsersync: {
       development: {
-        proxy: 'http://127.0.0.1:1337',
+        proxy: 'http://127.0.0.1:12345',
         online: true,
         port: 9999,
         files: [

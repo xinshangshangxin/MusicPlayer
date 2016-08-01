@@ -54,3 +54,4 @@ app/public/styles/*
 static
 production
 deploy
+dist

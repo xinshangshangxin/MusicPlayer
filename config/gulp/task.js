@@ -229,11 +229,32 @@ gulp.task('fonts', function(done) {
 
 gulp.task('css', function(done) {
 
-  if(!config.injectHtmlProd.cssSource || !config.injectHtmlProd.cssSource.length || !config.injectHtmlProd.prodCssName) {
+  if(!validConfig(config.injectHtmlProd, 'cssSource') || !config.injectHtmlProd.prodCssName) {
     return done();
   }
 
-  return gulp.src(config.injectHtmlProd.cssSource)
+
+  var stream = gulp.src(config.injectHtmlProd.cssSource);
+
+  var filters = config.injectHtmlProd.cssFilters;
+  var f;
+  for(var i = 0, l = filters.length; i < l; i++) {
+    if(!filters[i].src || !filters[i].src.length) {
+      continue;
+    }
+    f = $.filter(changeSrc(filters[i].src), {restore: true});
+
+    if(typeof filters[i].newStr === 'function') {
+      filters[i].newStr = filters[i].newStr($);
+    }
+
+    stream = stream
+      .pipe(f)
+      .pipe($.replace(filters[i].subStr, filters[i].newStr))
+      .pipe(f.restore);
+  }
+
+  return stream
     .pipe($.concat(config.injectHtmlProd.prodCssName))
     .pipe($.cssnano())
     .pipe($.rev())

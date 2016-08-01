@@ -26,6 +26,12 @@ prod:
 static:
 	gulp static
 	cd static && hs
+build:
+	gulp prod
+	cp package.json production/
+	mv node_modules/ production/node_modules/
+	sh config/build.sh darwin x64
+	mv production/node_modules/ node_modules/
 copy:
 	cp -r ./ ../$(d)
 	if [ -n "$(b)" ]; \
