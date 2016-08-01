@@ -12,6 +12,8 @@ global._ = require('lodash');
 // set global ApplicationError
 global.ApplicationError = function(code, message, data, constr) {
   Promise.OperationalError.call(constr || this, message || 'no ApplicationError message ');
+  this.errCode = code;
+  this.message = message;
   this.code = code;
   this.data = data;
 };
@@ -23,7 +25,7 @@ var env = (process.env.NODE_ENV || 'development').trim();
 global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
   exclude: function(path) {
     var reg = new RegExp('[\\/\\\\]env[\\/\\\\](?!' + env + ')');
-    return reg.test(path) || /init\.js/.test(path);
+    return reg.test(path) || /(bootstrap|globalInit)\.js/.test(path);
   }
 });
 // reset env value

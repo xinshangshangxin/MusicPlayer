@@ -22,9 +22,9 @@ module.exports = {
   update: {
     ref: 'master'
   },
-  port: process.env.PORT,
+  port: process.env.PORT || 12345,
   bootstrap: [
-    'mongodbBackupService',
+    // 'mongodbBackupService',
     'songSaveService'
   ]
 };

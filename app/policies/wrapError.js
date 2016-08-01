@@ -1,7 +1,7 @@
 'use strict';
 
 function isUserDefineError(e) {
-  return e instanceof ApplicationError || !(e instanceof Error);
+  return e instanceof ApplicationError;
 }
 
 function wrapError(e, otherError, errStatus) {
@@ -9,7 +9,7 @@ function wrapError(e, otherError, errStatus) {
   if(isUserDefineError(e)) {
     return this.status(errStatus || 400).json(e);
   }
-  console.log(e && e.stack || e);
+  console.error(e && e.stack || e);
   if(otherError) {
     return this.status(otherError.status || 400).json(otherError);
   }
