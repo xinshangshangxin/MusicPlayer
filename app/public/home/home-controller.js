@@ -3,21 +3,21 @@
 angular
   .module('musicPlayer')
   .controller('homeController', function($scope, $sce, $q, $timeout, playListService, notificationService, musicInfoEntity, lyricEntity, MUSIC_TYPES) {
-    var favorName = 'temp';
     var errorIndex = -1;
     var errorTimer = null;
 
     $scope.currentIndex = -1;
     $scope.currentSong = null;
     $scope.currentTime = -1;
+    $scope.favorName = 'temp';
     $scope.lrcStr = '';
+    $scope.timeFix = 100;
     $scope.config = {
       type: 'audio',
       loop: false,
       autoPlay: true,
       preload: 'auto',
       sources: [],
-      // theme: 'vendor/videogular-themes-default/videogular.min.css'
     };
     $scope.musicTypes = MUSIC_TYPES;
     $scope.songList = [];
@@ -28,6 +28,7 @@ angular
     $scope.onUpdateTime = onUpdateTime;
     $scope.onError = onError;
     $scope.onPlayerReady = onPlayerReady;
+    $scope.setCurrentSongIndex = setCurrentSongIndex;
 
     init();
 
@@ -36,7 +37,7 @@ angular
     }
 
     function init() {
-      return playListService.getFavor(favorName)
+      return playListService.getFavor($scope.favorName)
         .then(function(data) {
           $scope.songList = data;
           playNext();
@@ -70,7 +71,7 @@ angular
               if(!song.lrc) {
                 song.lrc = 'NONE';
               }
-              playListService.saveSong($scope.songList, favorName);
+              playListService.saveSong($scope.songList, $scope.favorName);
               return song;
             });
         })
@@ -111,6 +112,10 @@ angular
 
     function getSongIndex(song) {
       return _.findIndex($scope.songList, {id: song.id, type: song.type});
+    }
+
+    function setCurrentSongIndex(){
+      setCurrentSong($scope.currentSong);
     }
 
     function onUpdateTime(currentTime) {

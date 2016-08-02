@@ -15,6 +15,13 @@ body {
   color: #fff;
 }
 
+vg-play-pause-button, vg-mute-button {
+  button:focus {
+    outline: none;
+    border: none;
+  }
+}
+
 a {
   outline: none;
   text-decoration: none;
@@ -82,56 +89,56 @@ a {
   display: none;
 }
 
-#songList ul {
-  list-style: none;
-  padding: 0 0 0 15px;
+#songList {
+
+  .dndDragging {
+    opacity: 0.7;
+  }
+  .dndDraggingSource {
+    display: none;
+  }
+  .dndPlaceholder {
+    min-height: 2.625rem;
+    display: block;
+    position: relative;
+  }
+
+  .odd {
+    background-color: #2d2d2d;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0 0 0 15px;
+
+    li {
+      color: #aaa;
+      font-size: 14px;
+      line-height: 2;
+      cursor: pointer;
+      text-overflow: ellipsis;
+
+      &:hover {
+        color: #fff;
+        font-weight: bold;
+      }
+
+      &.playing {
+        color: #fff;
+        font-weight: bolder;
+      }
+
+      div {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+  }
 }
-
-#songList ul li {
-  color: #aaa;
-  font-size: 14px;
-  line-height: 2;
-  cursor: pointer;
-  text-overflow: ellipsis;
-}
-
-#songList ul li:hover {
-  color: #fff;
-  font-weight: bold;
-}
-
-#songList ul li.playing {
-  color: #fff;
-  font-weight: bolder;
-}
-
-#songList li div {
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-
-#songList .odd {
-  background-color: #2d2d2d;
-}
-
-#songList .odd div {
-  background-color: #2d2d2d;
-}
-
-#songList .playing {
-  color: white;
-}
-
-#songList .playing div {
-  color: white;
-}
-
 
 hr {
   border: none;
 }
-
 
 span.badge {
   background-color: #777;

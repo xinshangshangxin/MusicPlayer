@@ -16,6 +16,7 @@
     "lodash": "4.13.1",
     "videogular": "1.4.4",
     "videogular-themes-default": "1.4.4",
-    "videogular-controls": "~1.4.4"
+    "videogular-controls": "~1.4.4",
+    "angular-drag-and-drop-lists": "1.4.0"
   }
 }

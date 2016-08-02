@@ -7,7 +7,8 @@ angular
       restrict: 'AE',
       scope: {
         lrcStr: '=lrcStr',
-        mediaElement: '=mediaElement'
+        mediaElement: '=mediaElement',
+        timeFix: '=timeFix',
       },
       templateUrl: 'common/lrc/lrc.tpl.html',
       link: function(scope, element) {
@@ -15,9 +16,10 @@ angular
         var prefixHeight = 100;
         var generateLrcUniqueClass = lrcUniqueClass();
         // 因为lrc上有动画, 直接通过元素P 会获取上一次歌词的残留,故对每个歌词使用独立的class
-        scope.lrcUniqueClass  = generateLrcUniqueClass();
+        scope.lrcUniqueClass = generateLrcUniqueClass();
 
         scope.lrcIndex = 0;
+        scope.timeFix = scope.timeFix || 0;
         scope.marginTop = {
           'margin-top': prefixHeight + 'px'
         };
@@ -66,7 +68,7 @@ angular
           var curLrc = scope.lrcList[scope.lrcIndex + 1];
           // console.log('time: ', time, curLrc);
 
-          if(time >= curLrc.time) {
+          if((time + scope.timeFix / 100) >= curLrc.time) {
             scope.lrcIndex++;
 
             scope.marginTop = {
@@ -169,9 +171,9 @@ angular
           return ele.offsetHeight + margin - padding + border;
         }
 
-        function lrcUniqueClass(){
+        function lrcUniqueClass() {
           var nu = 0;
-          return function(){
+          return function() {
             nu++;
             return 'lrcUniqueClass' + nu;
           };

@@ -11,6 +11,7 @@ angular
     'angular-loading-bar',
     'ngAnimate',
     'pascalprecht.translate',
+    'dndLists',
     'common'
   ])
   .config(function($locationProvider, $httpProvider, $translateProvider) {
