@@ -67,7 +67,7 @@ var ctrl = {
             if(res.headersSent) {
               return;
             }
-            return res.send(400);
+            return res.sendStatus(400);
           })
           .on('response', (response) => {
             console.log('content-length: ', response.headers['content-length']);

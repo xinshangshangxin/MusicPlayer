@@ -50,7 +50,7 @@ var svc = {
         }
 
         if(typeCode === svc.typeCodes.qq) {
-          return Promise.reject('qq not support');
+          return QQService.parse(id);
         }
 
         if(typeCode === svc.typeCodes.netease) {

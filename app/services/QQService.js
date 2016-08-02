@@ -66,6 +66,20 @@ var svc = {
       url: svc.getUrlById(id, key)
     };
   },
+  parse: function(id) {
+    return svc.getDetail(id);
+  },
+  getDetail: function(id) {
+    return svc.getUrlById(id)
+      .then((url) => {
+        return {
+          type: svc.typeCode,
+          id: id,
+          url: url,
+          lrc: 'http://i.y.qq.com/api/song/lyric/' + id
+        };
+      });
+  },
   getUrlById: (id, key) => {
     if(key) {
       return `http://dl.stream.qqmusic.qq.com/C200${id}.m4a?vkey=${key}&guid=9320260485&fromtag=30`;
