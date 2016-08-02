@@ -28,8 +28,10 @@ function createWindow() {
 
   /**start 创建界面**/
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 837,
+    height: 626,
+    // frame: false,
+    titleBarStyle: 'hidden-inset',
     webPreferences: {
       nodeIntegration: false
     }
@@ -37,20 +39,19 @@ function createWindow() {
   /**end 创建界面**/
 
   /** start 设置tray**/
-  let image = nativeImage.createFromPath(path.join(__dirname, './public/images/tray.png'));
+  let image = nativeImage.createFromPath(path.join(__dirname, './public/images/status_bar.png'));
   image.setTemplateImage(true);
 
   tray = new Tray(image);
 
-  let contextMenu = Menu.buildFromTemplate([{
-    label: 'Show',
-    click: tollageWindow
-  }, {
-    label: 'Exit',
-    click: () => app.exit(0)
-  }]);
-  tray.setToolTip('Music Player');
-  tray.setContextMenu(contextMenu);
+  // let contextMenu = Menu.buildFromTemplate([{
+  //   label: 'Show',
+  //   click: tollageWindow
+  // }, {
+  //   label: 'Exit',
+  //   click: () => app.exit(0)
+  // }]);
+  // tray.setContextMenu(contextMenu);
   tray.on('click', tollageWindow);
   /** end 设置tray**/
 
@@ -69,11 +70,19 @@ function createWindow() {
       // mainWindow.loadURL('server-url://hostname.com/');
       // mainWindow.loadURL('http://xinshangshangxin.com');
       mainWindow.loadURL(localServerUrl);
-      setTimeout(function() {
-        // mainWindow.loadURL(localServerUrl);
-        // mainWindow.loadURL('server-url://hostname.com');
-      }, 3 * 1000);
+    })
+    .catch(function(e){
+      console.log(e);
+      serverError(e);
     });
+
+}
+
+function serverError(e){
+  require('node-notifier').notify({
+    'title': 'Music Player',
+    'message': JSON.stringify(e)
+  });
 
 }
 
@@ -81,11 +90,12 @@ function tollageWindow() {
   if(!mainWindow) {
     return;
   }
-  if(mainWindow.isVisible()) {
+  if(mainWindow.isFocused()) {
     mainWindow.hide();
   }
   else {
     mainWindow.show();
+    mainWindow.focus();
   }
 }
 

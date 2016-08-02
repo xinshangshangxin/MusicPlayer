@@ -27,7 +27,7 @@ fi
 
 ignore_list="\./dist|\./config|\.tmp|\./static|\./production|\.idea|.*\.md|.*\.yml"
 
-electron-packager ./production "${APP_NAME}" --platform=$PLATFORM --arch=$ARCH --version=1.1.0  --overwrite --out=./dist --ignore=${ignore_list} --icon=app/public/images/shang.icns
+electron-packager ./production "${APP_NAME}" --platform=$PLATFORM --arch=$ARCH --version=1.1.0  --overwrite --out=./dist --ignore=${ignore_list} --icon=/Users/feng/Github/musicPlayer/app/public/images/shang.icns
 
 # --asar --app-version=1.3.0
 
