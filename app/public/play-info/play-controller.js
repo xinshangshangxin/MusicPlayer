@@ -12,10 +12,22 @@ angular
       console.log('dragMoved: ', index);
       // 删除拖动的歌曲的原来位置
       $scope.songList.splice(index, 1);
+      catchDragSongError($scope.songList);
       // 重新设置当前播放歌曲
       $scope.setCurrentSongIndex();
       // 保存当前播放顺序
       playListService.saveSong($scope.songList, $scope.favorName);
+    }
+
+    // 几率出现,未找到方法重现和防止
+    function catchDragSongError(songList){
+      console.log('songList.length: ', songList.length);
+      var uniqSongList = _.uniqBy(songList, 'id');
+      if(uniqSongList.length !== songList.length) {
+        alert('拖动出错!!!!');
+        songList.length = 0;
+        songList.push.apply(songList, uniqSongList);
+      }
     }
 
     function keyChange(e) {
