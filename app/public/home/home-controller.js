@@ -114,7 +114,7 @@ angular
       return _.findIndex($scope.songList, {id: song.id, type: song.type});
     }
 
-    function setCurrentSongIndex(){
+    function setCurrentSongIndex() {
       setCurrentSong($scope.currentSong);
     }
 
@@ -178,22 +178,33 @@ angular
       if(index === -1) {
         return;
       }
+      playListService.deleteSongFromFavor(song)
+        .then(function() {
+          // 当前没有歌曲了
+          if($scope.songList.length === 0) {
+            $scope.currentIndex = -1;
+            $scope.currentSong = null;
+            $scope.config.sources = [{
+              src: null,
+              type: 'audio/mpeg'
+            }];
+            return;
+          }
 
-      playListService.deleteSongFromFavor(song);
-      if(index === $scope.currentIndex) {
-        playNext();
-        setCurrentIndex(-1);
-      }
-      else if(index < $scope.currentIndex) {
-        setCurrentIndex(-1);
-      }
-      else if(index > $scope.currentIndex) {
+          if(index === $scope.currentIndex) {
+            playNext();
+            setCurrentIndex(-1);
+          }
+          else if(index < $scope.currentIndex) {
+            setCurrentIndex(-1);
+          }
+          else if(index > $scope.currentIndex) {
 
-      }
-
+          }
+        });
     }
 
-    function getBaseSongInfo(song){
+    function getBaseSongInfo(song) {
       return {
         id: song.id,
         song: song.song,

@@ -16,8 +16,8 @@
       </div>
       <div class="col-xs-6 text-nowrap" title="{{item.song}}">{{item.song}}</div>
       <div class="col-xs-2 text-nowrap" title="{{item.singer}}">{{item.singer}}</div>
-      <div ng-show="options" class="col-sm-2 text-nowrap" ng-click="deleteSong(item); $event.stopPropagation();">
-        <i class="fa fa-trash" aria-hidden="true"></i>
+      <div ng-show="options" class="col-sm-2 text-nowrap" >
+        <i class="fa fa-trash" aria-hidden="true" ng-click="deleteSong(item); $event.stopPropagation();"></i>
       </div>
     </li>
   </ul>
