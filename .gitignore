@@ -47,3 +47,11 @@ Temporary Items
 
 # user
 .git
+.idea
+.tmp
+app/public/vendor/*
+app/public/styles/*
+static
+production
+deploy
+dist
