@@ -134,7 +134,7 @@ function getCommonConfig() {
     },
     fonts: {
       src: ['app/public/vendor/font-awesome/fonts/**/*'],
-      dest: path.join(alterableSetting.publicPath, 'fonts')
+      dest: path.join(alterableSetting.publicPath, 'styles/fonts')
     },
     injectHtmlProd: {
       src: 'index.html',
@@ -151,7 +151,12 @@ function getCommonConfig() {
         path.join(alterableSetting.publicPath, 'js/lib*.min*.js'),
         path.join(alterableSetting.publicPath, 'js/user*.min*.js')
       ],
-      cssDest: path.join(alterableSetting.publicPath, 'css'),
+      cssDest: path.join(alterableSetting.publicPath, 'styles'),
+      cssFilters: [{
+        src: ['some-need-change-fonts-like-bootstrap.min.css'],
+        subStr: '../fonts/',
+        newStr: 'fonts/'
+      }],
       dest: alterableSetting.viewPath,
       injectIgnorePath: alterableSetting.publicPath,
       isHtmlmin: true,
