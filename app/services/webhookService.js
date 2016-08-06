@@ -2,7 +2,7 @@
 
 var rp = Promise.promisify(require('request'));
 
-var WebhookModel = require('../models/Webhook');
+var WebhookModel = require('../models/webhook');
 var HookService = require('./HookService');
 
 var svc = {

@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var WebhookModel = require('../models/Webhook');
+var WebhookModel = require('../models/webhook');
 var HookService = require('../services/HookService');
 
 var ctrl = {

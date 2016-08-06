@@ -6,7 +6,7 @@ var router = express.Router();
 
 var executeCmdController = require('../controllers/executeCmdController.js');
 var tokenAuth = require('../policies/tokenAuth.js');
-var WebhookController = require('../controllers/WebhookController');
+var webhookController = require('../controllers/webhookController');
 var wrapError = require('../policies/wrapError.js');
 
 var execCmdKey = config.env.execCmdKey;
@@ -39,12 +39,12 @@ router
         console.log(e);
       });
   })
-  .get('/api/v1/webhook-event', WebhookController.queryEvent)
-  .get('/api/v1/webhook', WebhookController.query)
-  .get('/api/v1/webhook/:id', WebhookController.get)
-  .post('/api/v1/webhook', WebhookController.create)
-  .put('/api/v1/webhook/:id', WebhookController.update)
-  .delete('/api/v1/webhook/:id', WebhookController.destroy)
+  .get('/api/v1/webhook-event', webhookController.queryEvent)
+  .get('/api/v1/webhook', webhookController.query)
+  .get('/api/v1/webhook/:id', webhookController.get)
+  .post('/api/v1/webhook', webhookController.create)
+  .put('/api/v1/webhook/:id', webhookController.update)
+  .delete('/api/v1/webhook/:id', webhookController.destroy)
 ;
 
 module.exports = router;

@@ -2,7 +2,7 @@
 
 var dbService = require('../services/dbService.js');
 
-var Webhook = dbService.define('Webhook', {
+var webhook = dbService.define('webhook', {
   name: {
     type: 'string',
     required: true,
@@ -44,11 +44,11 @@ var Webhook = dbService.define('Webhook', {
   },
 });
 
-var WebhookModel = Webhook.model;
-var WebhookSchema = Webhook.schema;
+var webhookModel = webhook.model;
+var webhookSchema = webhook.schema;
 
-WebhookSchema.post('save', function(doc) {
+webhookSchema.post('save', function(doc) {
   console.log('%s has been saved', doc);
 });
 
-module.exports = WebhookModel;
+module.exports = webhookModel;
