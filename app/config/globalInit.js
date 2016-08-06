@@ -11,8 +11,18 @@ global._ = require('lodash');
 
 // set global ApplicationError
 global.ApplicationError = function(code, message, data, constr) {
-  Promise.OperationalError.call(constr || this, message || 'no ApplicationError message ');
-  this.code = code;
+
+  var msg = '';
+  if(_.isObject(message)) {
+    msg = message[code];
+  }
+  else {
+    msg = message;
+  }
+
+  Promise.OperationalError.call(constr || this, msg || 'no ApplicationError message ');
+  this.errCode = code;
+  this.msg = msg;
   this.data = data;
 };
 util.inherits(ApplicationError, Promise.OperationalError);

@@ -2,10 +2,19 @@
 
 angular
   .module('shangAngularTemplate')
-  .factory('shangAngularTemplateEntity', function($resource) {
+  .factory('webhookEntity', function($resource) {
     return $resource(
-      '/api/v1/:type',
-      {type: '@type'},
+      '/api/v1/webhook/:id',
+      {id: '@id'},
+      {
+        update: {method: 'PUT'}
+      }
+    );
+  })
+  .factory('webhookEventEntity', function($resource) {
+    return $resource(
+      '/api/v1/webhook-event',
+      {},
       {
         update: {method: 'PUT'}
       }

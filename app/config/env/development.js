@@ -24,7 +24,8 @@ module.exports = {
   },
   port: process.env.PORT,
   bootstrap: [
-    'mongodbBackupService'
+    // 'mongodbBackupService',
+    'webhookService',
   ]
 };
 

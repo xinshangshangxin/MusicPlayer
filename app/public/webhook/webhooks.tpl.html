@@ -1,0 +1,48 @@
+<div class="panel no-border">
+  <div class="h5 panel-heading wrapper b-b b-light">
+    <span>Webhooks (共计: {{meta.totalItems || 0}}个)</span>
+
+    <button class="btn btn-xs btn-success pull-right m-l-xs" ui-sref="^.new">
+      {{ "general.create" | translate }}
+    </button>
+    <form style="display:inline;" role="form" name="form" method="post" enctype="multipart/form-data" ng-submit="search(meta.search)" novalidate>
+      <div class="input-group col-md-2 pull-right m-l-xs">
+        <input class="form-control" style="height: 23px;" type="text" ng-model="meta.search">
+        <a class="input-group-addon" style="padding: 0 5px;" ng-click="search(meta.search)"><span class="glyphicon glyphicon-search"></span></a>
+      </div>
+    </form>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{{ "webhooks.name" | translate }}</th>
+        <th>{{ "webhooks.method" | translate }}</th>
+        <th>{{ "webhooks.payloadUrl" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in viewData">
+        <td><a ui-sref="^.detail({id:row.id})">{{row.name}}</a></td>
+        <td>{{row.method}}</td>
+        <td>{{row.payloadUrl}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="panel-footer clearfix">
+    <pagination
+      num-pages="numPages"
+      boundary-links="true"
+      ng-model="meta.page"
+      items-per-page="meta.per_page"
+      total-items="meta.totalItems"
+      max-size="meta.maxSize"
+      ng-change="$state.go('.', meta)"
+      class="pagination pull-left"
+      previous-text="上页"
+      next-text="下页"
+      first-text="头页"
+      last-text="尾页"
+    ></pagination>
+    <p class="text-muted pull-right" style="line-height: 75px; margin: 0;">找到{{meta.totalItems}}条记录，每页显示{{meta.per_page}}条记录，当前第{{meta.page}}页，共{{numPages}}页</p>
+  </div>
+</div>

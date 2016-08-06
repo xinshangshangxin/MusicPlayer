@@ -19,6 +19,7 @@ module.exports = {
 
         var line = [
           chalk.yellow(el.file + ':' + err.line + ':' + err.character),
+          '\n',
           isError ? chalk.red(err.reason) : chalk.blue(err.reason)
         ];
 

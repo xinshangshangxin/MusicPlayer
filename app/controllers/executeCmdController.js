@@ -16,7 +16,8 @@ var ctrl = {
   },
   help: function(req, res) {
     return res.send('<pre>' + JSON.stringify(executeCmdService.helpInfo, null, 2) + '</pre>');
-  }
+  },
+  tryAutoDeploy: executeCmdService.tryAutoDeploy
 };
 
 module.exports = ctrl;

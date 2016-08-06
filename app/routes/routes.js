@@ -6,7 +6,7 @@ var router = express.Router();
 
 var executeCmdController = require('../controllers/executeCmdController.js');
 var tokenAuth = require('../policies/tokenAuth.js');
-var webHookService = require('../services/webHookService.js');
+var WebhookController = require('../controllers/WebhookController');
 var wrapError = require('../policies/wrapError.js');
 
 var execCmdKey = config.env.execCmdKey;
@@ -27,14 +27,24 @@ router
   })
   .get(/^\/(?=api\/v\d+\/cmds)/, executeCmdController.help)
   .post(/^\/(?=api\/v\d+\/cmds)/, tokenAuth(), executeCmdController.execCmds)
-  .post(/^\/(?=api\/v\d+\/webhook)/, function(req, res) {
+  .post('/api/v1/auto-deploy', function(req, res) {
     res.end('ok');
-    webHookService
-      .tryUpdate(req.body)
+
+    executeCmdController
+      .tryAutoDeploy(req.body)
       .then(function(data) {
         console.log(data);
+      })
+      .catch(function(e) {
+        console.log(e);
       });
   })
+  .get('/api/v1/webhook-event', WebhookController.queryEvent)
+  .get('/api/v1/webhook', WebhookController.query)
+  .get('/api/v1/webhook/:id', WebhookController.get)
+  .post('/api/v1/webhook', WebhookController.create)
+  .put('/api/v1/webhook/:id', WebhookController.update)
+  .delete('/api/v1/webhook/:id', WebhookController.destroy)
 ;
 
 module.exports = router;
