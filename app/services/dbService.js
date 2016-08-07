@@ -33,18 +33,15 @@ function getMongodbUri(config) {
   config = config || {};
   var uri = '';
   switch(config.type) {
-    case 'fun':
-    {
+    case 'fun': {
       uri = config.fun();
       break;
     }
-    case 'env':
-    {
+    case 'env': {
       uri = resolveEnvUrl(config);
       break;
     }
-    default:
-    {
+    default: {
       break;
     }
   }
@@ -62,53 +59,46 @@ console.log('connect mongodbUri: ', mongodbUri);
 
 var db = mongoose.connect(mongodbUri);
 
-function define(modelName, opt, index) {
-  var modelNameSchema = new mongoose.Schema(_.assign({
-    createdAt: {
-      type: Date,
-      default: Date.now()
+function define(modelName, opt, config) {
+  config = _.assign({
+    timestamps: true,
+    set: {
+      toJSON: {
+        transform: function(doc, ret) {
+          ret.id = ret._id;
+        }
+      },
     },
-    updatedAt: {
-      type: Date
-    }
-  }, opt));
+  }, config);
 
-  if(index) {
-    modelNameSchema.index.apply(modelNameSchema, index);
+  var modelNameSchema = new mongoose.Schema(opt, {
+    timestamps: config.timestamps
+  });
+
+  if(config.index) {
+    modelNameSchema.index.apply(modelNameSchema, config.index);
   }
 
-  // 更新 updatedAt
-  modelNameSchema.pre('save', function(next) {
-    this.updatedAt = Date.now();
-    next();
-    return null;
-  });
 
-  modelNameSchema.pre('update', function(next) {
-    this.updatedAt = Date.now();
-    next();
-    return null;
-  });
-
-  modelNameSchema.pre('findOneAndUpdate', function(next) {
-    if(!this.createdAt) {
-      this.findOneAndUpdate({}, {
-        createdAt: Date.now()
-      });
-    }
-    this.findOneAndUpdate({}, {
-      updatedAt: Date.now()
+  if(config.pre && _.isPlainObject(config.pre)) {
+    _.forEach(config.pre, function(value, key) {
+      modelNameSchema.pre(key, value);
     });
-    next();
-    return null;
-  });
-  var modelNameModel = db.model(modelName, modelNameSchema);
+  }
 
-  modelNameSchema.set('toJSON', {
-    transform: function(doc, ret) {
-      ret.id = ret._id;
-    }
-  });
+  if(config.post && _.isPlainObject(config.post)) {
+    _.forEach(config.post, function(value, key) {
+      modelNameSchema.post(key, value);
+    });
+  }
+
+  if(config.set && _.isPlainObject(config.set)) {
+    _.forEach(config.set, function(value, key) {
+      modelNameSchema.set(key, value);
+    });
+  }
+
+  var modelNameModel = db.model(modelName, modelNameSchema);
 
   return {
     model: modelNameModel,
