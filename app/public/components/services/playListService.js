@@ -131,7 +131,9 @@ angular
 
     function saveSong(favorSongs, favorName) {
       favorName = favorName || 'temp';
-      localSaveService.set('favor_' + favorName, favorSongs);
+      localSaveService.set('favor_' + favorName, _.map(favorSongs || [], function(item) {
+        return _.pick(item || {}, ['id', 'type', 'singer', 'song', 'cover', 'url', 'lrc', 'album']);
+      }));
     }
 
   });
