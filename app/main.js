@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const {app, BrowserWindow, Menu, nativeImage, protocol, Tray} = require('electron');
+const {app, BrowserWindow, globalShortcut, Menu, nativeImage, protocol, Tray} = require('electron');
 
 let localServerUrl = 'http://localhost:12345';
 let mainWindow, willQuitApp, tray;
@@ -32,9 +32,9 @@ function createWindow() {
     height: 626,
     // frame: false,
     titleBarStyle: 'hidden-inset',
-    webPreferences: {
-      nodeIntegration: false
-    }
+    // webPreferences: {
+    //   nodeIntegration: false
+    // }
   });
   /**end 创建界面**/
 
@@ -65,6 +65,8 @@ function createWindow() {
     }
   });
 
+  registerGlobalShortcut();
+
   require('./app')
     .then(function() {
       // mainWindow.loadURL('server-url://hostname.com/');
@@ -76,6 +78,48 @@ function createWindow() {
       serverError(e);
     });
 
+}
+
+function registerGlobalShortcut() {
+
+  var obj = {
+    'F6': {
+      action: 'playOrPause'
+    },
+    'Ctrl+Option+Right': {
+      action: 'nextSong'
+    },
+    'Ctrl+Option+Left': {
+      action: 'preSong'
+    },
+    'Command+Shift+H': function() {
+      if(mainWindow.isFocused()) {
+        mainWindow.hide();
+      }
+      else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    },
+  };
+
+  Object.keys(obj).forEach(function(key) {
+    var value = obj[key];
+
+    let ret = globalShortcut.register(key, function() {
+      console.log(`${key} is pressed`);
+
+      if(typeof value === 'function') {
+        return value();
+      }
+
+      mainWindow.webContents.send('globalShortcut', value);
+    });
+
+    if (!ret) {
+      console.log(`${key} registration failed`);
+    }
+  });
 }
 
 function serverError(e){
@@ -237,3 +281,6 @@ app.on('window-all-closed', function() {
 
 app.on('activate', () => mainWindow.show());
 app.on('before-quit', () => willQuitApp = true);
+app.on('will-quit', function() {
+  globalShortcut.unregisterAll();
+});

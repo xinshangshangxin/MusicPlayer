@@ -6,7 +6,7 @@
   },
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron ./app/main.js",
     "test": "mocha --recursive --timeout 10000 --harmony --bail test"
   },
   "dependencies": {

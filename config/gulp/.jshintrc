@@ -51,7 +51,8 @@
   "latedef": "nofunc",
 
   "predef": [
+    "_",
     "angular",
-    "_"
+    "nodeRequire"
   ]
 }

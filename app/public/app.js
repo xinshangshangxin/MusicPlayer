@@ -35,5 +35,18 @@ angular
       403: 'home'
     };
     httpInjectorFactory.setServerUrl(SERVER_URL);
+
+    //electron
+    if(nodeRequire) {
+      const {ipcRenderer} = nodeRequire('electron');
+      ipcRenderer.on('globalShortcut', function(event, args) {
+        console.log('set ipcRenderer globalShortcut: ', args);
+        $rootScope.$broadcast('globalShortcut', args);
+      });
+      console.log('electron global shortcut');
+    }
+    else {
+      console.log('no electron, skip global shortcut');
+    }
   });
 
