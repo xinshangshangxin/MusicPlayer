@@ -38,7 +38,7 @@ angular
 
     //electron
     if(nodeRequire) {
-      const {ipcRenderer} = nodeRequire('electron');
+      var ipcRenderer = nodeRequire('electron').ipcRenderer;
       ipcRenderer.on('globalShortcut', function(event, args) {
         console.log('set ipcRenderer globalShortcut: ', args);
         $rootScope.$broadcast('globalShortcut', args);
