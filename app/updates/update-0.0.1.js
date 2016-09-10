@@ -1,6 +1,6 @@
 'use strict';
 
-require('../config/init.js');
+require('../config/globalInit.js');
 
 function closeConnection() {
   require('../services/dbService').closeMongoose();

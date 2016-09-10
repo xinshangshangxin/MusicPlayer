@@ -4,7 +4,7 @@ module.exports = {
   superSecret: process.env.SUPER_SECRET || 'SUPER_SECRET',
   execCmdKey: process.env.EXEC_CMD_KEY || 'key',
   port: process.env.PORT || '8080',
-  ip: process.env.OPENSHIFT_DIY_IP,
+  ip: undefined,
   mailTransport: {
     host: 'smtp.sina.com',
     port: 465,
@@ -18,20 +18,14 @@ module.exports = {
     }
   },
   mongo: {
-    type: 'env',
-    condition: 'host',
-    host: 'OPENSHIFT_DIY_IP',
-    post: 27017,
-    dbName: 'noDbName',
-    backupName: 'template',
-    backupPassword: process.env.BACKUP_PASSWORD || 'template',
-    backupDirPrefixes: './',
-    backupInterval: 12 * 60 * 60 * 1000
+    type: 'uri',
+    uri: 'mongodb://heroku:heroku@ds019816.mlab.com:19816/q2234037172-heroku',
+    collectionPrefix: 'template-',
   },
   update: {
     ref: 'production'
   },
   bootstrap: [
-    'webhookService'
+    // 'webhookService',
   ]
 };

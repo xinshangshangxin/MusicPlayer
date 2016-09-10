@@ -47,7 +47,7 @@ var appStart = require('./config/bootstrap')()
       });
 
       var port = config.env.port || '1337';
-      var ip = config.env.ip || 'localhost';
+      var ip = config.env.ip;
       var server = http.createServer(app);
       server.listen(port, ip);
       server.on('error', onError);

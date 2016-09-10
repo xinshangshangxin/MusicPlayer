@@ -23,6 +23,10 @@ test:
 prod:
 	gulp prod
 	node production/app.js
+pushHeroku: 
+	cp ./package.json ./production
+	sed -i '' 's/"start": "NODE_ENV=.*/"start": "NODE_ENV=heroku pm2 start .\/app.js --no-daemon",/g' ./production/package.json
+	cd ./production && git add -A && git commit -m "auto" && git push heroku master && heroku logs --tail
 static:
 	gulp static
 	cd static && hs

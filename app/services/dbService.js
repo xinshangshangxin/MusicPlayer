@@ -41,6 +41,9 @@ function getMongodbUri(config) {
       uri = resolveEnvUrl(config);
       break;
     }
+    case 'uri': {
+      return config.uri;
+    }
     default: {
       break;
     }

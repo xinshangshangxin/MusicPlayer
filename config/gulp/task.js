@@ -453,6 +453,23 @@ gulp.task('build', gulp.series(
   'injectHtml:prod'
 ));
 
+gulp.task('buildServer', gulp.series(
+  function setBuildEnv(done) {
+    if(!$.isStatic) {
+      copyAttrValue(gulpConfig.alterableSetting, gulpConfig.__alterableSetting__);
+    }
+    getConfig();
+    $.isBuild = true;
+    return done();
+  },
+  'clean',
+  gulp
+    .parallel(
+      'server'
+    ),
+  'injectHtml:prod'
+));
+
 gulp.task('prod', gulp.series('build'));
 
 gulp.task('default', gulp.series(
