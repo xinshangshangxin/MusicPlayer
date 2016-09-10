@@ -16,8 +16,8 @@
   <!-- endinject -->
 </head>
 <body>
-  <div class="notification-bar" notification-bar></div>
-  <div class="container">
+  <div ng-if="!initialingServiceCount" class="notification-bar" notification-bar></div>
+  <div ng-if="!initialingServiceCount" class="container-fluid">
     <div ui-view></div>
   </div>
 
@@ -31,21 +31,21 @@
   <script src="/vendor/angular-translate/angular-translate.min.js"></script>
   <script src="/vendor/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
   <script src="/vendor/lodash/dist/lodash.min.js"></script>
-  <script src="/common/common.js"></script>
-  <script src="/common/resize/resize-drvt.js"></script>
-  <script src="/common/notification/notification-service.js"></script>
-  <script src="/common/notification/notification-bar-drtv.js"></script>
-  <script src="/common/local-save/local-save-service.js"></script>
-  <script src="/common/http-injector/http-injector-factory.js"></script>
-  <script src="/common/dialog/dialog-svc.js"></script>
-  <script src="/common/custom-fields/custom-fields-drtv.js"></script>
   <script src="/app.js"></script>
-  <script src="/webhook/webhppk-routes.js"></script>
-  <script src="/webhook/webhooks-ctrl.js"></script>
-  <script src="/webhook/webhook-detail-ctrl.js"></script>
-  <script src="/home/home-routes.js"></script>
-  <script src="/components/entities-factory.js"></script>
+  <script src="/common/common.js"></script>
+  <script src="/common/custom-fields/custom-fields-drtv.js"></script>
+  <script src="/common/dialog/dialog-svc.js"></script>
+  <script src="/common/http-injector/http-injector-factory.js"></script>
+  <script src="/common/local-save/local-save-service.js"></script>
+  <script src="/common/notification/notification-bar-drtv.js"></script>
+  <script src="/common/notification/notification-service.js"></script>
+  <script src="/common/resize/resize-drvt.js"></script>
   <script src="/components/constants.js"></script>
+  <script src="/components/entities-factory.js"></script>
+  <script src="/home/home-routes.js"></script>
+  <script src="/webhook/webhook-detail-ctrl.js"></script>
+  <script src="/webhook/webhooks-ctrl.js"></script>
+  <script src="/webhook/webhppk-routes.js"></script>
   <!-- endinject -->
 </body>
 </html>

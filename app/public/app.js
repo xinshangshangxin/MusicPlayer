@@ -23,8 +23,16 @@ angular
     $translateProvider.preferredLanguage('zh-hans');
 
   })
-  .run(function($rootScope, $state, httpInjectorFactory, SERVER_URL) {
+  .run(function($rootScope, $state, $stateParams, httpInjectorFactory, SERVER_URL) {
     $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
+
+    // 防止languages未加载
+    $rootScope.initialingServiceCount = $rootScope.initialingServiceCount || 0;
+    $rootScope.initialingServiceCount += 1;
+    $rootScope.$on('$translateLoadingSuccess', function () {
+      $rootScope.initialingServiceCount -= 1;
+    });
 
     httpInjectorFactory.statusCodeRouter = {
       401: 'home',

@@ -347,7 +347,8 @@ gulp.task('js', function(done) {
     var templateStream = gulp
       .src(config.html2js.src, config.html2js.opt)
       .pipe($.if(config.html2js.isHtmlmin, $.htmlmin(config.htmlminConfig)))
-      .pipe($.angularTemplatecache(config.html2js.name, config.html2js.config));
+      .pipe($.angularTemplatecache(config.html2js.name, config.html2js.config))
+      .pipe($.angularFilesort());
 
     jssStreamQueue.push(templateStream);
   }

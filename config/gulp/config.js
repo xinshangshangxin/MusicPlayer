@@ -226,7 +226,7 @@ function getCommonConfig() {
         'base': 'app/'
       },
       dest: alterableSetting.basePath
-    },{
+    }, {
       src: [
         'languages/**/*'
       ],
