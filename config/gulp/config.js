@@ -147,7 +147,7 @@ function getCommonConfig() {
         'app/public/styles/**/*.css'
       ],
       injectSource: [
-        path.join(alterableSetting.publicPath, 'css/**/*.css'),
+        path.join(alterableSetting.publicPath, 'styles/**/*.css'),
         path.join(alterableSetting.publicPath, 'js/lib*.min*.js'),
         path.join(alterableSetting.publicPath, 'js/user*.min*.js')
       ],
