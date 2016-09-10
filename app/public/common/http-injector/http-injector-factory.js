@@ -3,7 +3,7 @@
 
 angular
   .module('common')
-  .factory('httpInjectorFactory', function($injector, $q, localSaveService, notificationService) {
+  .factory('httpInjectorFactory', function($injector, $location, $q, localSaveService, notificationService) {
     var serverUrl = '';
     var httpInjector = {
       setServerUrl: function(url) {
@@ -36,7 +36,7 @@ angular
         }
 
         if(httpInjector.statusCodeRouter && httpInjector.statusCodeRouter[response.status]) {
-          $injector.get('$state').go(httpInjector.statusCodeRouter[response.status], {from: encodeURIComponent(location.href)});
+          $injector.get('$state').go(httpInjector.statusCodeRouter[response.status], {from: $location.url()});
         }
         return $q.reject(response);
       }

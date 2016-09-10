@@ -9,7 +9,7 @@ function wrapError(e, otherError, errStatus) {
   if(isUserDefineError(e)) {
     return this.status(errStatus || 400).json(e);
   }
-  console.log(e && e.stack || e);
+  logger.warn(e && e.stack || e);
   if(otherError) {
     return this.status(otherError.status || 400).json(otherError);
   }

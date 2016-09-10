@@ -59,7 +59,92 @@ var svc = {
       reject: reject,
       promise: promise
     };
-  }
+  },
+  promiseWhile: Promise.method(function(condition, action) {
+    if(!condition()) {
+      return;
+    }
+    return action().then(svc.promiseWhile.bind(null, condition, action));
+  }),
+  getCondition: function(req, {condition = {}, projection, options}) {
+    var opt = {
+      sort: req.query.sort || 'createdAt DESC'
+    };
+
+    if(req.query.page || req.query.limit) {
+      var meta = {
+        page: parseInt(req.query.page) || 1,
+        limit: parseInt(req.query.limit) || 20
+      };
+
+      opt.skip = meta.limit * (meta.page - 1);
+      opt.limit = meta.limit;
+    }
+    opt = _.assign(opt, options);
+
+    var query = {};
+
+    var from = req.query.from;
+    if(from) {
+      query.createdAt = {
+        $gte: new Date(from)
+      };
+    }
+
+    var to = req.query.to;
+    if(to) {
+      query.createdAt = query.createdAt || {};
+      query.createdAt.$lte = new Date(to);
+    }
+
+    query = _.assign(query, condition);
+    return {
+      condition: query,
+      projection: projection,
+      options: opt
+    };
+  },
+  conditionQuery: function(Model, req, opt = {}) {
+    let {condition, projection, options} = svc.getCondition(req, opt);
+
+    return Promise
+      .props({
+        total: Model.count(condition),
+        data: Model.find(condition, projection, options)
+      })
+      .then(function(result) {
+        if(opt.filter) {
+          result.data = opt.filter(result.data);
+        }
+        return result;
+      });
+  },
+  conditionQuerySend: function(Model, req, res, error, opt) {
+    return svc.conditionQuery(Model, req, opt)
+      .then(function(result) {
+        var totalName = opt.totalName || 'totalItems';
+        res.set(totalName, result.total);
+        return result.data;
+      })
+      .then(function(data) {
+        return res.json(data);
+      })
+      .catch(function(e) {
+        return res.wrapError(e, error);
+      });
+  },
+  escapeRegExp: function(str, disAbleRegExp) {
+    if(!str) {
+      return null;
+    }
+
+    str = str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+    if(disAbleRegExp === true) {
+      return str;
+    }
+
+    return new RegExp(str, 'gi');
+  },
 };
 
 module.exports = svc;

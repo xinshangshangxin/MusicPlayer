@@ -53,6 +53,7 @@
                         "_",
                         "ApplicationError",
                         "config",
+                        "logger",
                         "Promise"
                       ]
 }

@@ -64,7 +64,7 @@ function getCommonConfig() {
     },
     libCss: {             // lib css 需要引入的的css
       src: [              // src 可以为空数组
-        'framework/paper/bootstrap.min.css',
+        'framework/paper/dist/bootstrap.min.css',
         'vendor/angular-loading-bar/build/loading-bar.min.css',
         'vendor/font-awesome/css/font-awesome.min.css'
       ],

@@ -6,50 +6,22 @@
 
 var WebhookModel = require('../models/webhook');
 var HookService = require('../services/HookService');
+var utilitiesService = require('../services/utilitiesService');
 
 var ctrl = {
-  errCode: {
-    11001: '查询webhook错误',
-    11002: '创建webHook失败',
-    11003: '更新webHook失败',
-    11004: '无法找到对应webhook',
-    11005: '删除webhook失败',
-  },
   query: function(req, res) {
-    var conditions = {};
+    var opt = {};
 
     var search = req.query.search;
     if(search) {
-      conditions.or = [{
-        'name': {'contains': search}
-      }];
-    }
-
-    var options = null;
-    var meta = {
-      page: parseInt(req.query.page || 1),
-      per_page: parseInt(req.query.per_page || 20)
-    };
-
-    if(req.query.page || req.query.per_page) {
-      options = {
-        skip: (meta.page - 1) * meta.per_page,
-        limit: meta.per_page
+      opt.condition = {
+        or: [{
+          'name': {'contains': search}
+        }]
       };
     }
 
-    return Promise
-      .props({
-        total: WebhookModel.count(conditions),
-        result: WebhookModel.find(conditions, null, options),
-      })
-      .then(function(result) {
-        res.set('total', result.total);
-        res.json(result.result);
-      })
-      .catch(function(e) {
-        res.wrapError(e, new ApplicationError(11001, ctrl.errCode));
-      });
+    return utilitiesService.conditionQuerySend(WebhookModel, req, res, new ApplicationError.QueryError(), opt);
   },
   get: function(req, res) {
     WebhookModel
@@ -60,7 +32,7 @@ var ctrl = {
         return res.json(data);
       })
       .catch(function(e) {
-        res.wrapError(e, new ApplicationError(11001, ctrl.errCode));
+        res.wrapError(e, new ApplicationError.GetError());
       });
   },
   create: function(req, res) {
@@ -85,7 +57,7 @@ var ctrl = {
         return res.json(data[0]);
       })
       .catch(function(e) {
-        res.wrapError(e, new ApplicationError(11003, ctrl.errCode));
+        res.wrapError(e, new ApplicationError.UpdateError());
       });
   },
   destroy: function(req, res) {
@@ -97,7 +69,7 @@ var ctrl = {
       })
       .then(function(data) {
         if(!data) {
-          return new ApplicationError(11004, ctrl.errCode);
+          return new ApplicationError.NotFoundWebhook();
         }
         webHook = data;
         return data.remove();
@@ -109,7 +81,7 @@ var ctrl = {
         res.json({});
       })
       .catch(function(e) {
-        res.wrapError(e, new ApplicationError(11005, ctrl.errCode));
+        res.wrapError(e, new ApplicationError.DeleteError());
       });
   },
   queryEvent: function(req, res) {

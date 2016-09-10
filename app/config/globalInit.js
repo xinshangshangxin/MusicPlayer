@@ -2,7 +2,7 @@
 
 var path = require('path');
 var requireDirectory = require('require-directory');
-var util = require('util');
+var winston = require('winston');
 
 // set bluebird and lodash
 global.__Promise__ = global.Promise;
@@ -10,23 +10,7 @@ global.Promise = require('bluebird');
 global._ = require('lodash');
 
 // set global ApplicationError
-global.ApplicationError = function(code, message, data, constr) {
-
-  var msg = '';
-  if(_.isObject(message)) {
-    msg = message[code];
-  }
-  else {
-    msg = message;
-  }
-
-  Promise.OperationalError.call(constr || this, msg || 'no ApplicationError message ');
-  this.errCode = code;
-  this.msg = msg;
-  this.data = data;
-};
-util.inherits(ApplicationError, Promise.OperationalError);
-ApplicationError.prototype.name = 'Application Error';
+global.ApplicationError = require('./ApplicationError');
 
 // set env
 var env = (process.env.NODE_ENV || 'development').trim();
@@ -38,3 +22,22 @@ global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
 });
 // reset env value
 global.config.env = global.config.env[env];
+
+// set logger
+var logger = new (winston.Logger)({
+  transports: [
+    new (winston.transports.Console)({
+      level: 'info',
+      colorize: true,
+      timestamp: function() {
+        return new Date().toISOString();
+      },
+      formatter: function(options) {
+        return options.timestamp() +' '+ options.level +' '+ (undefined !== options.message ? options.message : '') +
+          (options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' );
+      }
+    })
+  ]
+});
+
+global.logger = logger;
