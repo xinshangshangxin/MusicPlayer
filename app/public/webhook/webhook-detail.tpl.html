@@ -65,10 +65,8 @@
                     <tr ng-repeat="event in events">
                       <td>{{event.displayName}}</td>
                       <td>
-                        <label class="i-switch i-switch-sm m-r bg-info" style="display:block;float:left;">
                           <input type="checkbox" ng-checked="isEventEnabled(event)" ng-click="toggleEvent(event)">
                           <i></i>
-                        </label>
                         {{(isEventEnabled(event)? "general.enabled" : "general.disabled") | translate}}
                       </td>
                     </tr>
@@ -90,10 +88,10 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger" pc-avoid-multiple-click ng-click="delete()" ng-show="!editing">删除</button>
+        <button class="btn btn-danger" avoid-multiple-click ng-click="delete()" ng-show="!editing">删除</button>
         <button class="btn btn-primary" ng-click="edit()" ng-show="!editing">修改</button>
         <button class="btn btn-warning" ng-click="cancel(form)" ng-show="editing">取消</button>
-        <button class="btn btn-primary" pc-avoid-multiple-click ng-click="save(form)" ng-show="editing">保存</button>
+        <button class="btn btn-primary" avoid-multiple-click ng-click="save(form)" ng-show="editing">保存</button>
       </div>
     </div>
   </div>
