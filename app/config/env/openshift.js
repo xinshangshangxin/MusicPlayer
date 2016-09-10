@@ -32,6 +32,6 @@ module.exports = {
     ref: 'production'
   },
   bootstrap: [
-    'webhookService'
+    // 'webhookService'
   ]
 };

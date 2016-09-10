@@ -23,7 +23,7 @@ module.exports = {
     collectionPrefix: 'template-',
   },
   update: {
-    ref: 'production'
+    // ref: 'production'
   },
   bootstrap: [
     // 'webhookService',

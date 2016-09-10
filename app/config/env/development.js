@@ -25,7 +25,7 @@ module.exports = {
   },
   port: process.env.PORT,
   bootstrap: [
-    'webhookService',
+    // 'webhookService',
   ]
 };
 
