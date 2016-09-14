@@ -88,6 +88,9 @@ var ctrl = {
     res.json([{
       name: 'Test:afterCreate',
       displayName: '测试'
+    }, {
+      name: 'SiteMonitorError',
+      displayName: '站点监测失败'
     }]);
   }
 };

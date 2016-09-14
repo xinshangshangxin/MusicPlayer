@@ -1,7 +1,8 @@
 'use strict';
 
-var rp = Promise.promisify(require('request'));
+var rp = Promise.promisify(require('request'), {multiArgs: true});
 
+var mailSendService = require('./mailSendService');
 var WebhookModel = require('../models/webhook');
 var HookService = require('./HookService');
 
@@ -10,6 +11,9 @@ var svc = {
     return HookService.registerHook(svc.on.bind(svc));
   },
   resolveValue: function(body, data) {
+    if(!body) {
+      return null;
+    }
     return _.reduce(body, function(result, item) {
       if(!item.value) {
         return result;
@@ -28,26 +32,43 @@ var svc = {
   runHook: function(data, hook) {
     var method = (hook.method || 'POST').toUpperCase();
     var contentType = hook.contentType || 'application/json';
+    var body;
 
     return Promise
       .try(function() {
-        if(!hook.payloadUrl) {
-          return Promise.reject(new Error('缺少 url'));
+        if(!hook.payloadAddress) {
+          return Promise.reject(new ApplicationError.NoPayloadAddress());
         }
 
+        if(hook.resolveBody) {
+          body = svc.resolveValue(hook.bodyFields, data);
+        }
+        else {
+          body = data;
+        }
+
+        // mail
+        if(method === 'EMAIL') {
+          logger.info('hook sendMail to ', hook.name, 'body: ', body);
+          return mailSendService.sendMail({
+            subject: `webhook: ${hook.name}`,
+            html: '<div>' + JSON.stringify(body, null, 2) + '</div>'
+          });
+        }
+
+        // http 请求
         var options = {
           proxy: false,
           followRedirect: false,
-          url: hook.payloadUrl,
+          url: hook.payloadAddress,
           method: method,
           headers: svc.resolveValue(hook.headerFields, data)
         };
 
         if(method === 'GET') {
-          return options;
+          return rp(options);
         }
 
-        var body = svc.resolveValue(hook.bodyFields, data);
         switch(contentType) {
           case 'application/json':
             options.json = body || true;
@@ -56,12 +77,9 @@ var svc = {
             options.form = body;
             break;
           default:
-            return Promise.reject(new Error('Webhook Error: unsupported contentType:' + contentType));
+            return Promise.reject(new ApplicationError.NotSupportContentType(undefined, {contentType: contentType}));
         }
 
-        return options;
-      })
-      .then(function(options) {
         return rp(options);
       });
   },
@@ -83,15 +101,15 @@ var svc = {
       })
       .each(function(data) {
         if(data.isFulfilled()) {
-          console.log('Webhook success: ', JSON.stringify(conditions, null, 2));
+          logger.info('Webhook success: ', JSON.stringify(conditions, null, 2));
         }
         else {
-          console.log('Webhook error: ', conditions, JSON.stringify(data, null, 2));
+          logger.info('Webhook error: ', conditions, JSON.stringify(data, null, 2), data.reason());
         }
         return null;
       })
       .catch(function(e) {
-        console.log(e);
+        logger.info(e);
       });
 
     return Promise.resolve(null);

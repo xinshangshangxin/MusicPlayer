@@ -5,14 +5,13 @@ angular
   .controller('WebhookDetailCtrl',
     function($scope, $state, $stateParams, $translate, events, webhookEntity, dialogService) {
       $scope.events = events;
-      $scope.webhook = new webhookEntity({
-        id: $stateParams.id
-      });
+      $scope.webhook = new webhookEntity({id: $stateParams.id});
       $scope.editing = $stateParams.mode === 'edit' || !$scope.webhook.id;
 
       $scope.load = function() {
         if(!$scope.webhook.id) {
-          $scope.webhook.suspended = true;
+          $scope.webhook.suspended = false;
+          $scope.webhook.method = 'email';
           return;
         }
 

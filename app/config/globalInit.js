@@ -34,7 +34,7 @@ var logger = new (winston.Logger)({
       },
       formatter: function(options) {
         return options.timestamp() +' '+ options.level +' '+ (undefined !== options.message ? options.message : '') +
-          (options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' );
+          (options.meta && Object.keys(options.meta).length ? JSON.stringify(options.meta) : '' );
       }
     })
   ]

@@ -240,7 +240,7 @@ function getCommonConfig() {
       development: {
         proxy: 'http://127.0.0.1:1337',
         online: true,
-        port: 9999,
+        port: 13370,
         files: [
           'app/public/**/*',
           '!app/public/styles/**/*',

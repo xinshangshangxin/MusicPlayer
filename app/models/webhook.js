@@ -30,13 +30,16 @@ var webhook = dbService.define('webhook', {
   bodyTransform: {
     type: 'string'
   },
-  payloadUrl: {
+  payloadAddress: {
     type: 'string',
     required: true
   },
   contentType: {
-    type: 'string',
-    required: true
+    type: 'string'
+  },
+  resolveBody: {
+    type: 'boolean',
+    default: false
   },
   suspended: {
     type: 'boolean',

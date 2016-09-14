@@ -23,6 +23,9 @@ var errors = {
   DeleteError: {code: 100105, message:'删除出错'},
   //WebhookController
   NotFoundWebhook: {code: 200101, message: '无法找到对应的webhook'},
+  // WebHookService
+  NoPayloadAddress: {code: 200201, message: '没有发送地址'},
+  NotSupportContentType: {code: 200201, message: '不支持此种类型'},
 };
 
 function ApplicationError() {
