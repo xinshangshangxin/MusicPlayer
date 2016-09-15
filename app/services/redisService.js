@@ -14,16 +14,16 @@ var svc = {
       url: 'redis://' + (config.env.redis.ip || '127.0.0.1') + ':' + (config.env.redis.port || '6379')
     };
 
-    console.log('redis option: ', option);
+    logger.info('redis option: ', option);
 
     return new Promise(function(resolve, reject) {
       redisClient = redis.createClient(option);
       redisClient.on('error', function(err) {
-        console.log('Redis error ' + err);
-        reject();
+        logger.error('Redis error ' + err);
+        reject(err);
       });
       redisClient.on('connect', function() {
-        console.log('Redis connect');
+        logger.info('Redis connect');
         resolve();
       });
     });

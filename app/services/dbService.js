@@ -5,7 +5,7 @@ mongoose.Promise = Promise;
 
 function close() {
   mongoose.connection.close(function() {
-    console.log('Mongoose disconnected');
+    logger.info('Mongoose disconnected');
   });
 }
 
@@ -58,7 +58,7 @@ function getMongodbUri(config) {
 
 var mongodbUri = getMongodbUri(config.env.mongo);
 
-console.log('connect mongodbUri: ', mongodbUri);
+logger.info('connect mongodbUri: ', mongodbUri);
 
 var db = mongoose.connect(mongodbUri);
 
@@ -81,7 +81,6 @@ function define(modelName, opt, config) {
   if(config.index) {
     modelNameSchema.index.apply(modelNameSchema, config.index);
   }
-
 
   if(config.pre && _.isPlainObject(config.pre)) {
     _.forEach(config.pre, function(value, key) {

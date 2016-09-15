@@ -48,10 +48,5 @@ var webhook = dbService.define('webhook', {
 });
 
 var webhookModel = webhook.model;
-var webhookSchema = webhook.schema;
-
-webhookSchema.post('save', function(doc) {
-  console.log('%s has been saved', doc);
-});
 
 module.exports = webhookModel;

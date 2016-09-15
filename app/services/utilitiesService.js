@@ -10,6 +10,48 @@ var svc = {
   isMongoDuplicateKeyError: function(err) {
     return err.code === 11000 && err.name === 'MongoError';
   },
+  defer: function() {
+    var resolve, reject;
+    var promise = new Promise(function() {
+      resolve = arguments[0];
+      reject = arguments[1];
+    });
+    return {
+      resolve: resolve,
+      reject: reject,
+      promise: promise
+    };
+  },
+  spawnDefer: function(option) {
+    var deferred = svc.defer();
+    if(!option) {
+      return deferred.reject(new Error('no option'));
+    }
+
+    if(option.platform) {
+      option.cmd = (process.platform === 'win32' ? (option.cmd + '.cmd') : option.cmd);
+    }
+    var opt = {
+      stdio: 'inherit'
+    };
+    // set ENV
+    var env = Object.create(process.env);
+    env.NODE_ENV = option.NODE_ENV || process.env.NODE_ENV;
+    opt.env = env;
+
+    var proc = spawn(option.cmd, option.arg, opt);
+    deferred.promise.proc = proc;
+    proc.on('error', function(err) {
+      console.log(err);
+    });
+    proc.on('exit', function(code) {
+      if(code !== 0) {
+        return deferred.reject(code);
+      }
+      deferred.resolve();
+    });
+    return deferred.promise;
+  },
   spawnAsync: function(option) {
     if(!option) {
       return Promise.reject(new Error('no option'));
@@ -27,7 +69,7 @@ var svc = {
 
       var cmd = spawn(option.cmd, option.arg, opt);
       cmd.on('error', function(err) {
-        console.log(err);
+        logger.error(err);
       });
       cmd.on('exit', function(code) {
         if(code !== 0) {
@@ -48,24 +90,24 @@ var svc = {
       });
     });
   },
-  defer: function() {
-    var resolve, reject;
-    var promise = new Promise(function() {
-      resolve = arguments[0];
-      reject = arguments[1];
-    });
-    return {
-      resolve: resolve,
-      reject: reject,
-      promise: promise
-    };
-  },
   promiseWhile: Promise.method(function(condition, action) {
     if(!condition()) {
       return;
     }
     return action().then(svc.promiseWhile.bind(null, condition, action));
   }),
+  escapeRegExp: function(str, disAbleRegExp) {
+    if(!str) {
+      return null;
+    }
+
+    str = str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
+    if(disAbleRegExp === true) {
+      return str;
+    }
+
+    return new RegExp(str, 'gi');
+  },
   getCondition: function(req, {condition = {}, projection, options}) {
     var opt = {
       sort: req.query.sort || 'createdAt DESC'
@@ -132,18 +174,6 @@ var svc = {
       .catch(function(e) {
         return res.wrapError(e, error);
       });
-  },
-  escapeRegExp: function(str, disAbleRegExp) {
-    if(!str) {
-      return null;
-    }
-
-    str = str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&');
-    if(disAbleRegExp === true) {
-      return str;
-    }
-
-    return new RegExp(str, 'gi');
   },
 };
 

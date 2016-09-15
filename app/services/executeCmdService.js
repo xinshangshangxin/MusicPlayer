@@ -85,7 +85,7 @@ function execCmds(option) {
         }
       })
       .catch(function(e) {
-        console.log(e);
+        logger.info(e);
         if(isWait) {
           reject(e);
         }
@@ -173,7 +173,7 @@ function tryAutoDeploy(body) {
       return utilitiesService.execAsync(cmds.join(' && '));
     })
     .catch(function(e) {
-      console.log(e);
+      logger.info(e);
       return mailSendService.sendMail({
         subject: '自动部署失败',
         html: '<p>' + (new Date().toLocaleString()) + '</p>' + JSON.stringify(e)

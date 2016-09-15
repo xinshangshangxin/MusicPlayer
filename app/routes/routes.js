@@ -33,10 +33,10 @@ router
     executeCmdController
       .tryAutoDeploy(req.body)
       .then(function(data) {
-        console.log(data);
+        logger.info(data);
       })
       .catch(function(e) {
-        console.log(e);
+        logger.info(e);
       });
   })
   .get('/api/v1/webhook-event', webhookController.queryEvent)

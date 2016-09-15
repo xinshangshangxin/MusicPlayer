@@ -7,7 +7,7 @@ var ctrl = {
     return executeCmdService
       .execCmds(req.body)
       .then(function(data) {
-        console.log('data:    ', data);
+        logger.info('execCmd data:    ', data);
         return res.json(data);
       })
       .catch(function(e) {

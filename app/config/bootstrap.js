@@ -10,11 +10,11 @@ function bootstrapService(){
         var service;
         try {
           service = require(path.join(__dirname, '../services/' + name));
-          console.log(name + ' start at ' + i);
+          logger.info(name + ' start at ' + i);
           return service.lift();
         }
         catch(e) {
-          console.log(e);
+          logger.error(e);
           return Promise.reject(e);
         }
       });
