@@ -28,13 +28,17 @@ var logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
       level: 'info',
-      colorize: true,
       timestamp: function() {
         return new Date().toISOString();
       },
       formatter: function(options) {
-        return options.timestamp() +' '+ options.level +' '+ (undefined !== options.message ? options.message : '') +
-          (options.meta && Object.keys(options.meta).length ? JSON.stringify(options.meta) : '' );
+        var stackInfo = '';
+        if(options.meta && options.meta.stack) {
+          stackInfo = '    ' + options.meta.stack;
+          delete options.meta.stack;
+        }
+
+        return winston.config.colorize(options.level, options.timestamp() + ' ' + options.level) + ' ' + (undefined !== options.message ? options.message : '') + (options.meta && Object.keys(options.meta).length ? JSON.stringify(options.meta) : '' ) + stackInfo;
       }
     })
   ]

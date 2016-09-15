@@ -9,6 +9,7 @@ var util = require('util');
 var errors = {
   SystemBusy: {code: -1, message: 'system busy, retry later'},
   Success: {code: 0, message: 'success'},
+  UnknownError: {code: 1, message: 'unknown error, need feedback'},
   InternalError: {code: 1, message: 'internal error, contact us'},
   RequireAppKey: {code: 10001, message: 'require appKey'},
   RequireAppSecret: {code: 10002, message: 'require appSecret'},
@@ -32,17 +33,14 @@ function ApplicationError() {
 
 util.inherits(ApplicationError, Error);
 
-function BuildErrorType(errorConfig) {
-  function ConcreteCustomError(message, extra) {
-    Error.captureStackTrace(this, this.constructor);
-    this.name = this.constructor.name;
+function BuildErrorType(errorConfig, errorName) {
+  function ConcreteCustomError(extra, message) {
+    Error.captureStackTrace(this);
+    this.name = errorName || this.constructor.name;
     this.message = message || errorConfig.message;
 
     this.extra = extra;
     this.code = errorConfig.code;
-
-    //compatible
-    this.err = errorConfig.code;
   }
 
   util.inherits(ConcreteCustomError, ApplicationError);
@@ -50,7 +48,7 @@ function BuildErrorType(errorConfig) {
 }
 
 _.forEach(errors, function(errorConfig, errorName) {
-  ApplicationError[errorName] = BuildErrorType(errorConfig);
+  ApplicationError[errorName] = BuildErrorType(errorConfig, errorName);
 });
 
 module.exports = ApplicationError;

@@ -13,10 +13,7 @@ function wrapError(e, otherError, errStatus) {
   if(otherError) {
     return this.status(otherError.status || 400).json(otherError);
   }
-  return this.status(400).json({
-    code: 100,
-    msg: '未知错误，请反馈！'
-  });
+  return this.status(400).json(new ApplicationError.UnknownError());
 }
 
 module.exports = function(req, res, next) {
