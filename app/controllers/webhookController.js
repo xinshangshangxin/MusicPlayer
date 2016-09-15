@@ -44,7 +44,7 @@ var ctrl = {
         return res.json(data);
       })
       .catch(function(e) {
-        res.wrapError(e, new ApplicationError(11002, ctrl.errCode));
+        res.wrapError(e, new ApplicationError.CreateError());
       });
   },
   update: function(req, res) {

@@ -1,7 +1,7 @@
 'use strict';
 
 function isUserDefineError(e) {
-  return e instanceof ApplicationError || !(e instanceof Error);
+  return e instanceof ApplicationError;
 }
 
 function wrapError(e, otherError, errStatus) {
