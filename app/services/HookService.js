@@ -2,6 +2,16 @@
 
 var svc = {
   hooks: [],
+  events: {
+    SiteMonitorError: {
+      name: 'SiteMonitorError',
+      displayName: '站点监测失败'
+    },
+    'Test:afterCreate': {
+      name: 'Test:afterCreate',
+      displayName: '测试'
+    }
+  },
   on: function(data, conditions, projection, options) {
     return Promise
       .mapSeries(svc.hooks, function(hook) {

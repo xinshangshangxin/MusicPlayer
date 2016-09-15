@@ -85,13 +85,9 @@ var ctrl = {
       });
   },
   queryEvent: function(req, res) {
-    res.json([{
-      name: 'Test:afterCreate',
-      displayName: '测试'
-    }, {
-      name: 'SiteMonitorError',
-      displayName: '站点监测失败'
-    }]);
+    res.json(_.map(HookService.events, function(value) {
+      return value;
+    }));
   }
 };
 
