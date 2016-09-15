@@ -23,6 +23,11 @@ global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
 // reset env value
 global.config.env = global.config.env[env];
 
+// set RegExp toJson for log
+RegExp.prototype.toJSON = function() {
+  return 'RegExp:  /' + this.source + '/' + this.flags;
+};
+
 // set logger
 var logger = new (winston.Logger)({
   transports: [
