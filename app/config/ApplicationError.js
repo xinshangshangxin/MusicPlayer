@@ -14,7 +14,6 @@ var errors = {
   RequireAppSecret: {code: 10002, message: 'require appSecret'},
   InvalidAppKey: {code: 10004, message: 'invalid appKey'},
   InvalidAppSecret: {code: 10005, message: 'invalid appSecret'},
-  queryError: {code: 10005, message: 'invalid appSecret'},
   //global
   QueryError: {code: 100101, message:'查询列表出错'},
   GetError: {code: 100102, message:'查询详情出错'},
