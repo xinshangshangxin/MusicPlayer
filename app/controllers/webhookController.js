@@ -15,8 +15,8 @@ var ctrl = {
     var search = req.query.search;
     if(search) {
       opt.condition = {
-        or: [{
-          'name': {'contains': search}
+        $or: [{
+          name: utilitiesService.escapeRegExp(search)
         }]
       };
     }

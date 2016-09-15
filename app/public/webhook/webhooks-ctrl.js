@@ -2,7 +2,7 @@
 
 angular
   .module('shangAngularTemplate')
-  .controller('WebhooksCtrl', function($scope, $stateParams, $state, $translate, webhookEntity) {
+  .controller('WebhooksCtrl', function($scope, $stateParams, webhookEntity) {
     $stateParams.page = $stateParams.page || 1;
     $stateParams.limit = $stateParams.limit || 10;
     $stateParams.search = $stateParams.search || '';
@@ -15,11 +15,11 @@ angular
     };
 
     $scope.search = function() {
-      webhookEntity
-        .query($scope.meta, function(data, headers) {
-          $scope.meta.totalItems = headers('totalItems');
-          $scope.viewData = data;
-        });
+      var searchProps = ['page', 'limit', 'search'];
+      webhookEntity.query(_.pick($scope.meta, searchProps), function(data, headers) {
+        $scope.meta.totalItems = headers('totalItems');
+        $scope.resources = data;
+      });
     };
 
     $scope.search();

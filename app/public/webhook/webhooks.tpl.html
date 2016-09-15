@@ -23,7 +23,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr ng-repeat="row in viewData">
+    <tr ng-repeat="row in resources">
       <td><a ui-sref="^.detail({id:row.id})">{{row.name}}</a></td>
       <td>{{row.method}}</td>
       <td>{{row.payloadAddress}}</td>
@@ -38,12 +38,12 @@
       items-per-page="meta.limit"
       total-items="meta.totalItems"
       max-size="meta.maxSize"
-      ng-change="$state.go('.', meta)"
+      ng-change="search()"
       class="pagination pull-left"
-      previous-text="上页"
-      next-text="下页"
-      first-text="头页"
-      last-text="尾页"
+      previous-text="{{::'pagination.previous' | translate}}"
+      next-text="{{::'pagination.next' | translate}}"
+      first-text="{{::'pagination.first' | translate}}"
+      last-text="{{::'pagination.last' | translate}}"
     ></pagination>
     <p class="text-muted pull-right" style="line-height: 75px; margin: 0;">
       找到{{meta.totalItems}}条记录，每页显示{{meta.limit}}条记录，当前第{{meta.page}}页，共{{numPages}}页</p>
