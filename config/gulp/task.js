@@ -5,7 +5,7 @@ var path = require('path');
 var browserSync = require('browser-sync').create();
 var reload = browserSync.reload;
 
-var myJshintReporter = require('./myJshintReporter.js');
+var utilities = require('./utilities');
 
 var gulpConfig = require('./config.js');
 var specConfig = null;       // 在环境初始化之后再读取配置
@@ -16,11 +16,13 @@ var $ = require('gulp-load-plugins')(
     pattern: ['gulp-*', 'del', 'streamqueue']
     //,lazy: false
   });
-$.storeFileName = require('./storeFileName.js');
+
+$.utilities = utilities;
 $.isBuild = false;
 $.isStatic = false;
 $.specConfig = specConfig;
 $.config = config;
+$.isNeedInjectHtml = false;
 
 // set default env
 gulpConfig.__alterableSetting__ = {};
@@ -68,6 +70,15 @@ function changeSrc(src) {
 function errorHandler(error) {
   console.log(error);
   this.end();
+  this.emit('end');
+}
+
+
+function injectHtmlDevErrorHandler(error) {
+  console.log(error);
+  $.isNeedInjectHtml = true;
+  this.end();
+  this.emit('end');
 }
 
 function validConfig(config, name) {
@@ -90,9 +101,8 @@ gulp.task('theme', function(done) {
     .pipe($.cssnano())
     .pipe($.rev())
     .pipe($.rename({extname: '.min.css'}))
-    .pipe($.storeFileName(specConfig.theme.storeFileNameSpaceName))
+    .pipe(utilities.saveStoreFile(specConfig.theme.storeFileNameSpaceName))
     .pipe(gulp.dest(specConfig.theme.dest));
-
 });
 
 gulp.task('userTask', gulp.series('theme'));
@@ -205,7 +215,10 @@ gulp.task('injectHtml:dev', function(done) {
       $.streamqueue.apply($.streamqueue, arr),
       ignorePath
     ))
-    .on('error', errorHandler)
+    .on('error', injectHtmlDevErrorHandler)
+    .on('finish', function() {
+      $.isNeedInjectHtml = false;
+    })
     .pipe(gulp.dest(config.injectHtmlDev.dest));
 });
 
@@ -294,15 +307,16 @@ gulp.task('cp', function(done) {
     })();
 });
 
-// jshint 用户的js
+// 前端js
 gulp.task('js', function(done) {
   if(!validConfig(config.js)) {
     return done();
   }
+
   if(!$.isBuild) {
     return gulp.src(config.js.src, config.js.opt)
       .pipe($.jshint(config.jshintPath))
-      .pipe($.jshint.reporter(myJshintReporter));
+      .pipe($.jshint.reporter(utilities.jshintReporter));
   }
 
   var jssStreamQueue = [{
@@ -335,7 +349,7 @@ gulp.task('js', function(done) {
     }
 
     var scriptStream = stream.pipe($.jshint(config.jshintPath))
-      .pipe($.jshint.reporter(myJshintReporter))
+      .pipe($.jshint.reporter(utilities.jshintReporter))
       .pipe($.ngAnnotate())
       .pipe($.angularFilesort())
       .on('error', errorHandler);
@@ -361,6 +375,20 @@ gulp.task('js', function(done) {
     .on('error', errorHandler)
     .pipe(gulp.dest(config.js.dest));
 });
+
+// 前端js进行jshint
+gulp.task('jsCachedJshint', function(done) {
+  if(!validConfig(config.js)) {
+    return done();
+  }
+
+  return gulp.src(config.js.src, config.js.opt)
+    .pipe($.cached('js')) // 只传递更改过的文件
+    .pipe($.jshint(config.jshintPath))
+    .pipe($.jshint.reporter(utilities.jshintReporter))
+    .pipe($.remember('js')) // 把所有的文件放回 stream
+});
+
 
 gulp.task('libJs', function(done) {
   if(!validConfig(config.libJs) || !config.injectHtmlProd.prodLibJsName) {
@@ -398,7 +426,7 @@ gulp.task('server', function(done) {
       .src(config.server.src, config.server.opt)
       .pipe(f)
       .pipe($.jshint(config.jshintPathApp))
-      .pipe($.jshint.reporter(myJshintReporter))
+      .pipe($.jshint.reporter(utilities.jshintReporter))
       .pipe(f.restore);
   }
 
@@ -406,21 +434,50 @@ gulp.task('server', function(done) {
     .src(config.server.src, config.server.opt)
     .pipe(f)
     .pipe($.jshint(config.jshintPathApp))
-    .pipe($.jshint.reporter(myJshintReporter))
+    .pipe($.jshint.reporter(utilities.jshintReporter))
     .pipe(f.restore)
     .pipe(gulp.dest(config.server.dest))
 });
 
 // start watchers
 gulp.task('watchers', function(done) {
+  // less
   if(config.less.watcherPath) {
     gulp.watch(config.less.watcherPath, gulp.series('less'));
   }
+  // 后端js变动
   if(config.server.jsWatch) {
     gulp.watch(config.server.jsWatch, gulp.series('server'));
   }
-  //gulp.watch(config.images.src, config.images.opt, ['images']);
-  //gulp.watch(config.js.src, config.js.opt, ['js', 'injectHtml:dev']);
+
+  if(config.browsersync.development && config.browsersync.development.files) {
+    var injectHtmlDevTimer = null;
+    gulp.watch(config.browsersync.development.files)
+      .on('change', function(filePath) {
+        // js文件需要 jshint
+        if(/\.js/.test(filePath)) {
+          gulp.series('jsCachedJshint')();
+        }
+        
+        if($.isNeedInjectHtml) {
+          console.log('NeedInjectHtml');
+          gulp.series('injectHtml:dev')();
+        }
+      }) // 增加文件需要重新生成依赖
+      .on('add', function() {
+        clearTimeout(injectHtmlDevTimer);
+        injectHtmlDevTimer = setTimeout(function() {
+          gulp.series('injectHtml:dev')();
+        }, 200);
+      })// 删除文件需要重新生成依赖
+      .on('unlink', function() {
+        clearTimeout(injectHtmlDevTimer);
+        injectHtmlDevTimer = setTimeout(function() {
+          gulp.series('injectHtml:dev')();
+        }, 200);
+      });
+  }
+
   done();
 });
 
@@ -473,20 +530,6 @@ gulp.task('buildServer', gulp.series(
 
 gulp.task('prod', gulp.series('build'));
 
-gulp.task('default', gulp.series(
-  setDevEnv,
-  'clean',
-  gulp.parallel(
-    'libCss',
-    'less',
-    'js',
-    'server',
-    'fonts'
-  ),
-  //'userTask',
-  'injectHtml:dev'
-));
-
 gulp.task('static', gulp.series(
   function setStaticEnv(done) {
     $.isStatic = true;
@@ -500,18 +543,20 @@ gulp.task('static', gulp.series(
   'build'
 ));
 
-
-gulp.task('dev', gulp.series(
+gulp.task('default', gulp.series(
   setDevEnv,
   'clean',
   gulp.parallel(
-    'libCss',
     'less',
-    'js',
-    'server',
-    'fonts'
+    'js'
   ),
-  'injectHtml:dev',
+  //'userTask',
+  'injectHtml:dev'
+));
+
+
+gulp.task('dev', gulp.series(
+  'default',
   'browser-sync',
   'watchers'
 ));

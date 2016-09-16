@@ -118,7 +118,7 @@ function getCommonConfig() {
         src: ['this_is_a_template.js'],
         subStr: /shangAngularTemplate/,
         newStr: function($) {
-          var filepath = $.storeFileName.get($.specConfig.theme.storeFileNameSpaceName, 'relative') || [];
+          var filepath = $.utilities.getStoreFile($.specConfig.theme.storeFileNameSpaceName, 'relative') || [];
           return filepath[0];
         }
       }],
@@ -127,7 +127,7 @@ function getCommonConfig() {
     images: {
       src: [],
       opt: {
-        cwd: 'app/public/imgs',
+        cwd: 'app/public/images',
         base: 'app/public'
       },
       dest: alterableSetting.publicPath
@@ -188,8 +188,8 @@ function getCommonConfig() {
     server: {
       jsWatch: [
         'app/**/*.js',
-        'config/**/*',
-        '!app/public/**/*'
+        '!app/public/**/*',
+        '!app/views/**/*'
       ],
       src: [
         '**/*',
