@@ -34,7 +34,7 @@ angular
         }
       })
       .state('webhook.detail', {
-        url: '/:id',
+        url: '/:id?mode',
         templateUrl: 'webhook/webhook-detail.tpl.html',
         controller: 'WebhookDetailCtrl',
         resolve: {

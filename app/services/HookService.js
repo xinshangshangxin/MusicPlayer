@@ -10,6 +10,10 @@ var svc = {
     'Test:afterCreate': {
       name: 'Test:afterCreate',
       displayName: '测试'
+    },
+    'Webhook:afterDestroy': {
+      name: 'Webhook:afterDestroy',
+      displayName: 'webhook删除'
     }
   },
   on: function(data, conditions, projection, options) {

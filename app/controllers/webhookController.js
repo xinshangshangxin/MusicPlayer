@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var WebhookModel = require('../models/webhook');
+var webhookModel = require('../models/webhookModel');
 var HookService = require('../services/HookService');
 var utilitiesService = require('../services/utilitiesService');
 
@@ -21,10 +21,10 @@ var ctrl = {
       };
     }
 
-    return utilitiesService.conditionQuerySend(WebhookModel, req, res, new ApplicationError.QueryError(), opt);
+    return utilitiesService.conditionQuerySend(webhookModel, req, res, new ApplicationError.QueryError(), opt);
   },
   get: function(req, res) {
-    WebhookModel
+    webhookModel
       .findOne({
         _id: req.params.id
       })
@@ -38,7 +38,7 @@ var ctrl = {
   create: function(req, res) {
     var webhook = req.body;
 
-    WebhookModel
+    webhookModel
       .create(webhook)
       .then(function(data) {
         return res.json(data);
@@ -50,7 +50,7 @@ var ctrl = {
   update: function(req, res) {
     var webhook = req.body;
 
-    WebhookModel.update({
+    webhookModel.update({
       _id: webhook.id
     }, webhook)
       .then(function(data) {
@@ -63,7 +63,7 @@ var ctrl = {
   destroy: function(req, res) {
     var id = req.params.id;
     var webHook;
-    WebhookModel
+    webhookModel
       .findOne({
         _id: id
       })

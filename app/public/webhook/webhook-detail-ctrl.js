@@ -6,7 +6,7 @@ angular
     function($scope, $state, $stateParams, $translate, events, webhookEntity, dialogService) {
       $scope.events = events;
       $scope.webhook = new webhookEntity({id: $stateParams.id});
-      $scope.editing = $stateParams.mode === 'edit' || !$scope.webhook.id;
+      $scope.editing = $stateParams.mode === 'editing' || !$scope.webhook.id;
 
       $scope.load = function() {
         if(!$scope.webhook.id) {
@@ -26,10 +26,7 @@ angular
       };
 
       $scope.edit = function() {
-        if($scope.webhook.id) {
-          $scope.original = angular.copy($scope.webhook);
-          $scope.editing = true;
-        }
+        $state.go('.', {id: $scope.webhook.id, mode: 'editing'});
       };
 
       $scope.save = function(form) {
@@ -41,19 +38,17 @@ angular
         ($scope.webhook.id ? $scope.webhook.$update() : $scope.webhook.$save())
           .then(function(data) {
             $scope.editing = false;
-            if(!$stateParams.id) {
-              $state.go('^.detail', {id: data.id});
+            if(!$scope.webhook.id) {
+              $state.go('.', {id: data.id});
             } else {
-              $scope.load();
-              $state.go('^.detail', {mode: undefined});
+              $state.go('.', {id: $scope.webhook.id, mode: undefined});
             }
           });
       };
 
       $scope.cancel = function() {
         if($scope.webhook.id) {
-          angular.copy($scope.original, $scope.webhook);
-          $scope.editing = false;
+          $state.go('.', {id: $scope.webhook.id, mode: undefined});
         } else {
           $state.go('^.list');
         }

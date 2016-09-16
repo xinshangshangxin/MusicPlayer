@@ -25,14 +25,15 @@ angular
           notificationService.error('无权限');
         }
         else if(response.status === 400) {
-          response.isShow = true;
-          notificationService.error(response.data.msg);
+          response.hadShown = true;
+          notificationService.error(response.data.message);
         }
         else if(response.status === 404) {
-          notificationService.error('404错误');
+          response.hadShown = true;
+          notificationService.error('未找到相关页面');
         }
         else if(response.status >= 500) {
-          notificationService.error('服务器出错');
+          notificationService.error('服务器出错, 请反馈!');
         }
 
         if(httpInjector.statusCodeRouter && httpInjector.statusCodeRouter[response.status]) {
