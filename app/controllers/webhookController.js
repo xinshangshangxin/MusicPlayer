@@ -5,7 +5,7 @@
 'use strict';
 
 var webhookModel = require('../models/webhookModel');
-var HookService = require('../services/HookService');
+var hookService = require('../services/hookService');
 var utilitiesService = require('../services/utilitiesService');
 
 var ctrl = {
@@ -75,7 +75,7 @@ var ctrl = {
         return data.remove();
       })
       .then(function() {
-        return HookService.on('Webhook:afterDestroy', webHook);
+        return hookService.on('Webhook:afterDestroy', webHook);
       })
       .then(function() {
         res.json({});
@@ -85,7 +85,7 @@ var ctrl = {
       });
   },
   queryEvent: function(req, res) {
-    res.json(_.map(HookService.events, function(value) {
+    res.json(_.map(hookService.events, function(value) {
       return value;
     }));
   }

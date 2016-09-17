@@ -39,7 +39,7 @@ module.exports = svc;
 
 /**
 
- require('../services/HookService').on({
+ require('../services/hookService').on({
       id: 'id001',
       data: {
         d1: {

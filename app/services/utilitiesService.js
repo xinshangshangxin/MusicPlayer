@@ -110,7 +110,7 @@ var svc = {
   },
   getCondition: function(req, {condition = {}, projection, options}) {
     var opt = {
-      sort: req.query.sort || 'createdAt DESC'
+      sort: req.query.sort || '-createdAt'
     };
 
     if(req.query.page || req.query.limit) {

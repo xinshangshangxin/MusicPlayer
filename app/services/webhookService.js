@@ -3,12 +3,12 @@
 var rp = Promise.promisify(require('request'), {multiArgs: true});
 
 var mailSendService = require('./mailSendService');
-var WebhookModel = require('../models/webhook');
-var HookService = require('./HookService');
+var webhookModel = require('../models/webhookModel');
+var hookService = require('./hookService');
 
 var svc = {
   lift: function() {
-    return HookService.registerHook(svc.on.bind(svc));
+    return hookService.registerHook(svc.on.bind(svc));
   },
   resolveValue: function(body, data) {
     if(!body) {
@@ -90,7 +90,7 @@ var svc = {
   },
   on: function(data, conditions, projection, options) {
     // not care the result
-    WebhookModel
+    webhookModel
       .find(conditions, projection, options)
       .then(function(hooks) {
         if(!hooks || !hooks.length) {
