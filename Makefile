@@ -25,7 +25,7 @@ prod:
 	node production/app.js
 pushHeroku: 
 	cp ./package.json ./production
-	sed -i '' 's/"start": "NODE_ENV=.*/"start": "NODE_ENV=heroku pm2 start .\/app.js --no-daemon",/g' ./production/package.json
+	gsed -i 's/"start": "NODE_ENV=.*/"start": "NODE_ENV=heroku pm2 start .\/app.js --no-daemon",/g' ./production/package.json
 	cd ./production && git add -A && git commit -m "auto" && git push heroku master && heroku logs --tail
 static:
 	gulp static
@@ -45,5 +45,9 @@ copy:
 	fi
 	rm -rf ../$(d)/.idea
 	rm -rf ../$(d)/.git
+rsync:
+	cp ./package.json ./production
+	gsed -i 's/"start": "NODE_ENV=.*/"start": "PORT=1337 NODE_ENV=production pm2 start .\/app.js --name template:1337",/g' ./production/package.json
+	rsync --exclude .tmp --exclude node_modules -azvF -e "ssh -p 22" ./production/  root@139.129.92.153:/root/shang/template
 openshift:
 	NODE_ENV=openshift pm2 start app.js
