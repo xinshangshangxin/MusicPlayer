@@ -36,7 +36,7 @@ function getCommonConfig() {
         'app/public/components/**/*.less'
       ],    // watch:sass 文件路径
       src: [
-        'less/**/*.less',
+        'less/variables.less',
         'app/public/common/**/*.less',
         'app/public/components/**/*.less'
       ],
