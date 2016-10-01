@@ -14,7 +14,7 @@ angular
     'dndLists',
     'common'
   ])
-  .config(function($locationProvider, $httpProvider, $translateProvider) {
+  .config(function($locationProvider, $httpProvider, $translateProvider, $compileProvider) {
     //$locationProvider.html5Mode(true);
 
     $httpProvider.interceptors.push('httpInjectorFactory');
@@ -26,6 +26,10 @@ angular
     });
     $translateProvider.preferredLanguage('zh-hans');
 
+    // electron
+    if(nodeRequire) {
+      $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|chrome-extension|shang):|data:image\//);
+    }
   })
   .run(function($rootScope, $state, httpInjectorFactory, SERVER_URL) {
     $rootScope.$state = $state;

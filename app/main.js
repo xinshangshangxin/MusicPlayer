@@ -4,22 +4,25 @@ const path = require('path');
 const {app, BrowserWindow, globalShortcut, Menu, nativeImage, protocol, Tray} = require('electron');
 
 let localServerUrl = 'http://localhost:12345';
+let openServerUrl = 'shang://server.musicplayer.com';
 let mainWindow, willQuitApp, tray;
 
+protocol.registerStandardSchemes(['shang']);
+
 function createWindow() {
-  protocol.registerHttpProtocol('server-url', function(request, callback) {
-    let url = request.url.replace('server-url://hostname.com', '');
+  protocol.registerHttpProtocol('shang', function(request, callback) {
+    let url = request.url.replace(openServerUrl, '');
     if(!/^\//.test(url)) {
       url = '/' + url;
     }
     request.url = localServerUrl + url;
-    console.info('request: ', JSON.stringify(request, null, 2));
     callback(request);
   }, function(e) {
     if(e) {
       console.error('Failed to register protocol: ', e);
     }
   });
+
 
   /** start 设置menu **/
   let menuFromTemplate = Menu.buildFromTemplate(getTemplate(process.platform));
@@ -52,7 +55,7 @@ function createWindow() {
   //   click: () => app.exit(0)
   // }]);
   // tray.setContextMenu(contextMenu);
-  tray.on('click', tollageWindow);
+  tray.on('click', toggleWindow);
   /** end 设置tray**/
 
 
@@ -69,9 +72,11 @@ function createWindow() {
 
   require('./app')
     .then(function() {
-      // mainWindow.loadURL('server-url://hostname.com/');
       // mainWindow.loadURL('http://xinshangshangxin.com');
-      mainWindow.loadURL(localServerUrl);
+      mainWindow.loadURL(openServerUrl);
+      // mainWindow.loadURL(localServerUrl);
+
+      mainWindow.openDevTools();
     })
     .catch(function(e){
       console.log(e);
@@ -130,7 +135,7 @@ function serverError(e){
 
 }
 
-function tollageWindow() {
+function toggleWindow() {
   if(!mainWindow) {
     return;
   }
@@ -268,7 +273,7 @@ function getTemplate(platform) {
 }
 
 function reload() {
-  mainWindow.loadURL(localServerUrl);
+  mainWindow.loadURL(openServerUrl);
 }
 
 app.on('ready', createWindow);
