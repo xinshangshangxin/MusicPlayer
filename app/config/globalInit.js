@@ -2,10 +2,9 @@
 
 var path = require('path');
 var requireDirectory = require('require-directory');
-var winston = require('winston');
+var pino = require('pino');
 
 // set bluebird and lodash
-global.__Promise__ = global.Promise;
 global.Promise = require('bluebird');
 global._ = require('lodash');
 
@@ -23,36 +22,13 @@ global.config = requireDirectory(module, path.resolve(__dirname, '.'), {
 // reset env value
 global.config.env = global.config.env[env];
 
-var transport = new (winston.transports.Console)({
-  level: 'info',
-  timestamp: function() {
-    return new Date().toISOString();
-  },
-  formatter: function(options) {
-    var stackInfo = '';
-    if(options.meta && options.meta.stack) {
-      stackInfo = '    ' + options.meta.stack;
-      delete options.meta.stack;
-    }
 
-    return winston.config.colorize(options.level, options.timestamp() + ' ' + options.level) + ' ' + (undefined !== options.message ? options.message : '') + (options.meta && Object.keys(options.meta).length ? JSON.stringify(options.meta) : '' ) + stackInfo;
-  }
-});
+// log
+var pretty = undefined;
+if(env === 'development') {
+  pretty = pino.pretty();
+  pretty.pipe(process.stdout)
+}
 
-var originalLog = transport.log;
-transport.log = function(level, msg, meta, callback) {
-  // mongodb 的 doc文档
-  if(meta && '_doc' in meta && 'save' in meta) {
-    meta = JSON.parse(JSON.stringify(meta));
-  }
-  return originalLog.call(transport, level, msg, meta, callback);
-};
+global.logger = pino(undefined, pretty);
 
-// set logger
-var logger = new (winston.Logger)({
-  transports: [
-    transport
-  ]
-});
-
-global.logger = logger;
