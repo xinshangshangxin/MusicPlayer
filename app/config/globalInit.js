@@ -3,7 +3,6 @@
 var path = require('path');
 var requireDirectory = require('require-directory');
 var winston = require('winston');
-var util = require('util');
 
 // set bluebird and lodash
 global.__Promise__ = global.Promise;

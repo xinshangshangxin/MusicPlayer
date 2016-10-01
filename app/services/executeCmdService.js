@@ -58,18 +58,15 @@ function execCmds(option) {
   var email = option.email;
 
   if(!_.isArray(cmds)) {
-    return Promise.reject({
-      code: 10001,
-      msg: '参数错误, 请使用help命令查看如何使用'
-    });
+    return Promise.reject(new ApplicationError.ExecCmdParamError());
   }
 
   return new Promise(function(resolve, reject) {
     if(!isWait) {
-      resolve(Promise.resolve({
-        code: 0,
+      resolve({
         msg: '正在执行中, ' + email ? ('执行结果发送至: ' + email) : '无邮箱提醒'
-      }));
+      });
+      resolve = _.noop;
     }
 
     return Promise
@@ -123,12 +120,10 @@ function wrapResult(arr, email) {
           html: '<p>' + (new Date().toLocaleString()) + '</p>' + body
         });
       }
+      return null;
     })
     .then(function() {
-      return {
-        code: 0,
-        msg: body
-      };
+      return body;
     });
 }
 
