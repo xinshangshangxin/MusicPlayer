@@ -31,7 +31,7 @@ angular
       $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|chrome-extension|shang):|data:image\//);
     }
   })
-  .run(function($rootScope, $stateParams, $state, httpInjectorFactory, SERVER_URL) {
+  .run(function($rootScope, $stateParams, $state, $window, httpInjectorFactory, SERVER_URL) {
     // global variable
     $rootScope.$state = $state;
     $rootScope.$stateParams = $stateParams;
@@ -51,8 +51,9 @@ angular
     httpInjectorFactory.setServerUrl(SERVER_URL);
 
     //electron
-    if(window.nodeRequire) {
-      var ipcRenderer = nodeRequire('electron').ipcRenderer;
+    if($window.nodeRequire) {
+      $window.electron = $window.nodeRequire('electron');
+      var ipcRenderer = $window.electron.ipcRenderer;
       ipcRenderer.on('globalShortcut', function(event, args) {
         console.log('set ipcRenderer globalShortcut: ', args);
         $rootScope.$broadcast('globalShortcut', args);

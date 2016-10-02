@@ -25,11 +25,11 @@ else
     APP_NAME="Music Player"
 fi
 
-ignore_list="\./dist|\./config|\.tmp|\./static|\./production|\.idea|.*\.md|.*\.yml"
+ignore_list="\./dist/|\./config/|\.tmp|\./static/|\./production/|\.idea|.*\.md|.*\.yml"
 
 electron-packager ./production "${APP_NAME}" --platform=$PLATFORM --arch=$ARCH --version=1.1.0 --overwrite --out=./dist --ignore=${ignore_list} --icon=/Users/feng/Github/musicPlayer/app/public/images/shang.icns --app-version=0.1.0
 
-# --asar --app-version=1.3.0
+# --prune --asar --app-version=1.3.0
 
 if [ $? -eq 0 ]; then
   echo -e "$(tput setaf 2)Packaging for $PLATFORM $ARCH succeeded.$(tput sgr0)\n"

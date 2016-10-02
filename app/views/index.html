@@ -18,6 +18,14 @@
   <!-- endinject -->
 </head>
 <body>
+  <script>
+    // 重命名 Electron 提供的 require
+    window.nodeRequire = require;
+    delete window.require;
+    delete window.exports;
+    delete window.module;
+  </script>
+
   <div ng-if="!initialingServiceCount" class="notification-bar" notification-bar></div>
   <div ng-if="!initialingServiceCount" class="container">
     <div ui-view></div>
