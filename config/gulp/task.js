@@ -549,7 +549,8 @@ gulp.task('default', gulp.series(
   'clean',
   gulp.parallel(
     'less',
-    'js'
+    'js',
+    'server'
   ),
   //'userTask',
   'injectHtml:dev'
