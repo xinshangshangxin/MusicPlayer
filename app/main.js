@@ -19,18 +19,25 @@ appConfigure.registerListeners(opt);
 // 创建界面
 app.on('ready', createWindow);
 
+
 function createWindow() {
   // 注册自定义协议, 防止端口占用情况下localStorage无法使用
-  serverUrlConfigure.registerUserProtocol(opt);
-  // 创建界面
-  mainWindowConfigure.create(opt);
-  mainWindowConfigure.registerListeners(opt);
-  mainWindowConfigure.startServer(opt);
+  serverUrlConfigure.create(opt, function(err) {
+    if(err) {
+      throw err;
+    }
 
-  // 设置菜单
-  menuConfigure.create(opt);
-  // 托盘图标
-  trayConfigure.create(opt);
-  // 全局键盘快捷键
-  globalShortcutConfigure.create(opt);
+    // 创建界面
+    mainWindowConfigure.create(opt);
+    mainWindowConfigure.registerListeners(opt);
+    mainWindowConfigure.startServer(opt);
+
+    // 设置菜单
+    menuConfigure.create(opt);
+    // 托盘图标
+    trayConfigure.create(opt);
+    // 全局键盘快捷键
+    globalShortcutConfigure.create(opt);
+
+  });
 }

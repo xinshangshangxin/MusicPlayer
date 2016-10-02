@@ -6,7 +6,7 @@ const nodeNotifier = require('node-notifier');
 function serverError(e) {
   nodeNotifier.notify({
     'title': 'Music Player',
-    'message': JSON.stringify(e)
+    'message': e && e.toString()
   });
 }
 
@@ -29,6 +29,7 @@ module.exports = {
     });
   },
   startServer: function(opt) {
+    process.env.PORT = opt.PORT;
     // 启动后端服务
     require('../app')
       .then(function() {
