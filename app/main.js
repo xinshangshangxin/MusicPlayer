@@ -1,25 +1,28 @@
 'use strict';
 
 const path = require('path');
-const {app, BrowserWindow, Menu, nativeImage, protocol, Tray} = require('electron');
+const {app, BrowserWindow, globalShortcut, Menu, nativeImage, protocol, Tray} = require('electron');
 
 let localServerUrl = 'http://localhost:12345';
+let openServerUrl = 'shang://server.musicplayer.com';
 let mainWindow, willQuitApp, tray;
 
+protocol.registerStandardSchemes(['shang']);
+
 function createWindow() {
-  protocol.registerHttpProtocol('server-url', function(request, callback) {
-    let url = request.url.replace('server-url://hostname.com', '');
+  protocol.registerHttpProtocol('shang', function(request, callback) {
+    let url = request.url.replace(openServerUrl, '');
     if(!/^\//.test(url)) {
       url = '/' + url;
     }
     request.url = localServerUrl + url;
-    console.info('request: ', JSON.stringify(request, null, 2));
     callback(request);
   }, function(e) {
     if(e) {
       console.error('Failed to register protocol: ', e);
     }
   });
+
 
   /** start 设置menu **/
   let menuFromTemplate = Menu.buildFromTemplate(getTemplate(process.platform));
@@ -32,9 +35,9 @@ function createWindow() {
     height: 626,
     // frame: false,
     titleBarStyle: 'hidden-inset',
-    webPreferences: {
-      nodeIntegration: false
-    }
+    // webPreferences: {
+    //   nodeIntegration: false
+    // }
   });
   /**end 创建界面**/
 
@@ -52,7 +55,7 @@ function createWindow() {
   //   click: () => app.exit(0)
   // }]);
   // tray.setContextMenu(contextMenu);
-  tray.on('click', tollageWindow);
+  tray.on('click', toggleWindow);
   /** end 设置tray**/
 
 
@@ -65,17 +68,63 @@ function createWindow() {
     }
   });
 
+  registerGlobalShortcut();
+
   require('./app')
     .then(function() {
-      // mainWindow.loadURL('server-url://hostname.com/');
       // mainWindow.loadURL('http://xinshangshangxin.com');
-      mainWindow.loadURL(localServerUrl);
+      mainWindow.loadURL(openServerUrl);
+      // mainWindow.loadURL(localServerUrl);
+
+      mainWindow.openDevTools();
     })
     .catch(function(e){
       console.log(e);
       serverError(e);
     });
 
+}
+
+function registerGlobalShortcut() {
+
+  var obj = {
+    'F6': {
+      action: 'playOrPause'
+    },
+    'Ctrl+Option+Right': {
+      action: 'nextSong'
+    },
+    'Ctrl+Option+Left': {
+      action: 'preSong'
+    },
+    'Command+Option+Shift+H': function() {
+      if(mainWindow.isFocused()) {
+        mainWindow.hide();
+      }
+      else {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    },
+  };
+
+  Object.keys(obj).forEach(function(key) {
+    var value = obj[key];
+
+    let ret = globalShortcut.register(key, function() {
+      console.log(`${key} is pressed`);
+
+      if(typeof value === 'function') {
+        return value();
+      }
+
+      mainWindow.webContents.send('globalShortcut', value);
+    });
+
+    if (!ret) {
+      console.log(`${key} registration failed`);
+    }
+  });
 }
 
 function serverError(e){
@@ -86,7 +135,7 @@ function serverError(e){
 
 }
 
-function tollageWindow() {
+function toggleWindow() {
   if(!mainWindow) {
     return;
   }
@@ -224,7 +273,7 @@ function getTemplate(platform) {
 }
 
 function reload() {
-  mainWindow.loadURL(localServerUrl);
+  mainWindow.loadURL(openServerUrl);
 }
 
 app.on('ready', createWindow);
@@ -237,3 +286,6 @@ app.on('window-all-closed', function() {
 
 app.on('activate', () => mainWindow.show());
 app.on('before-quit', () => willQuitApp = true);
+app.on('will-quit', function() {
+  globalShortcut.unregisterAll();
+});

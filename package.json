@@ -8,7 +8,7 @@
   },
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron ./app/main.js",
     "test": "mocha --recursive --timeout 10000 --harmony --bail test"
   },
   "dependencies": {
@@ -61,6 +61,7 @@
     "jshint-stylish": "^2.0.1",
     "log-symbols": "^1.0.2",
     "node-notifier": "^4.6.1",
+    "open": "0.0.5",
     "streamqueue": "^1.1.1",
     "supertest": "^2.0.0",
     "through2": "^2.0.0"

@@ -10,13 +10,13 @@
     "angular-sanitize": "1.5.7",
     "angular-translate": "2.4.2",
     "angular-translate-loader-static-files": "2.4.2",
-    "angular-ui-router": "0.2.15",
+    "angular-drag-and-drop-lists": "1.4.0",
+    "angular-ui-router": "0.3.1",
     "bootstrap": "3.3.6",
     "font-awesome": "4.6.3",
     "lodash": "4.13.1",
     "videogular": "1.4.4",
     "videogular-themes-default": "1.4.4",
-    "videogular-controls": "~1.4.4",
-    "angular-drag-and-drop-lists": "1.4.0"
+    "videogular-controls": "~1.4.4"
   }
 }

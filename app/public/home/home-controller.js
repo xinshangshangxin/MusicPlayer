@@ -6,6 +6,22 @@ angular
     var errorIndex = -1;
     var errorTimer = null;
 
+    var globalShortcutAction = {
+      playOrPause: function() {
+        $scope.audioApi && $scope.audioApi.playPause();
+      },
+      nextSong: playNext,
+      preSong: function() {
+        if($scope.songList && $scope.songList.length) {
+          setCurrentIndex(-1);
+          playSong($scope.songList[$scope.currentIndex]);
+        }
+        else {
+          // 停止播放
+        }
+      }
+    };
+
     $scope.currentIndex = -1;
     $scope.currentSong = null;
     $scope.currentTime = -1;
@@ -216,5 +232,11 @@ angular
         updatedAt: song.updatedAt,
       };
     }
+    
+    $scope.$on('globalShortcut', function(event, args) {
+      args = args || {};
+      console.log('globalShortcut args', args);
+      globalShortcutAction[args.action] && globalShortcutAction[args.action]();
+    });
   });
 

@@ -8,6 +8,21 @@ angular
     $scope.dragMoved = dragMoved;
     $scope.keyChange = keyChange;
 
+    $scope.theme = {
+      row: 4
+    };
+    changeTheme();
+    $scope.changeTheme = changeTheme;
+    function changeTheme() {
+      $scope.theme.row = 12 - $scope.theme.row;
+      $scope.theme.row1 = 'col-xs-' + $scope.theme.row;
+      $scope.theme.row2 = 'col-xs-' + (12 - $scope.theme.row);
+      console.log('$scope.theme: ', $scope.theme);
+      setTimeout(function() {
+        window.dispatchEvent(new Event('resize'));
+      }, 1000);
+    }
+
     function dragMoved(event, index) {
       console.log('dragMoved: ', index);
       // 删除拖动的歌曲的原来位置
