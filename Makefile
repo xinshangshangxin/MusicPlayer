@@ -7,7 +7,7 @@ node-dev:
 supervisor:
 	supervisor -n error -i 'app/public/,app/views/,config/tasks/' app/app.js
 push:
-	git push origin template
+	git push origin master
 merge:
 	git fetch template template
 	git merge remotes/template/template
