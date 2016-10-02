@@ -97,7 +97,7 @@ function registerGlobalShortcut() {
     'Ctrl+Option+Left': {
       action: 'preSong'
     },
-    'Command+Shift+H': function() {
+    'Command+Option+Shift+H': function() {
       if(mainWindow.isFocused()) {
         mainWindow.hide();
       }

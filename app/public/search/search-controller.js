@@ -31,6 +31,10 @@ angular
     }
 
     function search() {
+      if(!$scope.key) {
+        return;
+      }
+
       $scope.songList = [];
       return musicSearchEntity
         .query({

@@ -27,13 +27,23 @@ angular
     $translateProvider.preferredLanguage('zh-hans');
 
     // electron
-    if(nodeRequire) {
+    if(window.nodeRequire) {
       $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|file|chrome-extension|shang):|data:image\//);
     }
   })
-  .run(function($rootScope, $state, httpInjectorFactory, SERVER_URL) {
+  .run(function($rootScope, $stateParams, $state, httpInjectorFactory, SERVER_URL) {
+    // global variable
     $rootScope.$state = $state;
+    $rootScope.$stateParams = $stateParams;
 
+    // languages loaded
+    $rootScope.initialingServiceCount = $rootScope.initialingServiceCount || 0;
+    $rootScope.initialingServiceCount += 1;
+    $rootScope.$on('$translateLoadingSuccess', function () {
+      $rootScope.initialingServiceCount -= 1;
+    });
+
+    // http inject
     httpInjectorFactory.statusCodeRouter = {
       401: 'home',
       403: 'home'
@@ -41,7 +51,7 @@ angular
     httpInjectorFactory.setServerUrl(SERVER_URL);
 
     //electron
-    if(nodeRequire) {
+    if(window.nodeRequire) {
       var ipcRenderer = nodeRequire('electron').ipcRenderer;
       ipcRenderer.on('globalShortcut', function(event, args) {
         console.log('set ipcRenderer globalShortcut: ', args);

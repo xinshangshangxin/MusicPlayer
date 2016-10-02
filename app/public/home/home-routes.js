@@ -5,14 +5,12 @@ angular
   .config(function($urlRouterProvider, $stateProvider) {
     $urlRouterProvider.when('', '/play');
     $urlRouterProvider.when('/', '/play');
-    $urlRouterProvider.otherwise('/play');
+    // $urlRouterProvider.otherwise('/play');
 
     $stateProvider
       .state('home', {
         url: '',
         templateUrl: 'home/home.tpl.html',
-        controller: 'homeController',
-        resolve: {
-        }
+        controller: 'homeController'
       });
   });

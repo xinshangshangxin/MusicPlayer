@@ -13,22 +13,24 @@
   <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/vendor/videogular-themes-default/videogular.min.css">
   <link rel="stylesheet" href="/styles/style.css">
-  <link rel="stylesheet" href="/styles/notification/notification-bar.css">
   <link rel="stylesheet" href="/styles/lrc/lrc.css">
+  <link rel="stylesheet" href="/styles/notification/notification-bar.css">
   <!-- endinject -->
 </head>
 <body>
   <div class="notification-bar" notification-bar></div>
-  <div class="container">
+  <div ng-if="!initialingServiceCount" class="container">
     <div ui-view></div>
   </div>
 
   <script>
-    // 重命名 Electron 提供的 require
-    window.nodeRequire = require;
-    delete window.require;
-    delete window.exports;
-    delete window.module;
+    if(window.require) {
+      // 重命名 Electron 提供的 require
+      window.nodeRequire = window.require;
+      delete window.require;
+      delete window.exports;
+      delete window.module;
+    }
   </script>
 
   <!-- inject:js -->
