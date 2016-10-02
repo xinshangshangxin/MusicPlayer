@@ -131,6 +131,11 @@ angular
 
     function saveSong(favorSongs, favorName) {
       favorName = favorName || 'temp';
+
+      favorSongs = favorSongs.map(function(song) {
+        return _.pick(song, ['type', 'singer', 'song', 'id', 'cover', 'lrc']);
+      });
+
       localSaveService.set('favor_' + favorName, favorSongs);
     }
 
