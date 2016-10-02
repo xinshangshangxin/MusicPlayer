@@ -24,10 +24,10 @@ global.config.env = global.config.env[env];
 
 
 // log
-var pretty = undefined;
+var pretty;
 if(env === 'development') {
   pretty = pino.pretty();
-  pretty.pipe(process.stdout)
+  pretty.pipe(process.stdout);
 }
 
 global.logger = pino(undefined, pretty);
