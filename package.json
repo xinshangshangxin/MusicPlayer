@@ -57,6 +57,7 @@
     "jshint-stylish": "^2.0.1",
     "log-symbols": "^1.0.2",
     "node-notifier": "^4.2.3",
+    "open": "0.0.5",
     "streamqueue": "^1.1.1",
     "supertest": "^1.0.1",
     "through2": "^2.0.0"

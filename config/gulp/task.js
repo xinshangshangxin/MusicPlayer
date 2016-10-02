@@ -3,13 +3,18 @@
 var gulp = require('gulp');
 var path = require('path');
 var browserSync = require('browser-sync').create();
+var open = require("open");
+var Promise = require('bluebird');
 var reload = browserSync.reload;
+var spawn = require('child_process').spawn;
+
 
 var myJshintReporter = require('./myJshintReporter.js');
 
 var gulpConfig = require('./config.js');
 var specConfig = null;       // 在环境初始化之后再读取配置
 var config = null;
+var cache = {};
 
 var $ = require('gulp-load-plugins')(
   {
@@ -73,6 +78,50 @@ function errorHandler(error) {
 function validConfig(config, name) {
   name = name || 'src';
   return config[name] && config[name].length;
+}
+
+function defer() {
+  var resolve, reject;
+  var promise = new Promise(function() {
+    resolve = arguments[0];
+    reject = arguments[1];
+  });
+  return {
+    resolve: resolve,
+    reject: reject,
+    promise: promise
+  };
+}
+
+function spawnDefer(option) {
+  var deferred = defer();
+  if(!option) {
+    return deferred.reject(new Error('no option'));
+  }
+
+  if(option.platform) {
+    option.cmd = (process.platform === 'win32' ? (option.cmd + '.cmd') : option.cmd);
+  }
+  var opt = {
+    stdio: 'inherit'
+  };
+  // set ENV
+  var env = Object.create(process.env);
+  env.NODE_ENV = option.NODE_ENV || process.env.NODE_ENV;
+  opt.env = env;
+
+  var proc = spawn(option.cmd, option.arg, opt);
+  deferred.promise.proc = proc;
+  proc.on('error', function(err) {
+    console.log(err);
+  });
+  proc.on('exit', function(code) {
+    if(code !== 0) {
+      return deferred.reject(code);
+    }
+    deferred.resolve();
+  });
+  return deferred.promise;
 }
 
 
@@ -427,6 +476,69 @@ gulp.task('watchers:sass', function() {
   gulp.watch(config.sass.watcherPath, ['sass']);
 });
 
+gulp.task('processRead', function processRead(done) {
+  done();
+
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('readable', function() {
+    var chunk = process.stdin.read();
+    if(chunk === null) {
+      return;
+    }
+    var data = chunk.toString().replace(/\n$/, '').trim();
+
+    if(data === 'o' || data === 'open') {
+      return open('http://localhost:' + config.browsersync.development.port);
+    }
+    else if(!data || /^(\s*|\u001b\[\w)*$/.test(data)) {
+    }
+    else {
+      var arg = data.split(/\s+/g);
+      var processName = arg[0];
+      arg.splice(0, 1);
+
+      if(!/^(gulp|bower|npm|node|ls|pwd|clear)/.test(processName)) {
+        console.log(data + ' not support');
+        return null;
+      }
+
+      if(cache[processName]) {
+        console.log('start kill ' + processName + ': ', cache[processName].data);
+        cache[processName].kill('SIGINT');
+      }
+
+      var processConfig = {
+        cmd: processName,
+        arg: arg
+      };
+
+
+      return Promise
+        .try(function() {
+          var p = spawnDefer(processConfig);
+
+          cache[processName] = p.proc;
+          cache[processName].data = processConfig;
+
+          return p;
+        })
+        .then(function() {
+          cache[processName] = null;
+          console.log('exec cmd: "' + processConfig.cmd + ' ' + processConfig.arg.join(' ') + '" success');
+          return null;
+        })
+        .catch(function(e) {
+          console.log(e);
+        });
+    }
+  });
+
+  process.stdin.on('end', function() {
+    process.stdout.write('end');
+  });
+});
+
+
 gulp.task('build', gulp.series(
   function setBuildEnv(done) {
     if(!$.isStatic) {
@@ -495,6 +607,7 @@ gulp.task('dev', gulp.series(
   ),
   'injectHtml:dev',
   'browser-sync',
+  'processRead',
   'watchers'
 ));
 
