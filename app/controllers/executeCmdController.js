@@ -7,7 +7,7 @@ var ctrl = {
     return executeCmdService
       .execCmds(req.body)
       .then(function(data) {
-        console.log('data:    ', data);
+        logger.info('execCmd data:    ', data);
         return res.json(data);
       })
       .catch(function(e) {
@@ -16,7 +16,8 @@ var ctrl = {
   },
   help: function(req, res) {
     return res.send('<pre>' + JSON.stringify(executeCmdService.helpInfo, null, 2) + '</pre>');
-  }
+  },
+  tryAutoDeploy: executeCmdService.tryAutoDeploy
 };
 
 module.exports = ctrl;

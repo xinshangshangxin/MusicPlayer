@@ -32,7 +32,7 @@ module.exports = {
     ref: 'production'
   },
   bootstrap: [
-    'mongodbBackupService',
+    // 'webhookService'
     'songSaveService'
   ]
 };

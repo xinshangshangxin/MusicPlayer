@@ -36,7 +36,7 @@ function getCommonConfig() {
         'app/public/components/**/*.less'
       ],    // watch:sass 文件路径
       src: [
-        'less/**/*.less',
+        'less/variables.less',
         'app/public/common/**/*.less',
         'app/public/components/**/*.less'
       ],
@@ -64,7 +64,7 @@ function getCommonConfig() {
     },
     libCss: {             // lib css 需要引入的的css
       src: [              // src 可以为空数组
-        'framework/paper/bootstrap.min.css',
+        'framework/paper/dist/bootstrap.min.css',
         'vendor/angular-loading-bar/build/loading-bar.min.css',
         'vendor/font-awesome/css/font-awesome.min.css',
         'vendor/videogular-themes-default/videogular.min.css'
@@ -123,7 +123,7 @@ function getCommonConfig() {
         src: ['this_is_a_template.js'],
         subStr: /musicPlayer/,
         newStr: function($) {
-          var filepath = $.storeFileName.get($.specConfig.theme.storeFileNameSpaceName, 'relative') || [];
+          var filepath = $.utilities.getStoreFile($.specConfig.theme.storeFileNameSpaceName, 'relative') || [];
           return filepath[0];
         }
       }],
@@ -249,7 +249,7 @@ function getCommonConfig() {
       development: {
         proxy: 'http://127.0.0.1:12345',
         online: true,
-        port: 9999,
+        port: 13370,
         files: [
           'app/public/**/*',
           '!app/public/styles/**/*',

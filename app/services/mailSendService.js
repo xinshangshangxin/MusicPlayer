@@ -11,11 +11,20 @@ var defaultMailOptions = {
   html: '<b>Hello world ✔</b>' // html body
 };
 
-var transporter = Promise.promisifyAll(nodemailer.createTransport(config.mailTransport));
+var transporter = nodemailer.createTransport(config.env.mailTransport);
 
-var sendMail = function(mailOtions) {
-  return transporter
-    .sendMailAsync(_.assign({}, defaultMailOptions, mailOtions));
+var sendMail = function(mailOptions) {
+  logger.info('start mailOptions');
+  return new Promise(function(resolve, reject) {
+    transporter.sendMail(_.assign({}, defaultMailOptions, mailOptions), function(error, info) {
+      logger.info('end sendMail');
+      if(error) {
+        reject(error);
+        return;
+      }
+      resolve(info);
+    });
+  });
 };
 
 module.exports = {

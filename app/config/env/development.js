@@ -17,14 +17,15 @@ module.exports = {
     }
   },
   mongo: {
-    dbName: 'noDbName'
+    dbName: 'noDbName',
+    collectionPrefix: '',
   },
   update: {
     ref: 'master'
   },
   port: process.env.PORT || 12345,
   bootstrap: [
-    // 'mongodbBackupService',
+    // 'webhookService',
     'songSaveService'
   ]
 };

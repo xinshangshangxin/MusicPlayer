@@ -1,46 +1,118 @@
 'use strict';
 
-var path = require('path');
-var mailSendService = require('./mailSendService');
-var utilitiesService = require('./utilitiesService');
+var rp = Promise.promisify(require('request'), {multiArgs: true});
 
-var env = (process.env.NODE_ENV || 'development').trim();
+var mailSendService = require('./mailSendService');
+var webhookModel = require('../models/webhookModel');
+var hookService = require('./hookService');
 
 var svc = {
-  tryUpdate: function(body) {
-    var ref = (body.ref || '').replace('refs/heads/', '');
-    if(!ref || ref !== _.get(config, 'env.update.ref')) {
-      return Promise.resolve('not match');
+  lift: function() {
+    return hookService.registerHook(svc.on.bind(svc));
+  },
+  resolveValue: function(body, data) {
+    if(!body) {
+      return null;
     }
-    var url = _.get(body, 'repository.https_url');
-    var name = _.get(body, 'repository.name');
-    var appPath = env === 'development' ? 'app/app.js' : 'app.js';
-    if(!url || !name) {
-      return Promise.reject(new Error('no url or no name'));
-    }
+    return _.reduce(body, function(result, item) {
+      if(!item.value) {
+        return result;
+      }
 
-    var dir = path.resolve(__dirname, '../');
-    var cmds = [
-      'cd ' + dir,
-      'git pull origin ' + ref,
-      'pm2 restart ' + appPath
-    ];
+      item.value = item.value.trim();
+      if(/^{{(.*)}}$/gi.test(item.value)) {
+        result[item.name] = _.get(data, RegExp.$1, '');
+      }
+      else {
+        result[item.name] = item.value;
+      }
+      return result;
+    }, {});
+  },
+  runHook: function(data, hook) {
+    var method = (hook.method || 'POST').toUpperCase();
+    var contentType = hook.contentType || 'application/json';
+    var body;
 
-    return mailSendService
-      .sendMail({
-        subject: '开始部署：' + name + '/' + ref,
-        html: '<p>' + (new Date().toLocaleString()) + '</p>'
+    return Promise
+      .try(function() {
+        if(!hook.payloadAddress) {
+          return Promise.reject(new ApplicationError.NoPayloadAddress());
+        }
+
+        if(hook.resolveBody) {
+          body = svc.resolveValue(hook.bodyFields, data);
+        }
+        else {
+          body = data;
+        }
+
+        // mail
+        if(method === 'EMAIL') {
+          logger.info('hook sendMail to ', hook.name, 'body: ', body);
+          return mailSendService.sendMail({
+            subject: `webhook: ${hook.name}`,
+            html: '<div>' + JSON.stringify(body, null, 2) + '</div>'
+          });
+        }
+
+        // http 请求
+        var options = {
+          proxy: false,
+          followRedirect: false,
+          url: hook.payloadAddress,
+          method: method,
+          headers: svc.resolveValue(hook.headerFields, data)
+        };
+
+        if(method === 'GET') {
+          return rp(options);
+        }
+
+        switch(contentType) {
+          case 'application/json':
+            options.json = body || true;
+            break;
+          case 'application/x-www-form-urlencoded':
+            options.form = body;
+            break;
+          default:
+            return Promise.reject(new ApplicationError.NotSupportContentType(undefined, {contentType: contentType}));
+        }
+
+        return rp(options);
+      });
+  },
+  runHooks: function(data, hooks) {
+    return Promise.map(hooks, function(hook) {
+      return svc.runHook(data, hook).reflect();
+    });
+  },
+  on: function(data, conditions, projection, options) {
+    // not care the result
+    webhookModel
+      .find(conditions, projection, options)
+      .then(function(hooks) {
+        if(!hooks || !hooks.length) {
+          return Promise.reject('no hooks');
+        }
+
+        return svc.runHooks(data, hooks);
       })
-      .then(function() {
-        return utilitiesService.execAsync(cmds.join(' && '));
+      .each(function(data) {
+        if(data.isFulfilled()) {
+          logger.info('Webhook success: ', JSON.stringify(conditions, null, 2));
+        }
+        else {
+          logger.info('Webhook error: ', conditions, JSON.stringify(data, null, 2), data.reason());
+        }
+        return null;
       })
       .catch(function(e) {
-        console.log(e);
-        return mailSendService.sendMail({
-          subject: '自动部署失败',
-          html: '<p>' + (new Date().toLocaleString()) + '</p>' + JSON.stringify(e)
-        });
+        logger.info(e);
       });
+
+    return Promise.resolve(null);
   }
 };
 

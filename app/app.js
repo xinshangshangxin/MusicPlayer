@@ -9,7 +9,7 @@ var appStart = require('./config/bootstrap')()
       var cookieParser = require('cookie-parser');
       var express = require('express');
       var http = require('http');
-      var logger = require('morgan');
+      var morgan = require('morgan');
       var path = require('path');
 
       var routes = require('./routes/routes');
@@ -20,7 +20,7 @@ var appStart = require('./config/bootstrap')()
       app.set('view engine', 'ejs');
       app.engine('.html', require('ejs').__express);
 
-      app.use(logger('dev'));
+      app.use(morgan('dev'));
       app.use(bodyParser.json());
       app.use(bodyParser.urlencoded({
         extended: false
@@ -47,7 +47,7 @@ var appStart = require('./config/bootstrap')()
       });
 
       var port = config.env.port || '1337';
-      var ip = config.env.ip || 'localhost';
+      var ip = config.env.ip;
       var server = http.createServer(app);
       server.listen(port, ip);
       server.on('error', onError);
@@ -64,11 +64,11 @@ var appStart = require('./config/bootstrap')()
         // handle specific listen errors with friendly messages
         switch(error.code) {
           case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
+            logger.error(bind + ' requires elevated privileges');
             process.exit(1);
             break;
           case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
+            logger.error(bind + ' is already in use');
             process.exit(1);
             break;
           default:
@@ -82,7 +82,7 @@ var appStart = require('./config/bootstrap')()
       function onListening() {
         var addr = server.address();
         var bind = typeof addr === 'string' ? 'pipe ' + addr : ('http://' + addr.address + ':' + addr.port);
-        console.log('Listening on: ' + bind);
+        logger.info('Listening on: ' + bind);
         resolve(app);
       }
     });

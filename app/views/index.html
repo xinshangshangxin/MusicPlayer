@@ -6,20 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Music Player</title>
   <base href="/">
-  <link rel="shortcut icon" href="http://upload.xinshangshangxin.com/o_19pbo74ug1egh1d4tt818hb14b49.ico">
+  <link rel="shortcut icon" href="//static.xinshangshangxin.com/favicon.ico">
   <!-- inject:css -->
-  <link rel="stylesheet" href="/framework/paper/bootstrap.min.css">
+  <link rel="stylesheet" href="/framework/paper/dist/bootstrap.min.css">
   <link rel="stylesheet" href="/vendor/angular-loading-bar/build/loading-bar.min.css">
   <link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/vendor/videogular-themes-default/videogular.min.css">
-  <link rel="stylesheet" href="/styles/style.css">
+  <link rel="stylesheet" href="/styles/variables.css">
   <link rel="stylesheet" href="/styles/lrc/lrc.css">
   <link rel="stylesheet" href="/styles/notification/notification-bar.css">
   <!-- endinject -->
 </head>
 <body>
-  <div class="notification-bar" notification-bar></div>
-  <div class="container">
+  <div ng-if="!initialingServiceCount" class="notification-bar" notification-bar></div>
+  <div ng-if="!initialingServiceCount" class="container">
     <div ui-view></div>
   </div>
 
@@ -39,6 +39,8 @@
   <script src="/vendor/lodash/dist/lodash.min.js"></script>
   <script src="/app.js"></script>
   <script src="/common/common.js"></script>
+  <script src="/common/avoid-multiple-click/avoid-multiple-click-drtv.js"></script>
+  <script src="/common/custom-fields/custom-fields-drtv.js"></script>
   <script src="/common/dialog/dialog-svc.js"></script>
   <script src="/common/http-injector/http-injector-factory.js"></script>
   <script src="/common/local-save/local-save-service.js"></script>
@@ -55,6 +57,9 @@
   <script src="/play-info/play-info-routes.js"></script>
   <script src="/search/search-controller.js"></script>
   <script src="/search/search-routes.js"></script>
+  <script src="/webhook/webhook-detail-ctrl.js"></script>
+  <script src="/webhook/webhook-routes.js"></script>
+  <script src="/webhook/webhooks-ctrl.js"></script>
   <!-- endinject -->
 </body>
 </html>

@@ -5,6 +5,8 @@ var path = require('path');
 var mailSendService = require('../services/mailSendService.js');
 var utilitiesService = require('../services/utilitiesService.js');
 
+var env = (process.env.NODE_ENV || 'development').trim();
+
 var helpInfo = {
   cmds: [{
     name: 'update',
@@ -56,18 +58,15 @@ function execCmds(option) {
   var email = option.email;
 
   if(!_.isArray(cmds)) {
-    return Promise.reject({
-      code: 10001,
-      msg: '参数错误, 请使用help命令查看如何使用'
-    });
+    return Promise.reject(new ApplicationError.ExecCmdParamError());
   }
 
   return new Promise(function(resolve, reject) {
     if(!isWait) {
-      resolve(Promise.resolve({
-        code: 0,
+      resolve({
         msg: '正在执行中, ' + email ? ('执行结果发送至: ' + email) : '无邮箱提醒'
-      }));
+      });
+      resolve = _.noop;
     }
 
     return Promise
@@ -83,7 +82,7 @@ function execCmds(option) {
         }
       })
       .catch(function(e) {
-        console.log(e);
+        logger.info(e);
         if(isWait) {
           reject(e);
         }
@@ -121,12 +120,10 @@ function wrapResult(arr, email) {
           html: '<p>' + (new Date().toLocaleString()) + '</p>' + body
         });
       }
+      return null;
     })
     .then(function() {
-      return {
-        code: 0,
-        msg: body
-      };
+      return body;
     });
 }
 
@@ -143,7 +140,44 @@ function analyseCmd(arr) {
   });
 }
 
+function tryAutoDeploy(body) {
+  var ref = (body.ref || '').replace('refs/heads/', '');
+  if(!ref || ref !== _.get(config, 'env.update.ref')) {
+    return Promise.resolve('not match');
+  }
+  var url = _.get(body, 'repository.https_url');
+  var name = _.get(body, 'repository.name');
+  var appPath = env === 'development' ? 'app/app.js' : 'app.js';
+  if(!url || !name) {
+    return Promise.reject(new Error('no url or no name'));
+  }
+
+  var dir = path.resolve(__dirname, '../');
+  var cmds = [
+    'cd ' + dir,
+    'git pull origin ' + ref,
+    'pm2 restart ' + appPath
+  ];
+
+  return mailSendService
+    .sendMail({
+      subject: '开始部署：' + name + '/' + ref,
+      html: '<p>' + (new Date().toLocaleString()) + '</p>'
+    })
+    .then(function() {
+      return utilitiesService.execAsync(cmds.join(' && '));
+    })
+    .catch(function(e) {
+      logger.info(e);
+      return mailSendService.sendMail({
+        subject: '自动部署失败',
+        html: '<p>' + (new Date().toLocaleString()) + '</p>' + JSON.stringify(e)
+      });
+    });
+}
+
 module.exports = {
   execCmds: execCmds,
+  tryAutoDeploy: tryAutoDeploy,
   helpInfo: helpInfo
 };

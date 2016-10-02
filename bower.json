@@ -2,7 +2,7 @@
   "name": "musicPlayer",
   "version": "0.0.1",
   "dependencies": {
-    "angular": "1.4.4",
+    "angular": "~1.5.8",
     "angular-animate": "1.4.4",
     "angular-bootstrap": "0.14.3",
     "angular-loading-bar": "0.9.0",

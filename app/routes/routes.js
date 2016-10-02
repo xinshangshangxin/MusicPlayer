@@ -4,44 +4,51 @@ var cors = require('cors');
 var express = require('express');
 var router = express.Router();
 
+var execCmdAuth = require('../policies/execCmdAuth');
 var executeCmdController = require('../controllers/executeCmdController.js');
 var musicController = require('../controllers/musicController');
 var requestForwardController = require('../controllers/requestForwardController');
 var tokenAuth = require('../policies/tokenAuth.js');
-var webHookService = require('../services/webHookService.js');
+var webhookController = require('../controllers/webhookController');
 var wrapError = require('../policies/wrapError.js');
 
-var execCmdKey = config.env.execCmdKey;
 
 router
   .all('*', wrapError)
   .all(/^\/(?=api)/, cors())
-  .all(/^\/(?=api\/v\d+\/cmds)/, function(req, res, next) {
-    if((req.query.key || req.body.key) === execCmdKey) {
-      return next();
-    }
-    return res.json(400, {
-      code: 1001
-    });
-  })
+  // exec cmd
   .get(/^\/(?!api)/, function(req, res) {
     res.render('index.html');
   })
-  .get(/^\/(?=api\/v\d+\/cmds)/, executeCmdController.help)
-  .post(/^\/(?=api\/v\d+\/cmds)/, tokenAuth(), executeCmdController.execCmds)
-  .post(/^\/(?=api\/v\d+\/webhook)/, function(req, res) {
+  .all('/api/:version(v\\d+)/cmds', execCmdAuth())
+  .get('/api/:version(v\\d+)/cmds', executeCmdController.help)
+  .post('/api/:version(v\\d+)/cmds', tokenAuth(), executeCmdController.execCmds)
+  // auto deploy
+  .post('/api/v1/auto-deploy', function(req, res) {
     res.end('ok');
-    webHookService
-      .tryUpdate(req.body)
+
+    executeCmdController
+      .tryAutoDeploy(req.body)
       .then(function(data) {
-        console.log(data);
+        logger.info(data);
+      })
+      .catch(function(e) {
+        logger.info(e);
       });
   })
-  .get('/api/v1/music/search/:key', musicController.search)
+  // webhook
+  .get('/api/v1/webhook-event', webhookController.queryEvent)
+  .get('/api/v1/webhook', webhookController.query)
+  .get('/api/v1/webhook/:id', webhookController.get)
+  .post('/api/v1/webhook', webhookController.create)
+  .put('/api/v1/webhook/:id', webhookController.update)
+  .delete('/api/v1/webhook/:id', webhookController.destroy)
+.get('/api/v1/music/search/:key', musicController.search)
   .get('/api/v1/music/detail/:id', musicController.detail)
   .get('/api/v1/music/play', musicController.play)
   .get('/api/v1/music/lyric', musicController.lyric)
   .get('/api/v1/request/forward', requestForwardController.forward)
+
 ;
 
 module.exports = router;

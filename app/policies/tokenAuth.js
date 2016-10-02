@@ -23,28 +23,19 @@ module.exports = function() {
     var token = req.body.token || req.query.token || getTokenFromHeader(req);
 
     if(!token) {
-      return res.json(401, {
-        code: 1002,
-        msg: '没有token'
-      });
+      return res.wrapError(new ApplicationError.TokenNotFound(), null, 401);
     }
 
     jwt.verify(token, superSecret, function(err, decoded) {
       if(err) {
-        return res.json(401, {
-          code: 1001,
-          msg: 'token错误'
-        });
+        return res.wrapError(new ApplicationError.TokenNotVerify());
       }
 
       req.user = decoded;
       req.userId = decoded && decoded.id;
 
       if(!req.user || !req.userId) {
-        return res.json(403, {
-          code: 1001,
-          msg: '用户不存在'
-        });
+        return res.wrapError(new ApplicationError.UserNotFound(), null, 403);
       }
 
       next();
