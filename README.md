@@ -24,6 +24,10 @@
 - on mac use `make build` to build a app
 
 
+## License
+
+  MIT
+
 # Music Player
 
 `Music Player` 是一款 `electron` 实现的app, 当听完一首歌后, 这首歌就缓存在本地, 下次再次进入时,无需连接网络,即可播放.
@@ -47,3 +51,8 @@
 ## 下载成品
 - 暂时不提供
 - 在mac使用 `make build` 自行编译成app
+
+
+## License
+
+  MIT
