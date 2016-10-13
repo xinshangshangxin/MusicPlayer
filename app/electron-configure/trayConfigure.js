@@ -23,9 +23,12 @@ const svc = {
     image.setTemplateImage(true);
     opt.tray = new Tray(image);
 
-    opt.tray.on('click', () => {
-      this.toggleWindow(opt.mainWindow);
-    });
+    // let contextMenu = Menu.buildFromTemplate([
+    //   {label: 'Exit', click: () => this.toggleWindow(opt.mainWindow)}
+    // ]);
+    // opt.tray.setContextMenu(contextMenu);
+    opt.tray.on('click', () => this.toggleWindow(opt.mainWindow));
+
   },
 };
 
