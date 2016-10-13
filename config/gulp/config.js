@@ -153,7 +153,10 @@ function getCommonConfig() {
       },
       cssSource: [                    // 需要引入的cs
         'app/public/styles/bootstrap.min.css',
-        'app/public/styles/**/*.css'
+        'app/public/styles/**/*.css',
+      ],
+      lastCssSource: [
+        'app/public/styles/variables.css',
       ],
       injectSource: [
         path.join(alterableSetting.publicPath, 'styles/**/*.css'),

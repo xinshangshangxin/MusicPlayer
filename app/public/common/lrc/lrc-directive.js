@@ -129,7 +129,7 @@ angular
             time: 0,
             lineLrc: '',
           }, {
-            time: (parsedLrcList[parsedLrcList.length - 1] || {}).time + 1,
+            time: (parsedLrcList[parsedLrcList.length - 1] || {}).time + 30,
             lineLrc: '',
           }]);
 

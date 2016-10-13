@@ -12,11 +12,20 @@ function serverError(e) {
 
 module.exports = {
   create: function(opt) {
-    opt.mainWindow = new BrowserWindow({
+    var options = {
       width: 837,
       height: 626,
-      titleBarStyle: 'hidden-inset',
-    });
+    };
+
+    if(process.platform === 'darwin') {
+      options.titleBarStyle = 'hidden-inset';
+    }
+    else {
+      options.transparent= true;
+      options.frame = false;
+    }
+
+    opt.mainWindow = new BrowserWindow(options);
   },
   registerListeners: function(opt) {
     opt.mainWindow.on('close', (e) => {

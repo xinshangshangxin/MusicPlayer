@@ -133,7 +133,7 @@ angular
       favorName = favorName || 'temp';
 
       favorSongs = favorSongs.map(function(song) {
-        return _.pick(song, ['type', 'singer', 'song', 'id', 'cover', 'lrc']);
+        return _.pick(song, ['type', 'singer', 'song', 'id', 'cover', 'lrc', 'url']);
       });
 
       localSaveService.set('favor_' + favorName, favorSongs);
