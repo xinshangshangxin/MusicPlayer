@@ -296,6 +296,16 @@ gulp.task('css', function(done) {
     return done();
   }
 
+  var cssStreamQueue = [{
+    objectMode: true
+  }];
+
+
+  if(validConfig(config.injectHtmlProd, 'lastCssSource')) {
+    config.injectHtmlProd.cssSource.push.apply(config.injectHtmlProd.cssSource, config.injectHtmlProd.lastCssSource.map(function(source) {
+      return '!' + source;
+    }));
+  }
 
   var stream = gulp.src(config.injectHtmlProd.cssSource);
 
@@ -317,7 +327,13 @@ gulp.task('css', function(done) {
       .pipe(f.restore);
   }
 
-  return stream
+  cssStreamQueue.push(stream);
+
+  if(validConfig(config.injectHtmlProd, 'lastCssSource')) {
+    cssStreamQueue.push(gulp.src(config.injectHtmlProd.lastCssSource));
+  }
+
+  return $.streamqueue.apply($.streamqueue, cssStreamQueue)
     .pipe($.concat(config.injectHtmlProd.prodCssName))
     .pipe($.cssnano())
     .pipe($.rev())
@@ -369,13 +385,13 @@ gulp.task('js', function(done) {
       .pipe($.jshint.reporter(utilities.jshintReporter));
   }
 
-  var jssStreamQueue = [{
+  var jsStreamQueue = [{
     objectMode: true
   }];
 
   if(validConfig(config.specJs)) {
     var specStream = gulp.src(config.specJs.src);
-    jssStreamQueue.push(specStream);
+    jsStreamQueue.push(specStream);
   }
 
   if(validConfig(config.js)) {
@@ -404,7 +420,7 @@ gulp.task('js', function(done) {
       .pipe($.angularFilesort())
       .on('error', errorHandler);
 
-    jssStreamQueue.push(scriptStream);
+    jsStreamQueue.push(scriptStream);
   }
 
   if(validConfig(config.html2js)) {
@@ -414,10 +430,10 @@ gulp.task('js', function(done) {
       .pipe($.angularTemplatecache(config.html2js.name, config.html2js.config))
       .pipe($.angularFilesort());
 
-    jssStreamQueue.push(templateStream);
+    jsStreamQueue.push(templateStream);
   }
 
-  return $.streamqueue.apply($.streamqueue, jssStreamQueue)
+  return $.streamqueue.apply($.streamqueue, jsStreamQueue)
     .pipe($.concat(config.injectHtmlProd.prodUserJsName))
     .pipe($.uglify(config.uglifyConfig))
     .pipe($.rev())
@@ -508,7 +524,7 @@ gulp.task('watchers', function(done) {
         if(/\.js/.test(filePath)) {
           gulp.series('jsCachedJshint')();
         }
-        
+
         if($.isNeedInjectHtml) {
           console.log('NeedInjectHtml');
           gulp.series('injectHtml:dev')();
@@ -656,7 +672,6 @@ gulp.task('static', gulp.series(
   'build'
 ));
 gulp.task('default', gulp.series(
-
   setDevEnv,
   'clean',
   gulp.parallel(
