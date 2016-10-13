@@ -20,7 +20,7 @@
 <body>
   <script>
     // 重命名 Electron 提供的 require
-    window.nodeRequire = require;
+    window.nodeRequire = window.require;
     delete window.require;
     delete window.exports;
     delete window.module;

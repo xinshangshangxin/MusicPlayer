@@ -1,10 +1,11 @@
 'use strict';
 
 const fs = Promise.promisifyAll(require('fs-extra'));
-var path = require('path');
+const path = require('path');
 
 var svc = {
   userDataPath: '',
+  cacheNu: 0,
   lift: function() {
     try {
       svc.userDataPath = require('electron').app.getPath('userData');
@@ -19,7 +20,7 @@ var svc = {
           return svc.userDataPath;
         }
 
-        console.log('未找到electron, 使用程序相对路径');
+        logger.info('未找到electron, 使用程序相对路径');
         svc.userDataPath = path.resolve(__dirname, '../../.tmp/');
 
         return fs.ensureDirAsync(svc.userDataPath)
@@ -33,10 +34,15 @@ var svc = {
           fs.ensureDirAsync(path.resolve(svc.userDataPath, 'download/')),
           fs.ensureDirAsync(path.resolve(svc.userDataPath, 'download/lyric')),
         ]);
+      })
+      .then(()=> {
+        logger.info('start remove temp file');
+        return fs.remove(path.resolve(svc.userDataPath, 'temp/*'));
       });
   },
   getSongCachePath: function(name, id, type, preDir = './', suffix = '.tmp') {
-    return path.resolve(svc.userDataPath, 'temp/', preDir, `${name}_${id}_${type}${suffix}`);
+    svc.cacheNu = svc.cacheNu + 1;
+    return path.resolve(svc.userDataPath, 'temp/', preDir, `${svc.cacheNu}_${name}_${id}_${type}${suffix}`);
   },
   getSongDownloadPath: function(name, id, type, preDir = './', suffix = '.mp3') {
     return path.resolve(svc.userDataPath, 'download/', preDir, `${name}_${id}_${type}${suffix}`);
