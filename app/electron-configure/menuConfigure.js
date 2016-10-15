@@ -103,29 +103,21 @@ const svc = {
       }]
     }];
 
-    let linuxTemplate = [
-      {
-        label: 'Window',
-        submenu: [{
-          label: 'Reload This Window',
-          accelerator: 'Ctrl+R',
-          click: () => reload
-        }, {
-          label: 'Toggle DevTools',
-          accelerator: 'Ctrl+Shift+I',
-          click: () => {
-            mainWindow.toggleDevTools();
-          }
-        }, {
-          type: 'separator'
-        }, {
-          label: 'Quit The App',
-          accelerator: 'Ctrl+Q',
-          click: () => {
-            app.exit(0);
-          }
-        }]
-      }];
+    let linuxTemplate = [{
+      label: 'Toggle DevTools',
+      accelerator: 'Ctrl+Shift+I',
+      click: () => {
+        mainWindow.toggleDevTools();
+      }
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Quit The App',
+      accelerator: 'Ctrl+Q',
+      click: () => {
+        app.exit(0);
+      }
+    }];
 
     if(platform === 'darwin') {
       return darwinTemplate;
