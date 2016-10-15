@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const {app, Menu, nativeImage, Tray} = require('electron');
+const {Menu, nativeImage, Tray} = require('electron');
 
 const {getTemplate} = require('./menuConfigure');
 const imagePath = path.join(__dirname, '../public/images/status_bar.png');
@@ -28,7 +28,7 @@ const svc = {
       let contextMenu = Menu.buildFromTemplate(getTemplate(process.platform, opt.mainWindow, opt.openServerUrl));
       opt.tray.setContextMenu(contextMenu);
     }
-    
+
     opt.tray.on('click', () => this.toggleWindow(opt.mainWindow));
   },
 };
