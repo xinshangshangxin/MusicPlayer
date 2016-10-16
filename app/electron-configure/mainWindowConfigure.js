@@ -15,6 +15,8 @@ module.exports = {
     var options = {
       width: 837,
       height: 626,
+      backgroundColor: '#333',
+      show: false,
     };
 
     if(process.platform === 'darwin') {
@@ -35,6 +37,11 @@ module.exports = {
         e.preventDefault();
         opt.mainWindow.hide();
       }
+    });
+
+    opt.mainWindow.on('ready-to-show', function() {
+      opt.mainWindow.show();
+      opt.mainWindow.focus();
     });
   },
   startServer: function(opt) {
