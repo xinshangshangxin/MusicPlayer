@@ -231,7 +231,8 @@ gulp.task('injectHtml:dev', function(done) {
   }
 
   if(validConfig(config.injectHtmlDev, 'cssSource')) {
-    arr.push(gulp.src(config.injectHtmlDev.cssSource, {read: false}));
+    arr.push(gulp.src(config.injectHtmlDev.cssSource, {read: false})
+      .pipe($.sort(config.injectHtmlDev.cssSourceSort)));
   }
 
   if(validConfig(config.libJs) && config.injectHtmlDev.libJsPrefix) {
