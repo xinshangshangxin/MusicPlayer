@@ -35,6 +35,7 @@ build:
 	cp package.json production/
 	mv node_modules/ production/node_modules/
 	sh config/build.sh darwin x64
+	rm -rf dist/
 	mv production/node_modules/ node_modules/
 copy:
 	cp -r ./ ../$(d)

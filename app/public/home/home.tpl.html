@@ -27,6 +27,10 @@
                 <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
               </vg-scrub-bar>
               <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+              <vg-loop ng-click="config.loop = !config.loop">
+                <i ng-if="!config.loop" class="fa fa-refresh" aria-hidden="true"></i>
+                <i ng-if="config.loop" class="fa fa-undo" aria-hidden="true"></i>
+              </vg-loop>
               <vg-volume>
                 <vg-mute-button></vg-mute-button>
                 <vg-volume-bar></vg-volume-bar>
