@@ -146,8 +146,9 @@ body::-webkit-scrollbar-corner {
       text-overflow: ellipsis;
 
       &:hover {
-        color: #fff;
-        font-weight: bold;
+        * {
+          color: #fff;
+        }
       }
 
       &.playing {
@@ -158,6 +159,14 @@ body::-webkit-scrollbar-corner {
       div {
         text-overflow: ellipsis;
         overflow: hidden;
+      }
+
+      .badge {
+        color: #fff;
+      }
+
+      * {
+        color: #aaa;
       }
     }
   }

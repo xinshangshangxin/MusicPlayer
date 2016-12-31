@@ -19,11 +19,16 @@
           </div>
           <div class="col-sm-3 text-nowrap" title="{{item.singer}}">{{item.singer}}</div>
         </div>
-        <div class="col-sm-4" ng-click="addAndPlay(item)">
-          <!--<span>播放&nbsp;</span>-->
-          <!--<span>添加&nbsp;</span>-->
-          <span>添加并播放&nbsp;</span>
-          <!--<span>下载</span>-->
+        <div class="col-sm-4">
+          <span ng-click="addAndPlay(item)">
+            <i class="fa fa-play-circle-o" aria-hidden="true"></i>
+            &nbsp;&nbsp;
+          </span>
+          <span ng-if="!isElectron()">
+            <a ng-href="{{item.url}}" download="{{item.song}}-{{item.singer}}.mp3">
+              <i class="fa fa-download" aria-hidden="true"></i>
+            </a>
+          </span>
         </div>
       </div>
     </li>

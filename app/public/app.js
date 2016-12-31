@@ -51,6 +51,10 @@ angular
     httpInjectorFactory.setServerUrl(SERVER_URL);
 
     //electron
+    $rootScope.isElectron = function () {
+      return $window.nodeRequire;
+    };
+
     if($window.nodeRequire) {
       $window.electron = $window.nodeRequire('electron');
       var ipcRenderer = $window.electron.ipcRenderer;
