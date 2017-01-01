@@ -14,6 +14,8 @@ angular
     this.addSongToFavor = addSongToFavor;
     this.deleteSongFromFavor = deleteSongFromFavor;
     this.saveSong = saveSong;
+    this.getCurrentFavor = getCurrentFavor;
+    this.saveCurrentFavor = saveCurrentFavor;
 
     init();
 
@@ -137,6 +139,18 @@ angular
       });
 
       localSaveService.set('favor_' + favorName, favorSongs);
+    }
+
+    function getCurrentFavor() {
+      return $q.when(localSaveService.get('currentFavor') || {});
+    }
+
+    function saveCurrentFavor(currentIndex, favorName, isLoop) {
+      return localSaveService.set('currentFavor', {
+        currentIndex: currentIndex,
+        favorName: favorName,
+        loop: isLoop,
+      });
     }
 
   });

@@ -46,6 +46,12 @@ angular
     $scope.onPlayerReady = onPlayerReady;
     $scope.setCurrentSongIndex = setCurrentSongIndex;
 
+    $scope.$watch(function () {
+      return $scope.config.loop;
+    }, function () {
+      asyncSaveSongInfo();
+    });
+
     init();
 
     function onPlayerReady(api) {
@@ -53,7 +59,22 @@ angular
     }
 
     function init() {
-      return playListService.getFavor($scope.favorName)
+      return playListService.getCurrentFavor()
+        .then(function (currentFavor) {
+          console.log('currentFavor: ', currentFavor);
+          if(currentFavor.favorName) {
+            $scope.favorName = currentFavor.favorName;
+          }
+          if(currentFavor.currentIndex >= 0) {
+            $scope.currentIndex = currentFavor.currentIndex - 1;
+          }
+          if(currentFavor.loop) {
+            $scope.config.loop = true;
+          }
+        })
+        .then(function () {
+          return playListService.getFavor($scope.favorName);
+        })
         .then(function(data) {
           $scope.songList = data;
           playNext();
@@ -87,11 +108,11 @@ angular
               if(!song.lrc) {
                 song.lrc = 'NONE';
               }
-              playListService.saveSong($scope.songList, $scope.favorName);
               return song;
             });
         })
         .then(function(song) {
+          asyncSaveSongInfo();
           console.log('start play song: ', song);
           setLrc(song);
           $scope.config.sources = [{
@@ -231,6 +252,13 @@ angular
         lrc: song.lrc,
         updatedAt: song.updatedAt,
       };
+    }
+
+    function asyncSaveSongInfo() {
+      setTimeout(function () {
+        playListService.saveSong($scope.songList, $scope.favorName);
+        playListService.saveCurrentFavor($scope.currentIndex, $scope.favorName, $scope.config.loop);
+      }, 0);
     }
     
     $scope.$on('globalShortcut', function(event, args) {
