@@ -2,7 +2,11 @@ body {
   background: #333;
   color: #fff;
   -webkit-app-region: drag;
-  font: caption;   // 更随系统字体
+  font: caption; // 更随系统字体
+}
+
+div.no-padding {
+  padding: 0;
 }
 
 #songList, .controls, .lrc, .search {
@@ -165,7 +169,7 @@ body::-webkit-scrollbar-corner {
         color: #fff;
       }
 
-      * {
+      .delete * {
         color: #aaa;
       }
     }
@@ -188,7 +192,7 @@ span.badge {
   background: #3c3939;
 }
 
-videogular, [videogular]  {
+videogular, [videogular] {
   vg-loop, .vg-loop {
     display: table-cell;
     width: 50px;

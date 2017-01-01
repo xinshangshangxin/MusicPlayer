@@ -14,9 +14,9 @@
       <div class="col-xs-2  text-nowrap">
         <span class="badge">{{musicTypes[item.type]}}</span>
       </div>
-      <div class="col-xs-6 text-nowrap" title="{{item.song}}">{{item.song}}</div>
-      <div class="col-xs-2 text-nowrap" title="{{item.singer}}">{{item.singer}}</div>
-      <div ng-show="options" class="col-sm-2 text-nowrap" >
+      <div class="col-xs-7 text-nowrap" title="{{item.song}}">{{item.song}}</div>
+      <div class="col-xs-1 text-nowrap no-padding" title="{{item.singer}}">{{item.singer}}</div>
+      <div class="col-xs-2 text-nowrap" ng-show="options">
         <i class="fa fa-trash" aria-hidden="true" ng-click="deleteSong(item); $event.stopPropagation();"></i>
       </div>
     </li>
