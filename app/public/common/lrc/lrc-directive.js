@@ -50,6 +50,7 @@ angular
           scope.lrcIndex = -1;
 
           if(noScroll) {
+            checkUpdate(audio.currentTime);
             return;
           }
 
@@ -158,7 +159,7 @@ angular
                 sum += getEleOuterHeight(lrcLineEleList[index]);
               }
             });
-            initLrc();
+            initLrc(true);
           }, 0);
         }
 
