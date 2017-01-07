@@ -2,7 +2,7 @@
 
 angular
   .module('common')
-  .directive('autoResize', function($window) {
+  .directive('autoResize', function($window, $timeout) {
     return function($scope) {
       var w = angular.element($window);
       var timer = null;
@@ -22,15 +22,15 @@ angular
       }, true);
 
       w.bind('resize', function() {
-        console.log($scope.offsetH );
         if(timer) {
           return;
         }
-        timer = setTimeout(function() {
+
+        timer = $timeout(function() {
           console.log('$scope.offsetH: ', $scope.offsetH);
           timer = null;
-          $scope.$apply();
         }, 500);
+
       });
     };
   });

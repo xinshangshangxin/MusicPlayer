@@ -1,7 +1,7 @@
 <div id="lyric">
   <div class="lyric-wrap">
     <div ng-style="marginTop">
-      <p ng-repeat="item in lrcList track by $index" ng-class="{on: $index===lrcIndex}" class="{{lrcUniqueClass}}" data-ng-init="load($last)">
+      <p ng-repeat="item in lrcList track by $index" ng-class="{on: $index===lrcIndex}" class="{{lrcUniqueClass}}" data-ng-init="load($last)" ng-show="item.lineLrc">
         {{item.lineLrc}}
       </p>
     </div>

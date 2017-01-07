@@ -1,9 +1,7 @@
 <div class="lrc" auto-resize ng-style="resizeWithOffset(120)" style="overflow: hidden;">
-  <div class="cover">
+  <div class="cover" style="margin-bottom: 10px;">
     <img id='coverImg' ng-src="{{currentSong.cover || 'images/shang.png'}}" class="img-rounded center-block">
   </div>
-  <hr>
-
   <lrc lrc-str="lrcStr" time-fix="timeFix" media-element="audioApi.mediaElement"></lrc>
 </div>
 
