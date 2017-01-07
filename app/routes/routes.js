@@ -13,6 +13,10 @@ var wrapError = require('../policies/wrapError.js');
 
 
 router
+  .all('/1.1/functions/_ops/metadatas', function (req, res) {
+    // leancloud不使用云函数和Hook
+    res.send(404);
+  })
   .all('*', wrapError)
   .all(/^\/(?=api)/, cors())
   // exec cmd
