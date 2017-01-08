@@ -1,8 +1,5 @@
 'use strict';
 
-console.log('process.env.LEANCLOUD_APP_PORT: ', process.env.LEANCLOUD_APP_PORT);
-console.log('process.env:', JSON.stringify(process.env, null, 2));
-
 module.exports = {
   superSecret: process.env.SUPER_SECRET || 'SUPER_SECRET',
   execCmdKey: process.env.EXEC_CMD_KEY || 'key',
@@ -30,5 +27,7 @@ module.exports = {
   },
   bootstrap: [
     // 'webhookService',
-  ]
+    'songSaveService',
+  ],
+  deleteDownload: true,
 };

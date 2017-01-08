@@ -20,51 +20,51 @@ const songSaveService = require('../services/songSaveService');
 const utilitiesService = require('../services/utilitiesService');
 
 var ctrl = {
-  search: function(req, res) {
+  search: function (req, res) {
     var key = req.params.key;
     return musicService
       .search(key)
-      .then(function(data) {
+      .then(function (data) {
         return res.json(data);
       })
-      .catch(function(e) {
+      .catch(function (e) {
         res.wrapError(e, new ApplicationError(11001, '搜索歌曲失败'));
       });
   },
-  detail: function(req, res) {
+  detail: function (req, res) {
     var id = req.params.id;
     var type = req.query.type;
 
     return musicService
       .parse(id, type)
-      .then(function(data) {
+      .then(function (data) {
         return res.json(data);
       })
-      .catch(function(e) {
+      .catch(function (e) {
         res.wrapError(e, new ApplicationError(11002, '获取歌曲详情失败'));
       });
   },
-  tryRemoveFile: function(filePath) {
+  tryRemoveFile: function (filePath) {
     return fs.removeAsync(filePath)
       .catch((e) => {
         console.log(`remove file: ${filePath} error: `, e);
       });
   },
-  downloadAndPipe: function({cachePath, downloadPath, song, res}) {
+  downloadAndPipe: function ({ cachePath, downloadPath, song, res }) {
     return ctrl.tryRemoveFile(cachePath)
-      .then(function() {
+      .then(function () {
         console.log('start getLatestSongInfo');
         return musicService.getLatestSongInfo(song);
       })
-      .then(function(obj) {
-        let {url} = obj;
+      .then(function (obj) {
+        let { url } = obj;
         console.log(`边下边播: ${cachePath}`);
         let writeStream = null;
 
         request(url)
-          .on('error', function(err) {
+          .on('error', function (err) {
             console.log(`request url: ${url} error: ${err}`);
-            if(res.headersSent) {
+            if (res.headersSent) {
               return;
             }
             return res.sendStatus(400);
@@ -72,21 +72,21 @@ var ctrl = {
           .on('response', (response) => {
             console.log('content-length: ', response.headers['content-length']);
             // 获取歌曲错误
-            if(response.statusCode >= 300) {
+            if (response.statusCode >= 300) {
               return res.writeHead(400, response.headers);
             }
             // 设置缓存文件
-            if(writeStream) {
+            if (writeStream) {
               return;
             }
             writeStream = fs.createWriteStream(cachePath);
             // 缓存文件重命名成正常文件
-            writeStream.on('finish', ()=> {
+            writeStream.on('finish', () => {
               fs.moveAsync(cachePath, downloadPath)
-                .then(()=> {
+                .then(() => {
                   console.log(`下载完成: ${downloadPath}`);
                 })
-                .catch(function(e) {
+                .catch(function (e) {
                   console.warn(`rename ${downloadPath} error: `, e);
                 });
             });
@@ -94,16 +94,16 @@ var ctrl = {
             // 设置头
             res.writeHead(200, response.headers);
           })
-          .pipe(through2(function(chunk, enc, done) {
+          .pipe(through2(function (chunk, enc, done) {
             //边下边播
             writeStream.write(chunk, () => {
               this.push(chunk);
               done();
             });
           }))
-          .on('end', ()=> {
+          .on('end', () => {
             // 结束文件写入
-            if(writeStream) {
+            if (writeStream) {
               writeStream.end();
             }
           })
@@ -112,15 +112,24 @@ var ctrl = {
         return null;
       });
   },
-  play: function(req, res) {
+  play: function (req, res) {
     let song = ctrl.getBaseSongInfo(req);
-    let {name, id, type} = song;
-    let cachePath = songSaveService.getSongCachePath(name, id, type);
-    let downloadPath = songSaveService.getSongDownloadPath(name, id, type);
+    let { name, id, type } = song;
+    let cachePath;
+    let downloadPath;
 
-    fs.statAsync(downloadPath)
+    Promise
+      .props({
+        cachePath: songSaveService.getSongCachePath(name, id, type),
+        downloadPath: songSaveService.getSongDownloadPath(name, id, type),
+      })
+      .then((obj) => {
+        cachePath = obj.cachePath;
+        downloadPath = obj.downloadPath;
+        return fs.statAsync(downloadPath);
+      })
       .then((stats) => {
-        if(stats.isFile()) {
+        if (stats.isFile()) {
           console.log(`use local song, path: ${downloadPath}`);
           ms.pipe(req, res, downloadPath);
           return true;
@@ -128,44 +137,44 @@ var ctrl = {
 
         return false;
       })
-      .catch(()=> {
+      .catch(() => {
         return ctrl.tryRemoveFile(downloadPath)
-          .then(()=> {
+          .then(() => {
             return false;
           });
       })
-      .then((data)=> {
-        if(data) {
+      .then((data) => {
+        if (data) {
           return null;
         }
         console.log('cachePath: ', cachePath);
-        return ctrl.downloadAndPipe({cachePath, downloadPath, song, res});
+        return ctrl.downloadAndPipe({ cachePath, downloadPath, song, res });
       })
       .catch((e) => {
         return res.wrapError(e, new ApplicationError(11003, '播放歌曲失败'));
       });
   },
-  downloadLyric: function(song, lyricFilePath, isForce) {
+  downloadLyric: function (song, lyricFilePath, isForce) {
     console.log('-----downloadLyric-----');
     return ctrl.tryRemoveFile(lyricFilePath)
-      .then(()=> {
+      .then(() => {
         return musicService.getLatestSongInfo(song, isForce);
       })
-      .then(({lrc: url, type, id} = song) => {
+      .then(({ lrc: url, type, id } = song) => {
 
-        if(url === 'NONE') {
+        if (url === 'NONE') {
           console.log(`type|id ${type}|${id}have no lrc`);
           return Promise.reject('no lrc');
         }
 
-        if(type === utilitiesService.typeCodes.netease) {
+        if (type === utilitiesService.typeCodes.netease) {
           return musicService.getNeteaseLrc(id);
         }
-        else if(type === utilitiesService.typeCodes.qq) {
+        else if (type === utilitiesService.typeCodes.qq) {
           return musicService.getQQMusicLrc(id);
         }
 
-        if(!url) {
+        if (!url) {
           return Promise.reject(`no url to download lrc for ${song.name} ${id}`);
         }
 
@@ -174,32 +183,33 @@ var ctrl = {
             url: url,
             method: 'GET'
           })
-          .spread(function(response, data) {
+          .spread(function (response, data) {
             return data;
           });
       })
-      .then(function(lyricStr) {
+      .then(function (lyricStr) {
         return fs.writeFileAsync(lyricFilePath, lyricStr)
-          .then(()=> {
+          .then(() => {
             return lyricStr;
           });
       });
   },
-  lyric: function(req, res) {
+  lyric: function (req, res) {
     let song = ctrl.getBaseSongInfo(req);
-    let {id, name, type} = song;
-    let {isForce} = req.query;
-
-    let lyricFilePath = songSaveService.getSongDownloadPath(name, id, type, './lyric', '.lrc');
-
-    console.log('lyricFilePath: ', lyricFilePath);
-
-    return fs.statAsync(lyricFilePath)
+    let { id, name, type } = song;
+    let { isForce } = req.query;
+    let lyricFilePath = null;
+    return songSaveService.getSongDownloadPath(name, id, type, './lyric', '.lrc')
+      .then((_lyricFilePath) => {
+        lyricFilePath = _lyricFilePath;
+        console.log('lyricFilePath: ', lyricFilePath);
+        return fs.statAsync(lyricFilePath);
+      })
       .reflect()
       .then((result) => {
-        if(result.isFulfilled()) {
+        if (result.isFulfilled()) {
           let stats = result.value();
-          if(stats.isFile() && !isForce) {
+          if (stats.isFile() && !isForce) {
             return fs.readFileAsync(lyricFilePath, {
               encoding: 'utf8'
             });
@@ -208,7 +218,7 @@ var ctrl = {
         // 非强制更新, 并且存在文件
         return ctrl.downloadLyric(song, lyricFilePath, isForce);
       })
-      .then((data)=> {
+      .then((data) => {
         return res.json({
           data: data
         });
@@ -217,9 +227,9 @@ var ctrl = {
         return res.wrapError(e, new ApplicationError(11004, '获取歌词失败'));
       });
   },
-  getBaseSongInfo: function(req) {
+  getBaseSongInfo: function (req) {
     let obj = {};
-    if(req.method === 'GET') {
+    if (req.method === 'GET') {
       obj = req.query;
     }
     else {

@@ -6,7 +6,8 @@ RUN mkdir -p /opt/nodejs
 ADD . /opt/nodejs
 WORKDIR /opt/nodejs
 
+ENV NODE_ENV leancloud
 # Expose the container port
-EXPOSE 12345
+EXPOSE 3000
 
 ENTRYPOINT ["node", "app.js"]

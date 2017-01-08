@@ -2,7 +2,7 @@
 
 angular
   .module('musicPlayer')
-  .controller('homeController', function($scope, $sce, $q, $timeout, playListService, notificationService, musicInfoEntity, lyricEntity, MUSIC_TYPES) {
+  .controller('homeController', function($scope, $sce, $q, $timeout, playListService, notificationService, musicInfoEntity, lyricEntity, MUSIC_TYPES, PLAY_URL_PREFIX) {
     var errorIndex = -1;
     var errorTimer = null;
 
@@ -125,8 +125,11 @@ angular
     }
 
     function getPlayUrl(song) {
-      var playUrlPrefix = '/api/v1/music/play';
-      return playUrlPrefix + '?name=' + getSongInfoStr(song) + '&id=' + song.id + '&type=' + song.type + '&url=' + encodeURIComponent(song.url);
+      if(!PLAY_URL_PREFIX) {
+        return song.url;
+      }
+
+      return PLAY_URL_PREFIX + '?name=' + getSongInfoStr(song) + '&id=' + song.id + '&type=' + song.type + '&url=' + encodeURIComponent(song.url);
     }
 
     function playNext() {
