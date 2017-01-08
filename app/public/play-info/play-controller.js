@@ -9,7 +9,7 @@ angular
     $scope.keyChange = keyChange;
 
     $scope.theme = {
-      row: 4
+      row: 3
     };
     changeTheme();
     $scope.changeTheme = changeTheme;

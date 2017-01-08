@@ -7,11 +7,13 @@ angular
     'com.2fdevs.videogular.plugins.controls',
     'ui.bootstrap',
     'ngResource',
+    'ngTouch',
     'ui.router',
     'angular-loading-bar',
     'ngAnimate',
     'pascalprecht.translate',
     'dndLists',
+    'pageslide-directive',
     'common'
   ])
   .config(function($locationProvider, $httpProvider, $translateProvider, $compileProvider) {

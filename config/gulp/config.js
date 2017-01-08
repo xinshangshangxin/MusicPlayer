@@ -94,9 +94,11 @@ function getCommonConfig() {
         'angular-loading-bar/build/loading-bar.min.js',
         'angular-translate/angular-translate.min.js',
         'angular-translate-loader-static-files/angular-translate-loader-static-files.min.js',
-        'angular-drag-and-drop-lists/angular-drag-and-drop-lists.min.js',
+        'angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
+        'angular-touch/angular-touch.min.js',
         'videogular/videogular.min.js',
         'videogular-controls/vg-controls.min.js',
+        'angular-pageslide-directive/dist/angular-pageslide-directive.min.js',
         'lodash/dist/lodash.min.js'
       ],
       'opt': {

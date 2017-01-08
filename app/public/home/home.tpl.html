@@ -1,42 +1,49 @@
-<div class="row" style="margin: 0">
-  <div ui-view></div>
-  <div class="col-sm-12 controls">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="videogular-container audio">
-          <videogular
-              vg-theme="config.theme"
-              vg-auto-play="config.autoPlay"
-              vg-loop="config.loop"
-              vg-complete="onComplete()"
-              vg-error="onError($event)"
-              vg-update-time="onUpdateTime($currentTime, $duration)"
-              vg-crossorigin
-              vg-player-ready="onPlayerReady($API)"
-              vg-update-volume="onUpdateVolume($volume)"
-              vg-update-state="onUpdateState($state)"
-              vg-seeking="onSeeking($currentTime, $duration)"
-              vg-seeked="onSeeked($currentTime, $duration)"
-              class="control">
-            <vg-media vg-src="config.sources" vg-type="audio"></vg-media>
+<div class="container" ng-swipe-right="config.pageSlide=!config.pageSlide;">
+  <div class="row">
+    <div class="main-drag">
+    </div>
 
-            <vg-controls>
-              <vg-play-pause-button></vg-play-pause-button>
-              <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
-              <vg-scrub-bar>
-                <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-              </vg-scrub-bar>
-              <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
-              <vg-loop ng-click="config.loop = !config.loop">
-                <i ng-if="!config.loop" class="fa fa-refresh" aria-hidden="true"></i>
-                <i ng-if="config.loop" class="fa fa-undo" aria-hidden="true"></i>
-              </vg-loop>
-              <vg-volume>
-                <vg-mute-button></vg-mute-button>
-                <vg-volume-bar></vg-volume-bar>
-              </vg-volume>
-            </vg-controls>
-          </videogular>
+    <div>
+      <div ui-view></div>
+      <div class="col-sm-12 controls">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="videogular-container audio">
+              <videogular
+                vg-theme="config.theme"
+                vg-auto-play="config.autoPlay"
+                vg-loop="config.loop"
+                vg-complete="onComplete()"
+                vg-error="onError($event)"
+                vg-update-time="onUpdateTime($currentTime, $duration)"
+                vg-crossorigin
+                vg-player-ready="onPlayerReady($API)"
+                vg-update-volume="onUpdateVolume($volume)"
+                vg-update-state="onUpdateState($state)"
+                vg-seeking="onSeeking($currentTime, $duration)"
+                vg-seeked="onSeeked($currentTime, $duration)"
+                class="control">
+                <vg-media vg-src="config.sources" vg-type="audio"></vg-media>
+
+                <vg-controls>
+                  <vg-play-pause-button></vg-play-pause-button>
+                  <vg-time-display>{{ currentTime | date:'mm:ss' }}</vg-time-display>
+                  <vg-scrub-bar>
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                  </vg-scrub-bar>
+                  <vg-time-display>{{ timeLeft | date:'mm:ss' }}</vg-time-display>
+                  <vg-loop ng-click="config.loop = !config.loop">
+                    <i ng-if="!config.loop" class="fa fa-refresh" aria-hidden="true"></i>
+                    <i ng-if="config.loop" class="fa fa-undo" aria-hidden="true"></i>
+                  </vg-loop>
+                  <vg-volume>
+                    <vg-mute-button></vg-mute-button>
+                    <vg-volume-bar></vg-volume-bar>
+                  </vg-volume>
+                </vg-controls>
+              </videogular>
+            </div>
+          </div>
         </div>
       </div>
     </div>

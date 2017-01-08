@@ -1,8 +1,8 @@
 body {
   background: #333;
   color: #fff;
+  -webkit-app-region: no-drag;
   -webkit-user-select:none;
-  -webkit-app-region: drag;
   font: caption; // 更随系统字体
 }
 
@@ -10,8 +10,10 @@ div.no-padding {
   padding: 0;
 }
 
-#songList, .controls, .lrc, .search {
-  -webkit-app-region: no-drag;
+.main-drag {
+  width: 100%;
+  height: 25px;
+  -webkit-app-region: drag;
 }
 
 .videogular-container {
@@ -201,3 +203,13 @@ videogular, [videogular] {
     cursor: pointer;
   }
 }
+
+.transition div {
+  //height: 200px;
+  -webkit-transition: width 1s ease;
+  -moz-transition: width 1s ease;
+  -o-transition: width 1s ease;
+  transition: width 1s ease;
+}
+
+.transition .col-xs-0 {width: 0 !important;float:left}

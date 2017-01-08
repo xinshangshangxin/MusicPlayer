@@ -1,12 +1,16 @@
 <div class="row">
-  <hr>
-  <a ng-show="false" class="btn btn-inverse" ng-click="changeTheme()">click me</a>
-  <hr>
+  <div pageslide ps-side="left" ps-push="true" ps-open="config.pageSlide">
+    <div>
+      123
+    </div>
+  </div>
   <div class="row-fluid">
     <div ng-class="[theme.row1]">
-      <div class="row search">
+      <div class="row">
         <div class="col-sm-12">
-          <input ng-keydown="keyChange($event)" ng-model="key" type="text" class="form-control" placeholder="回车搜索">
+          <div class="search">
+            <input ng-keydown="keyChange($event)" ng-model="key" type="text" class="form-control" placeholder="回车搜索">
+          </div>
         </div>
       </div>
       <hr>
