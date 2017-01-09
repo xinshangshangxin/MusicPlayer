@@ -24,11 +24,9 @@ const svc = {
     image.setTemplateImage(true);
     opt.tray = new Tray(image);
 
-    if(process.platform === 'win32') {
-      let contextMenu = Menu.buildFromTemplate(getTemplate(process.platform, opt.mainWindow, opt.openServerUrl));
-      opt.tray.setContextMenu(contextMenu);
-    }
+    let contextMenu = Menu.buildFromTemplate(getTemplate(process.platform, opt.mainWindow, opt.openServerUrl));
 
+    opt.tray.on('right-click', () => opt.tray.popUpContextMenu(contextMenu));
     opt.tray.on('click', () => this.toggleWindow(opt.mainWindow));
   },
 };
