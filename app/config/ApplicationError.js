@@ -36,7 +36,9 @@ var errors = {
 
 };
 
-function ApplicationError() {
+function ApplicationError(code, message) {
+  this.code = code;
+  this.message = message;
 }
 
 util.inherits(ApplicationError, Error);

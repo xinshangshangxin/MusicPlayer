@@ -35,6 +35,7 @@ static:
 build:
 	gulp prod
 	cp package.json production/
+	cp package-lock.json production/
 	mv node_modules/ production/node_modules/
 	sh config/build.sh darwin x64
 	rm -rf dist/

@@ -27,7 +27,7 @@ fi
 
 ignore_list="\./dist/|\./config/|\.tmp|\./static/|\./production/|\.idea|.*\.md|.*\.yml"
 
-electron-packager ./production "${APP_NAME}" --platform=$PLATFORM --arch=$ARCH --version=1.4.2 --overwrite --out=./dist --ignore=${ignore_list} --icon=./app/public/images/shang.icns --app-version=0.1.1 --prune
+electron-packager ./production "${APP_NAME}" --platform=$PLATFORM --arch=$ARCH --electronVersion=1.4.3 --overwrite --out=./dist --ignore=${ignore_list} --icon=./app/public/images/shang.icns --app-version=0.1.1 --prune
 
 # --prune --asar
 

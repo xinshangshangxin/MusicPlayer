@@ -34,11 +34,19 @@ var ctrl = {
   detail: function (req, res) {
     var id = req.params.id;
     var type = req.query.type;
+    var obj = _.pick(req.query, ['name', 'singer', 'song']);
 
     return musicService
       .parse(id, type)
       .then(function (data) {
-        return res.json(data);
+
+        _.assign(obj, data);
+
+        if (obj.name === 'undefined-undefined') {
+          obj.name = obj.song + '-' + obj.singer;
+        }
+
+        return res.json(obj);
       })
       .catch(function (e) {
         res.wrapError(e, new ApplicationError(11002, '获取歌曲详情失败'));
@@ -61,7 +69,18 @@ var ctrl = {
         console.log(`边下边播: ${cachePath}`);
         let writeStream = null;
 
-        request(url)
+        request({
+          url: url,
+          headers: {
+            range: 'bytes=0-',
+            connection: 'keep-alive',
+            referer: 'http',
+            'cache-control': 'no-cache',
+            accept: '*/*',
+            'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
+            pragma: 'no-cache'
+          }
+        })
           .on('error', function (err) {
             console.log(`request url: ${url} error: ${err}`);
             if (res.headersSent) {
@@ -92,7 +111,7 @@ var ctrl = {
             });
 
             // 设置头
-            res.writeHead(200, response.headers);
+            res.writeHead(response.statusCode, response.headers);
           })
           .pipe(through2(function (chunk, enc, done) {
             //边下边播
